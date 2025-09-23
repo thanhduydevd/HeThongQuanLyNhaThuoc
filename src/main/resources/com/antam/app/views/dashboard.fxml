@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <HBox alignment="CENTER" prefHeight="70.0" spacing="5.0" styleClass="top-page" stylesheets="@../styles/dashboard_style.css" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/logo.png" />
+                     </image>
+                  </ImageView>
+                  <VBox alignment="TOP_CENTER" prefWidth="200.0">
+                     <children>
+                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="NHÀ THUỐC AN TÂM">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Hệ Thống Quản Lý">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="user-info" stylesheets="@../styles/dashboard_style.css">
+                     <children>
+                        <FontAwesomeIcon fill="#374151" glyphName="USER" size="1.5em" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </HBox>
+                  <Button mnemonicParsing="false" styleClass="btn-logout" stylesheets="@../styles/dashboard_style.css" text="Đăng xuất" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="32.72" radius="12.93" />
+               </effect>
+            </HBox>
+         </top>
+         <left>
+            <VBox prefWidth="300.0" styleClass="sidebar" stylesheets="@../styles/dashboard_style.css" BorderPane.alignment="CENTER">
+               <children>
+                  <Button graphicTextGap="5.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item-active" stylesheets="@../styles/dashboard_style.css" text="Tổng quan">
+                     <graphic>
+                        <FontAwesomeIcon fill="#333333" glyphName="DASHBOARD" />
+                     </graphic>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding></Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Quản lý thuốc">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="MEDKIT" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Quản lý kệ thuốc">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="CUBES" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Quản lý nhân viên">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="USERS" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Quản lý kho">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="HOME" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Quản lý hoá đơn">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="FILE" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Khuyến mãi">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="GIFT" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Phiếu đặt">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="TICKET" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Khách hàng">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="USERS" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="300.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Tài khoản">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <graphic>
+                        <FontAwesomeIcon glyphName="COG" />
+                     </graphic>
+                  </Button>
+               </children>
+               <effect>
+                  <DropShadow blurType="ONE_PASS_BOX" height="59.11" offsetY="10.0" radius="38.58" width="97.21" />
+               </effect>
+            </VBox>
+         </left>
+         <center>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
+                           <children>
+                              <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng quan hệ thống">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <FlowPane alignment="CENTER" hgap="30.0" vgap="20.0">
+                                 <children>
+                                    <StackPane prefHeight="121.0" prefWidth="299.0" style="-fx-background-color: white; -fx-background-radius: 20px;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: #2563eb; -fx-background-radius: 15px;">
+                                                   <graphic>
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="MEDKIT" size="2em" />
+                                                   </graphic>
+                                                </Button>
+                                                <VBox maxHeight="-Infinity" prefHeight="60.0">
+                                                   <children>
+                                                      <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+                                                         <font>
+                                                            <Font name="System Bold" size="32.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#64748b" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng số thuốc" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <StackPane.margin>
+                                                <Insets />
+                                             </StackPane.margin>
+                                             <padding>
+                                                <Insets left="20.0" right="20.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <effect>
+                                          <DropShadow blurType="GAUSSIAN" height="11.97" offsetX="2.0" offsetY="3.0" radius="8.477500000000001" width="23.94">
+                                             <color>
+                                                <Color red="0.8289473652839661" green="0.8289473652839661" blue="0.8289473652839661" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </StackPane>
+                                    <StackPane prefHeight="121.0" prefWidth="299.0" style="-fx-background-color: white; -fx-background-radius: 20px;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: #2563eb; -fx-background-radius: 15px;">
+                                                   <graphic>
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="USERS" size="2em" />
+                                                   </graphic>
+                                                </Button>
+                                                <VBox maxHeight="-Infinity" prefHeight="60.0">
+                                                   <children>
+                                                      <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                                                         <font>
+                                                            <Font name="System Bold" size="32.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#64748b" strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <StackPane.margin>
+                                                <Insets />
+                                             </StackPane.margin>
+                                             <padding>
+                                                <Insets left="20.0" right="20.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <effect>
+                                          <DropShadow blurType="GAUSSIAN" height="11.97" offsetX="2.0" offsetY="3.0" radius="8.477500000000001" width="23.94">
+                                             <color>
+                                                <Color red="0.8289473652839661" green="0.8289473652839661" blue="0.8289473652839661" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </StackPane>
+                                    <StackPane prefHeight="121.0" prefWidth="299.0" style="-fx-background-color: white; -fx-background-radius: 20px;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: #2563eb; -fx-background-radius: 15px;">
+                                                   <graphic>
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="FILE" size="2em" />
+                                                   </graphic>
+                                                </Button>
+                                                <VBox maxHeight="-Infinity" prefHeight="60.0">
+                                                   <children>
+                                                      <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
+                                                         <font>
+                                                            <Font name="System Bold" size="32.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#64748b" strokeType="OUTSIDE" strokeWidth="0.0" text="Hoá đơn hôm nay" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <StackPane.margin>
+                                                <Insets />
+                                             </StackPane.margin>
+                                             <padding>
+                                                <Insets left="20.0" right="20.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <effect>
+                                          <DropShadow blurType="GAUSSIAN" height="11.97" offsetX="2.0" offsetY="3.0" radius="8.477500000000001" width="23.94">
+                                             <color>
+                                                <Color red="0.8289473652839661" green="0.8289473652839661" blue="0.8289473652839661" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </StackPane>
+                                    <StackPane prefHeight="121.0" prefWidth="299.0" style="-fx-background-color: white; -fx-background-radius: 20px;">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: #2563eb; -fx-background-radius: 15px;">
+                                                   <graphic>
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="GIFT" size="2em" />
+                                                   </graphic>
+                                                </Button>
+                                                <VBox maxHeight="-Infinity" prefHeight="60.0">
+                                                   <children>
+                                                      <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="23">
+                                                         <font>
+                                                            <Font name="System Bold" size="32.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#64748b" strokeType="OUTSIDE" strokeWidth="0.0" text="Khuyến mãi áp dụng" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <StackPane.margin>
+                                                <Insets />
+                                             </StackPane.margin>
+                                             <padding>
+                                                <Insets left="20.0" right="20.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <effect>
+                                          <DropShadow blurType="GAUSSIAN" height="11.97" offsetX="2.0" offsetY="3.0" radius="8.477500000000001" width="23.94">
+                                             <color>
+                                                <Color red="0.8289473652839661" green="0.8289473652839661" blue="0.8289473652839661" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                    </StackPane>
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="20.0" rowValignment="TOP" vgap="20.0">
+                                 <children>
+                                    <VBox maxHeight="-Infinity" prefWidth="700.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+                                       <effect>
+                                          <DropShadow height="23.93" offsetX="3.0" offsetY="2.0" radius="12.93" width="29.79">
+                                             <color>
+                                                <Color red="0.8552631735801697" green="0.8552631735801697" blue="0.8552631735801697" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <children>
+                                          <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc sắp hết hạn">
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Amoxicillin 250mg">
+                                                         <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
+                                                   </children>
+                                                </VBox>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="200 còn lại" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
+                                                         <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
+                                                   </children>
+                                                </VBox>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="20 còn lại" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Amoxicillin 250mg">
+                                                         <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
+                                                   </children>
+                                                </VBox>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="200 còn lại" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox maxHeight="-Infinity" prefWidth="700.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+                                       <effect>
+                                          <DropShadow height="23.93" offsetX="3.0" offsetY="2.0" radius="12.93" width="29.79">
+                                             <color>
+                                                <Color red="0.8552631735801697" green="0.8552631735801697" blue="0.8552631735801697" />
+                                             </color>
+                                          </DropShadow>
+                                       </effect>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <children>
+                                          <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc còn tồn kho thấp">
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font>
+                                          </Text>
+                                          <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
+                                                         <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã: VD-004-25" />
+                                                   </children>
+                                                </VBox>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" style="-fx-background-color: #fef3c7; -fx-text-fill: #92400e; -fx-background-radius: 20px;" text="200 còn lại" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
+                                                         <font>
+                                                            <Font name="System Bold" size="15.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã: VD-004-25" />
+                                                   </children>
+                                                </VBox>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" style="-fx-background-color: #fef3c7; -fx-text-fill: #92400e; -fx-background-radius: 20px;" text="20 còn lại" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </FlowPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane disable="true" fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý thuốc">
+                                       <font>
+                                          <Font name="System Bold" size="30.0" />
+                                       </font>
+                                    </Text>
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thêm thuốc" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="PLUS" text="" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <TextField prefHeight="40.0" prefWidth="300.0" promptText="Nhập thông tin thuốc" style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <TableView prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                  <TableColumn prefWidth="75.0" text="Số đăng ký" />
+                                  <TableColumn prefWidth="75.0" text="Tên thuốc" />
+                                    <TableColumn prefWidth="75.0" text="Hàm lượng" />
+                                    <TableColumn prefWidth="75.0" text="Dạng điều chế" />
+                                    <TableColumn prefWidth="75.0" text="Giá bán" />
+                                    <TableColumn prefWidth="75.0" text="Tồn kho" />
+                                    <TableColumn prefWidth="75.0" text="Hạn sử dụng" />
+                                    <TableColumn prefWidth="75.0" text="Kệ thuốc" />
+                                </columns>
+                              </TableView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý kệ thuốc">
+                                       <font>
+                                          <Font name="System Bold" size="30.0" />
+                                       </font>
+                                    </Text>
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="118.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thêm kệ thuốc" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="PLUS" text="" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <TextField prefHeight="40.0" prefWidth="300.0" promptText="Tìm kiếm kệ thuốc" style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <TableView prefHeight="200.0" prefWidth="200.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="Mã kệ" />
+                                    <TableColumn prefWidth="75.0" text="Tên kệ" />
+                                    <TableColumn prefWidth="75.0" text="Loại kệ" />
+                                    <TableColumn prefWidth="75.0" text="Số thuốc" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                     <content>
+                        <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý nhân viên">
+                                       <font>
+                                          <Font name="System Bold" size="30.0" />
+                                       </font>
+                                    </Text>
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="118.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thêm nhân viên" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="PLUS" text="" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <TextField prefHeight="40.0" prefWidth="300.0" promptText="Tìm kiếm nhân viên" style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <TableView prefHeight="200.0" prefWidth="200.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="Mã NV" />
+                                    <TableColumn prefWidth="75.0" text="Họ tên" />
+                                    <TableColumn prefWidth="75.0" text="Chức vụ" />
+                                    <TableColumn prefWidth="75.0" text="Số điện thoại" />
+                                    <TableColumn prefWidth="75.0" text="Email" />
+                                    <TableColumn prefWidth="75.0" text="Địa chỉ" />
+                                    <TableColumn prefWidth="75.0" text="Lương cơ bản" />
+                                    <TableColumn prefWidth="75.0" text="Doanh số" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
