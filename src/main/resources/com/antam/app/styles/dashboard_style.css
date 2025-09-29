@@ -39,8 +39,8 @@
     -fx-text-fill: #333;
     -fx-border-color: #2563eb;
     -fx-border-width: 0 0 0 5px;
-    -fx-alignment: center-left;
     -fx-cursor: hand;
+    -fx-alignment: center-left;
 }
 
 .sidebar-item:hover{
