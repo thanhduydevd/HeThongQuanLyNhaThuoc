@@ -23,30 +23,171 @@
     -fx-cursor: hand;
 }
 
+/* Sidebar */
 .sidebar{
     -fx-background-color: white;
 
 }
 
 .sidebar-item{
-    -fx-background-color: white;
+    -fx-background-color: #f8fafc;
     -fx-text-fill: #333;
     -fx-alignment: center-left;
-}
-
-.sidebar-item-active{
-    -fx-background-color: #eff6ff;
-    -fx-text-fill: #333;
-    -fx-border-color: #2563eb;
-    -fx-border-width: 0 0 0 5px;
-    -fx-cursor: hand;
-    -fx-alignment: center-left;
+    -fx-background-radius: 8px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-radius: 8px;
 }
 
 .sidebar-item:hover{
-    -fx-background-color: #eff6ff;
-    -fx-border-color: #2563eb;
-    -fx-border-width: 0 0 0 5px;
+    -fx-background-color: #f1f5f9;
     -fx-cursor: hand;
+}
+
+.sidebar-sub-item{
+    -fx-background-color: none;
+    -fx-text-fill: #333;
+    -fx-alignment: center-left;
+}
+
+.sidebar-sub-item{
+    -fx-background-color: none;
+    -fx-text-fill: #333;
+    -fx-alignment: center-left;
+}
+
+.sidebar-sub-item:hover{
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #2563eb;
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+}
+
+/* Table */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10;
+    -fx-table-cell-border-color: transparent; /* bỏ viền ô */
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 6px 10px;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #eaf2ff; /* màu khi chọn */
+}
+
+/* Box */
+.box-pane{
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+}
+
+/* Combo Box */
+.combo-box{
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+/* Text Field + Text Area */
+.text-field{
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+.text-area{
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+/* Button */
+.btn-primary{
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+}
+
+.btn-gray{
+    -fx-background-color: #6b7280;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+}
+
+/* Tab Pane */
+.tab-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 5px 10px;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+/* Tab mặc định */
+.tab {
+    -fx-background-color: transparent;
+    -fx-padding: 6px 14px;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.tab-label {
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+}
+
+/* Tab được chọn */
+.tab:selected {
+    -fx-background-color:  #2563eb;
+    -fx-border-color: #e5e7eb #e5e7eb transparent #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+/* Tab hover */
+.tab:hover {
+
+}
+
+/* Nội dung */
+.tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 15px;
+    -fx-background-radius: 0 0 8px 8px;
 }
 
