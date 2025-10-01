@@ -21,6 +21,7 @@ public class HoaDon {
     private NhanVien maNV;
     private KhachHang maKH;
     private KhuyenMai maKM;
+    private double tongTien;
 
     public HoaDon() {
         MaHD = "";
@@ -28,6 +29,7 @@ public class HoaDon {
         maNV = new NhanVien();
         maKH = new KhachHang();
         maKM = null;
+        tongTien = 0;
     }
     public HoaDon(String maHD, LocalDate ngayTao, NhanVien maNV, KhachHang maKH, KhuyenMai maKM) {
         MaHD = maHD;
@@ -35,6 +37,7 @@ public class HoaDon {
         this.maNV = maNV;
         this.maKH = maKH;
         this.maKM = maKM;
+        this.tongTien = 0;
     }
     public String getMaHD() {
         return MaHD;
@@ -66,6 +69,15 @@ public class HoaDon {
     public void setMaKM(KhuyenMai maKM) {
         this.maKM = maKM;
     }
+    public double getTongTien() {
+        return tongTien;
+    }
+    public void setTongTien(double tongTien) {
+        if (tongTien < 0) {
+            throw new IllegalArgumentException("Tổng tiền không được âm");
+        }
+        this.tongTien = tongTien;
+    }
     @Override
     public String toString() {
         return "HoaDon{" +
@@ -74,6 +86,7 @@ public class HoaDon {
                 ", maNV=" + maNV +
                 ", maKH=" + maKH +
                 ", maKM=" + maKM +
+                ", tongTien=" + tongTien +
                 '}';
     }
 

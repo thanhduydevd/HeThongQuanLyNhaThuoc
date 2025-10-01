@@ -14,24 +14,27 @@ package com.antam.app.entity;
  */
 public class ChiTietHoaDon {
     private HoaDon MaHD;
-    private Thuoc soDangKy;
+    private Thuoc maThuoc;
     private int soLuong;
     private DonViTinh maDVT;
     private String tinhTrang;
+    private double thanhTien;
 
     public ChiTietHoaDon() {
         this.MaHD = new HoaDon();
-        this.soDangKy = new Thuoc();
+        this.maThuoc = new Thuoc();
         this.soLuong = 0;
         this.maDVT = new DonViTinh();
         this.tinhTrang = "";
+        this.thanhTien = 0;
     }
-    public ChiTietHoaDon(HoaDon maHD, Thuoc soDangKy, int soLuong, DonViTinh maDVT, String tinhTrang) {
+    public ChiTietHoaDon(HoaDon maHD, Thuoc maThuoc, int soLuong, DonViTinh maDVT, String tinhTrang) {
         this.MaHD = maHD;
-        this.soDangKy = soDangKy;
+        this.maThuoc = maThuoc;
         setSoLuong(soLuong);
         this.maDVT = maDVT;
         setTinhTrang(tinhTrang);
+        setThanhTien();
     }
     public HoaDon getMaHD() {
         return MaHD;
@@ -40,10 +43,10 @@ public class ChiTietHoaDon {
         MaHD = maHD;
     }
     public Thuoc getSoDangKy() {
-        return soDangKy;
+        return maThuoc;
     }
     public void setSoDangKy(Thuoc soDangKy) {
-        this.soDangKy = soDangKy;
+        this.maThuoc = soDangKy;
     }
     public int getSoLuong() {
         return soLuong;
@@ -53,6 +56,7 @@ public class ChiTietHoaDon {
             throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
         }
         this.soLuong = soLuong;
+        setThanhTien();
     }
     public DonViTinh getMaDVT() {
         return maDVT;
@@ -69,16 +73,19 @@ public class ChiTietHoaDon {
         }
         this.tinhTrang = tinhTrang;
     }
+    public void setThanhTien() {
+        this.thanhTien = tinhThanhTien();
+    }
     public double tinhThanhTien() {
-        double giaBan = soDangKy.getGiaBan();
-        float thue = soDangKy.getThue();
+        double giaBan = maThuoc.getGiaBan();
+        float thue = maThuoc.getThue();
         return soLuong * giaBan * (1 + thue);
     }
     @Override
     public String toString() {
         return "ChiTietHoaDon{" +
                 "MaHD=" + MaHD +
-                ", soDangKy=" + soDangKy +
+                ", soDangKy=" + maThuoc +
                 ", soLuong=" + soLuong +
                 ", maDVT=" + maDVT +
                 ", tinhTrang='" + tinhTrang + '\'' +

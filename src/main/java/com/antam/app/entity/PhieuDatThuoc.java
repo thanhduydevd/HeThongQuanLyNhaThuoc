@@ -22,6 +22,7 @@ public class PhieuDatThuoc {
     private NhanVien maNV;
     private KhachHang maKH;
     private KhuyenMai maKM;
+    private double tongTien;
 
     public PhieuDatThuoc() {
         this.maPhieu = "";
@@ -30,6 +31,7 @@ public class PhieuDatThuoc {
         this.maNV = new NhanVien();
         this.maKH = new KhachHang();
         this.maKM = new KhuyenMai();
+        this.tongTien = 0;
     }
 
     public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM) {
@@ -39,6 +41,7 @@ public class PhieuDatThuoc {
         this.maNV = maNV;
         this.maKH = maKH;
         this.maKM = maKM;
+        this.tongTien = 0;
     }
 
     public String getMaPhieu() {
@@ -87,6 +90,15 @@ public class PhieuDatThuoc {
     public void setMaKM(KhuyenMai maKM) {
         this.maKM = maKM;
     }
+    public double getTongTien() {
+        return tongTien;
+    }
+    public void setTongTien(double tongTien) {
+        if (tongTien < 0) {
+            throw new IllegalArgumentException("Tổng tiền không được âm");
+        }
+        this.tongTien = tongTien;
+    }
 
     @Override
     public String toString() {
@@ -97,6 +109,7 @@ public class PhieuDatThuoc {
                 ", maNV=" + maNV +
                 ", maKH=" + maKH +
                 ", maKM=" + maKM +
+                ", tongTien=" + tongTien +
                 '}';
     }
 

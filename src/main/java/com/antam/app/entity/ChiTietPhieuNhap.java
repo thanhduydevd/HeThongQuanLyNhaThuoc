@@ -16,25 +16,28 @@ import java.util.Objects;
  */
 public class ChiTietPhieuNhap {
     private HoaDon MaPN;
-    private Thuoc soDangKy;
+    private Thuoc maThuoc;
     private DonViTinh maDVT;
     private int soLuong;
     private double giaNhap;
+    private double thanhTien;
 
     public ChiTietPhieuNhap() {
         this.MaPN = new HoaDon();
-        this.soDangKy = new Thuoc();
+        this.maThuoc = new Thuoc();
         this.maDVT = new DonViTinh();
         this.soLuong = 0;
         this.giaNhap = 0;
+        this.thanhTien = 0;
     }
 
-    public ChiTietPhieuNhap(HoaDon maPN, Thuoc soDangKy, DonViTinh maDVT, int soLuong, double giaNhap) {
+    public ChiTietPhieuNhap(HoaDon maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap) {
         this.MaPN = maPN;
-        this.soDangKy = soDangKy;
+        this.maThuoc = maThuoc;
         this.maDVT = maDVT;
         setSoLuong(soLuong);
         setGiaNhap(giaNhap);
+        setThanhTien();
     }
 
     public HoaDon getMaPN() {
@@ -46,11 +49,11 @@ public class ChiTietPhieuNhap {
     }
 
     public Thuoc getSoDangKy() {
-        return soDangKy;
+        return maThuoc;
     }
 
     public void setSoDangKy(Thuoc soDangKy) {
-        this.soDangKy = soDangKy;
+        this.maThuoc = soDangKy;
     }
 
     public DonViTinh getMaDVT() {
@@ -70,6 +73,7 @@ public class ChiTietPhieuNhap {
             throw new IllegalArgumentException("Số lượng không được âm");
         }
         this.soLuong = soLuong;
+        setThanhTien();
     }
 
     public double getGiaNhap() {
@@ -83,14 +87,21 @@ public class ChiTietPhieuNhap {
         this.giaNhap = giaNhap;
     }
 
+    public void setThanhTien() {
+        this.thanhTien = thanhTien();
+    }
+
+
     public double thanhTien() {
-        return soLuong * giaNhap;
+        double giaBan = maThuoc.getGiaBan();
+        float thue = maThuoc.getThue();
+        return soLuong * giaBan * (1 + thue);
     }
     @Override
     public String toString() {
         return "ChiTietPhieuNhap{" +
                 "MaPN=" + MaPN +
-                ", soDangKy=" + soDangKy +
+                ", soDangKy=" + maThuoc +
                 ", maDVT=" + maDVT +
                 ", soLuong=" + soLuong +
                 ", giaNhap=" + giaNhap +

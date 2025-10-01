@@ -15,7 +15,7 @@ import java.time.LocalDate;
  * version: 1.0
  */
 public class Thuoc {
-    private final String SoDangKy;
+    private final String maThuoc;
     private String TenThuoc;
     private LocalDate HanSuDung;
     private LocalDate NgaySanXuat;
@@ -24,26 +24,28 @@ public class Thuoc {
     private double giaBan;
     private double giaGoc;
     private float thue;
+    private boolean deleteAt;
     private DangDieuChe dangDieuChe;
     private DonViTinh maDVTCoSo;
     private Ke maKe;
 
     public Thuoc() {
-        SoDangKy = "";
-        TenThuoc = "";
-        HanSuDung = LocalDate.now();
-        NgaySanXuat = LocalDate.now();
-        tonKho = 0;
-        hamLuong = "";
-        giaBan = 0;
-        giaGoc = 0;
-        thue = 0;
-        dangDieuChe = new DangDieuChe();
-        maDVTCoSo = new DonViTinh();
-        maKe = new Ke();
+        this.maThuoc = "";
+        this.TenThuoc = "";
+        this.HanSuDung = LocalDate.now();
+        this.NgaySanXuat = LocalDate.now();
+        this.tonKho = 0;
+        this.hamLuong = "";
+        this.giaBan = 0;
+        this.giaGoc = 0;
+        this.thue = 0;
+        this.deleteAt = false;
+        this.dangDieuChe = new DangDieuChe();
+        this.maDVTCoSo = new DonViTinh();
+        this.maKe = new Ke();
     }
-    public Thuoc(String soDangKy, String tenThuoc, LocalDate hanSuDung, LocalDate ngaySanXuat, int tonKho, String hamLuong, double giaBan, double giaGoc, float thue, DangDieuChe dangDieuChe, DonViTinh maDVTCoSo, Ke maKe) {
-        SoDangKy = soDangKy;
+    public Thuoc(String maThuoc, String tenThuoc, LocalDate hanSuDung, LocalDate ngaySanXuat, int tonKho, String hamLuong, double giaBan, double giaGoc, float thue, boolean deleteAt, DangDieuChe dangDieuChe, DonViTinh maDVTCoSo, Ke maKe) {
+        this.maThuoc = maThuoc;
         setTenThuoc(tenThuoc);
         setHanSuDung(hanSuDung);
         setNgaySanXuat(ngaySanXuat);
@@ -52,12 +54,13 @@ public class Thuoc {
         setGiaBan(giaBan);
         setGiaGoc(giaGoc);
         setThue(thue);
+        this.deleteAt = deleteAt;
         this.dangDieuChe = dangDieuChe;
         this.maDVTCoSo = maDVTCoSo;
         this.maKe = maKe;
     }
     public String getSoDangKy() {
-        return SoDangKy;
+        return maThuoc;
     }
     public String getTenThuoc() {
         return TenThuoc;
@@ -149,10 +152,16 @@ public class Thuoc {
     public void setMaKe(Ke maKe) {
         this.maKe = maKe;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
     @Override
     public String toString() {
         return "Thuoc{" +
-                "SoDangKy='" + SoDangKy + '\'' +
+                "MaThuoc='" + maThuoc + '\'' +
                 ", TenThuoc='" + TenThuoc + '\'' +
                 ", HanSuDung=" + HanSuDung +
                 ", NgaySanXuat=" + NgaySanXuat +
@@ -161,6 +170,7 @@ public class Thuoc {
                 ", giaBan=" + giaBan +
                 ", giaGoc=" + giaGoc +
                 ", thue=" + thue +
+                ", deleteAt=" + deleteAt +
                 ", dangDieuChe=" + dangDieuChe +
                 ", maDVTCoSo=" + maDVTCoSo +
                 ", maKe=" + maKe +
@@ -171,6 +181,6 @@ public class Thuoc {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Thuoc thuoc = (Thuoc) o;
-        return SoDangKy.equals(thuoc.SoDangKy);
+        return maThuoc.equals(thuoc.maThuoc);
     }
 }
