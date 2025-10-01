@@ -5,20 +5,20 @@
 
 package com.antam.app.controller;
 
-import com.antam.app.gui.ShowDialog;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class EmployeeController {
+public class KhoController {
     @FXML
-    private Button btnAddEmployee;
+    private Button btnAddGoodsReceipt;
 
-    public EmployeeController() {
+    public KhoController() {
     }
 
     public void initialize() {
-        this.btnAddEmployee.setOnAction((e) -> {
-            (new ShowDialog("themnhanvien")).showAndWait();
+        this.btnAddGoodsReceipt.setOnAction((e) -> {
+            (new GiaoDienCuaSo("themphieunhap")).showAndWait();
         });
     }
 }

@@ -5,20 +5,20 @@
 
 package com.antam.app.controller;
 
-import com.antam.app.gui.ShowDialog;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class MedicineController {
+public class DatThuocController {
     @FXML
-    private Button btnAddMedicine;
+    private Button btnAddPurchaseOrder;
 
-    public MedicineController() {
+    public DatThuocController() {
     }
 
     public void initialize() {
-        this.btnAddMedicine.setOnAction((e) -> {
-            (new ShowDialog("themthuoc")).showAndWait();
+        this.btnAddPurchaseOrder.setOnAction((e) -> {
+            (new GiaoDienCuaSo("themphieudat")).showAndWait();
         });
     }
 }

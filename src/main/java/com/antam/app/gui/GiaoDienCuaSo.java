@@ -13,10 +13,10 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 
-public class ShowDialog extends Dialog {
+public class GiaoDienCuaSo extends Dialog {
     private String mainFunction;
 
-    public ShowDialog(String mainFunction) {
+    public GiaoDienCuaSo(String mainFunction) {
         this.mainFunction = mainFunction;
         this.setHeaderText((String)null);
         this.setGraphic((Node)null);

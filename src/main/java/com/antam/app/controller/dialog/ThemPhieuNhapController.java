@@ -10,11 +10,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ButtonBar.ButtonData;
 
-public class AddEmployeeController {
+public class ThemPhieuNhapController {
     @FXML
     private DialogPane dialogPane;
 
-    public AddEmployeeController() {
+    public ThemPhieuNhapController() {
     }
 
     public void initialize() {

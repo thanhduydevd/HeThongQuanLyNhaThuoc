@@ -10,11 +10,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ButtonBar.ButtonData;
 
-public class AddPromotionController {
+public class ThemThuocController {
     @FXML
     private DialogPane dialogPane;
 
-    public AddPromotionController() {
+    public ThemThuocController() {
     }
 
     public void initialize() {

@@ -10,16 +10,16 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ButtonBar.ButtonData;
 
-public class ExchangeMedicineController {
+public class ThemNhanVienController {
     @FXML
     private DialogPane dialogPane;
 
-    public ExchangeMedicineController() {
+    public ThemNhanVienController() {
     }
 
     public void initialize() {
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
-        ButtonType applyButton = new ButtonType("Xác nhận đổi thuốc", ButtonData.APPLY);
+        ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
         this.dialogPane.getButtonTypes().add(cancelButton);
         this.dialogPane.getButtonTypes().add(applyButton);
     }

@@ -5,20 +5,20 @@
 
 package com.antam.app.controller;
 
-import com.antam.app.gui.ShowDialog;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class ShelfController {
+public class KeThuocController {
     @FXML
     private Button btnAddShelf;
 
-    public ShelfController() {
+    public KeThuocController() {
     }
 
     public void initialize() {
         this.btnAddShelf.setOnAction((e) -> {
-            (new ShowDialog("themke")).showAndWait();
+            (new GiaoDienCuaSo("themke")).showAndWait();
         });
     }
 }

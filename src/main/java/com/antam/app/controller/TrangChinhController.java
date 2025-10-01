@@ -13,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-public class DashboardController {
+public class TrangChinhController {
     @FXML
     private VBox subMenuOverview;
     @FXML
@@ -59,7 +59,7 @@ public class DashboardController {
     @FXML
     private Button btnSetting;
 
-    public DashboardController() {
+    public TrangChinhController() {
     }
 
     public void initialize() {

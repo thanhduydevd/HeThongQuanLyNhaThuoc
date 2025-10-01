@@ -5,11 +5,11 @@
 
 package com.antam.app.controller;
 
-import com.antam.app.gui.ShowDialog;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class InvoiceController {
+public class HoaDonController {
     @FXML
     private Button btnAddInvoice;
     @FXML
@@ -17,18 +17,18 @@ public class InvoiceController {
     @FXML
     private Button btnExchangeMedicine;
 
-    public InvoiceController() {
+    public HoaDonController() {
     }
 
     public void initialize() {
         this.btnAddInvoice.setOnAction((e) -> {
-            (new ShowDialog("themhoadon")).showAndWait();
+            (new GiaoDienCuaSo("themhoadon")).showAndWait();
         });
         this.btnReturnMedicine.setOnAction((e) -> {
-            (new ShowDialog("trathuoc")).showAndWait();
+            (new GiaoDienCuaSo("trathuoc")).showAndWait();
         });
         this.btnExchangeMedicine.setOnAction((e) -> {
-            (new ShowDialog("doithuoc")).showAndWait();
+            (new GiaoDienCuaSo("doithuoc")).showAndWait();
         });
     }
 }

@@ -10,11 +10,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ButtonBar.ButtonData;
 
-public class AddShelfController {
+public class ThemPhieuDatController {
     @FXML
     private DialogPane dialogPane;
 
-    public AddShelfController() {
+    public ThemPhieuDatController() {
     }
 
     public void initialize() {

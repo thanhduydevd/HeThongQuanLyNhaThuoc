@@ -5,7 +5,7 @@
 
 package com.antam.app.controller;
 
-import com.antam.app.gui.MainApp;
+import com.antam.app.gui.GiaoDienChinh;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,17 +14,17 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class LoginController {
+public class DangNhapController {
     @FXML
     private Button btnLogin;
 
-    public LoginController() {
+    public DangNhapController() {
     }
 
     @FXML
     protected void onLoginButtonClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("/com/antam/app/views/dashboard.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
             Parent root = (Parent)fxmlLoader.load();
             Stage newStage = new Stage();
             newStage.setTitle("");

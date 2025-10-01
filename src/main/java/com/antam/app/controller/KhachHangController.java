@@ -5,7 +5,7 @@
 
 package com.antam.app.controller;
 
-public class CustomerController {
-    public CustomerController() {
+public class KhachHangController {
+    public KhachHangController() {
     }
 }
