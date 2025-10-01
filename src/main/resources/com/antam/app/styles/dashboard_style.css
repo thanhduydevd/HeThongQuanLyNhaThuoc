@@ -65,6 +65,15 @@
     -fx-cursor: hand;
 }
 
+.btn-active {
+    -fx-background-color: #e0e7ff;
+    -fx-border-color: #2563eb;
+    -fx-border-width: 0px 0px 0px 3px;
+    -fx-text-fill: #2563eb;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+
 /* Table */
 .table-view {
     -fx-background-color: white;

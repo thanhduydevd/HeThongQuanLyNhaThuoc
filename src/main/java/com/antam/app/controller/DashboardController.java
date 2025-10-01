@@ -62,10 +62,21 @@ public class DashboardController {
     public DashboardController() {
     }
 
+    private void setActiveButton(Button activeButton) {
+        Button[] buttons = {
+                btnDashboard, btnStatistical, btnMedicine, btnShelf, btnWarehouse,
+                btnInvoice, btnPurchaseOrder, btnPromotion, btnCustomer, btnEmployee, btnSetting
+        };
+        for (Button btn : buttons) {
+            btn.getStyleClass().remove("btn-active");
+        }
+        activeButton.getStyleClass().add("btn-active");
+    }
     public void initialize() {
         this.loadPage("/com/antam/app/views/overview/dashboard_view.fxml");
         this.btnOverview.setOnAction((e) -> {
             this.toggleSubMenu(this.subMenuOverview);
+            setActiveButton(btnDashboard);
         });
         this.btnProduct.setOnAction((e) -> {
             this.toggleSubMenu(this.subMenuProduct);
@@ -79,38 +90,50 @@ public class DashboardController {
         this.btnSystem.setOnAction((e) -> {
             this.toggleSubMenu(this.subMenuSystem);
         });
+
         this.btnDashboard.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/overview/dashboard_view.fxml");
+            setActiveButton(btnDashboard);
         });
         this.btnStatistical.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/overview/statistical_view.fxml");
+            setActiveButton(btnStatistical);
         });
         this.btnMedicine.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/product/medicine_view.fxml");
+            setActiveButton(btnMedicine);
         });
         this.btnShelf.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/product/shelf_view.fxml");
+            setActiveButton(btnShelf);
         });
         this.btnWarehouse.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/product/warehouse_view.fxml");
+            setActiveButton(btnWarehouse);
         });
         this.btnInvoice.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/sales/invoice_view.fxml");
+            setActiveButton(btnInvoice);
         });
         this.btnPurchaseOrder.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/sales/purchase_order_view.fxml");
+            setActiveButton(btnPurchaseOrder);
         });
         this.btnPromotion.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/sales/promotion_view.fxml");
+            setActiveButton(btnPromotion);
         });
         this.btnCustomer.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/user/customer_view.fxml");
+            setActiveButton(btnCustomer);
         });
         this.btnEmployee.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/user/employee_view.fxml");
+            setActiveButton(btnEmployee);
         });
         this.btnSetting.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/system/setting_view.fxml");
+            setActiveButton(btnSetting);
         });
         this.subMenuOverview.setVisible(false);
         this.subMenuOverview.setManaged(false);
