@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <header>
+        <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
+            <children>
+                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Chi tiết khách hàng">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                    <FlowPane.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </FlowPane.margin>
+                </Text>
+            </children>
+        </FlowPane>
+    </header>
+   <content>
+      <AnchorPane>
+         <children>
+            <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <HBox style="-fx-background-color: #059669; -fx-background-radius: 5px;">
+                     <children>
+                        <VBox prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Hóa đơn: HD001">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày: 9/12/2024">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng: Nguyễn Văn A">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên: Nguyễn Văn An">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="100.0">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng đơn hàng: 1">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng chi tiêu: 125.000 ₫">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn hàng gần nhất: 9/12/2024">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lịch sử mua hàng:" />
+                  <TableView prefWidth="200.0" stylesheets="@../../../styles/dashboard_style.css">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="Mã hoá đơn" />
+                      <TableColumn prefWidth="75.0" text="Ngày mua" />
+                        <TableColumn prefWidth="75.0" text="Số thuốc" />
+                        <TableColumn prefWidth="75.0" text="Tổng tiền" />
+                        <TableColumn prefWidth="75.0" text="Nhân viên" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đã mua:" />
+                  <FlowPane alignment="CENTER" hgap="10.0" prefWidth="200.0" style="-fx-background-color: #f8fafc;" vgap="10.0">
+                     <children>
+                        <VBox prefWidth="300.0" spacing="5.0" style="-fx-background-color: white; -fx-border-radius: 6px; -fx-border-color: #10b981; -fx-border-width: 0px 0px 0px 4px;">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paracetamol 500mg" />
+                              <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="Loại: Viên nén" />
+                              <Text fill="#5e5e5e" strokeType="OUTSIDE" strokeWidth="0.0" text="Đã mua: 2 | Tổng tiền: 50.000 ₫" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                        <VBox prefWidth="300.0" spacing="5.0" style="-fx-background-color: white; -fx-border-radius: 6px; -fx-border-color: #10b981; -fx-border-width: 0px 0px 0px 4px;">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paracetamol 500mg" />
+                              <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="Loại: Viên nén" />
+                              <Text fill="#5e5e5e" strokeType="OUTSIDE" strokeWidth="0.0" text="Đã mua: 2 | Tổng tiền: 50.000 ₫" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                        <VBox prefWidth="300.0" spacing="5.0" style="-fx-background-color: white; -fx-border-radius: 6px; -fx-border-color: #10b981; -fx-border-width: 0px 0px 0px 4px;">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paracetamol 500mg" />
+                              <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="Loại: Viên nén" />
+                              <Text fill="#5e5e5e" strokeType="OUTSIDE" strokeWidth="0.0" text="Đã mua: 2 | Tổng tiền: 50.000 ₫" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                        <VBox prefWidth="300.0" spacing="5.0" style="-fx-background-color: white; -fx-border-radius: 6px; -fx-border-color: #10b981; -fx-border-width: 0px 0px 0px 4px;">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paracetamol 500mg" />
+                              <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="Loại: Viên nén" />
+                              <Text fill="#5e5e5e" strokeType="OUTSIDE" strokeWidth="0.0" text="Đã mua: 2 | Tổng tiền: 50.000 ₫" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </content>
+
+</DialogPane>

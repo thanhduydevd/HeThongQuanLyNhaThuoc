@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.EmployeeController">
+   <content>
+      <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý nhân viên">
+                     <font>
+                        <Font name="System Bold" size="30.0" />
+                     </font>
+                  </Text>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnAddEmployee" mnemonicParsing="false" prefHeight="50.0" prefWidth="118.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thêm nhân viên" textFill="WHITE">
+                     <graphic>
+                        <FontAwesomeIcon fill="WHITE" glyphName="PLUS" text="" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <TextField prefHeight="40.0" prefWidth="300.0" promptText="Tìm kiếm nhân viên..." style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
+                     <graphic>
+                        <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <TableView prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="Mã nhân viên" />
+                  <TableColumn prefWidth="75.0" text="Họ tên" />
+                  <TableColumn prefWidth="75.0" text="Chức vụ" />
+                  <TableColumn prefWidth="75.0" text="Số điện thoại" />
+                  <TableColumn prefWidth="75.0" text="Địa chỉ" />
+                  <TableColumn prefWidth="75.0" text="Lương cơ bản" />
+                  <TableColumn prefWidth="75.0" text="Doanh số" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>
