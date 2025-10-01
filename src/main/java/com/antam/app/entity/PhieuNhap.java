@@ -23,6 +23,7 @@ public class PhieuNhap {
     private LocalDate ngayNhap;
     private String diaChi;
     private String lyDo;
+    private double tongTien;
     private NhanVien maNV;
 
     public PhieuNhap() {
@@ -40,6 +41,7 @@ public class PhieuNhap {
         setNgayNhap(ngayNhap);
         setDiaChi(diaChi);
         setLyDo(lyDo);
+        this.tongTien = 0;
         this.maNV = maNV;
 
     }
@@ -87,6 +89,16 @@ public class PhieuNhap {
     }
     public void setMaNV(NhanVien maNV) {
         this.maNV = maNV;
+    }
+
+    public double getTongTien() {
+        return tongTien;
+    }
+    public void setTongTien(double tongTien) {
+        if (tongTien < 0) {
+            throw new IllegalArgumentException("Tổng tiền không được âm");
+        }
+        this.tongTien = tongTien;
     }
 
     @Override

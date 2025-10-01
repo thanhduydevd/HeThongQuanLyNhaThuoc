@@ -24,7 +24,7 @@ public class NhanVien {
     private String taiKhoan;
     private String matKhau;
     private boolean isQuanLy;
-    private NhanVien MaQuanLy;
+    private boolean deleteAt;
 
     public NhanVien() {
         MaNV = "";
@@ -36,9 +36,9 @@ public class NhanVien {
         taiKhoan = "";
         matKhau = "";
         isQuanLy = false;
-        MaQuanLy = null;
+        deleteAt = false;
     }
-    public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean isQuanLy, NhanVien maQuanLy) {
+    public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean deleteAt, boolean isQuanLy) {
         MaNV = maNV;
         setHoTen(hoTen);
         setSoDienThoai(soDienThoai);
@@ -47,8 +47,8 @@ public class NhanVien {
         setLuongCoBan(luongCoBan);
         setTaiKhoan(taiKhoan);
         setMatKhau(matKhau);
+        this.deleteAt = deleteAt;
         this.isQuanLy = isQuanLy;
-        setMaQuanLy(maQuanLy);
     }
     public String getMaNV() {
         return MaNV;
@@ -121,16 +121,16 @@ public class NhanVien {
         this.matKhau = matKhau;
     }
     public boolean isQuanLy() {
-        return isQuanLy;
+        return deleteAt;
     }
     public void setQuanLy(boolean quanLy) {
-        isQuanLy = quanLy;
+        deleteAt = quanLy;
     }
-    public NhanVien getMaQuanLy() {
-        return MaQuanLy;
+    public boolean isDeleteAt() {
+        return deleteAt;
     }
-    public void setMaQuanLy(NhanVien maQuanLy) {
-        MaQuanLy = maQuanLy;
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
     }
 
     @Override
@@ -144,8 +144,8 @@ public class NhanVien {
                 ", luongCoBan=" + luongCoBan +
                 ", taiKhoan='" + taiKhoan + '\'' +
                 ", matKhau='" + matKhau + '\'' +
+                ", deleteAt=" + deleteAt +
                 ", isQuanLy=" + isQuanLy +
-                ", MaQuanLy='" + MaQuanLy + '\'' +
                 '}';
     }
 

@@ -22,6 +22,7 @@ public class KhuyenMai {
     private LoaiKhuyenMai loaiKhuyenMai;
     private double so;
     private int soLuongToiDa;
+    private boolean deleteAt;
 
     public KhuyenMai() {
         MaKM = "";
@@ -31,8 +32,9 @@ public class KhuyenMai {
         loaiKhuyenMai = new LoaiKhuyenMai();
         so = 0;
         soLuongToiDa = 0;
+        deleteAt = false;
     }
-    public KhuyenMai(String maKM, String tenKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, LoaiKhuyenMai loaiKhuyenMai, double so, int soLuongToiDa) {
+    public KhuyenMai(String maKM, String tenKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, LoaiKhuyenMai loaiKhuyenMai, double so, int soLuongToiDa, boolean deleteAt) {
         this.MaKM = maKM;
         setTenKM(tenKM);
         setNgayBatDau(ngayBatDau);
@@ -40,6 +42,7 @@ public class KhuyenMai {
         this.loaiKhuyenMai = loaiKhuyenMai;
         setSo(so);
         setSoLuongToiDa(soLuongToiDa);
+        this.deleteAt = deleteAt;
     }
     public String getMaKM() {
         return MaKM;
@@ -94,6 +97,12 @@ public class KhuyenMai {
             throw new IllegalArgumentException("Số lượng tối đa không được âm");
         }
         this.soLuongToiDa = soLuongToiDa;
+    }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
     }
     @Override
     public String toString() {

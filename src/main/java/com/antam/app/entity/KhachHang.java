@@ -18,17 +18,19 @@ public class KhachHang {
     private final String MaKH;
     private String tenKH;
     private String soDienThoai;
+    private boolean deleteAt;
 
     public KhachHang() {
         MaKH = "";
         tenKH = "";
         soDienThoai = "";
+        deleteAt = false;
     }
-    public KhachHang(String maKH, String tenKH, String soDienThoai) {
+    public KhachHang(String maKH, String tenKH, String soDienThoai, boolean deleteAt) {
         MaKH = maKH;
         setTenKH(tenKH);
         setSoDienThoai(soDienThoai);
-
+        this.deleteAt = deleteAt;
     }
     public String getMaKH() {
         return MaKH;
@@ -54,12 +56,19 @@ public class KhachHang {
 
         this.soDienThoai = soDienThoai;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
     @Override
     public String toString() {
         return "KhachHang{" +
                 "MaKH='" + MaKH + '\'' +
                 ", tenKH='" + tenKH + '\'' +
                 ", soDienThoai='" + soDienThoai + '\'' +
+                ", deleteAt=" + deleteAt +
                 '}';
     }
 

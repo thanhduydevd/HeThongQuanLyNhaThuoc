@@ -18,16 +18,19 @@ public class Ke {
     private final String MaKe;
     private String tenKe;
     private String LoaiKe;
+    private boolean deleteAt;
 
     public Ke() {
         MaKe = "";
         tenKe = "";
         LoaiKe = "";
+        deleteAt = false;
     }
-    public Ke(String maKe, String tenKe, String loaiKe) {
+    public Ke(String maKe, String tenKe, String loaiKe, boolean deleteAt) {
         MaKe = maKe;
         this.tenKe = tenKe;
         LoaiKe = loaiKe;
+        this.deleteAt = deleteAt;
     }
     public String getMaKe() {
         return MaKe;
@@ -44,6 +47,12 @@ public class Ke {
     public void setLoaiKe(String loaiKe) {
         LoaiKe = loaiKe;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
 
     @Override
     public String toString() {
@@ -51,6 +60,7 @@ public class Ke {
                 "MaKe=" + MaKe +
                 ", tenKe='" + tenKe + '\'' +
                 ", LoaiKe='" + LoaiKe + '\'' +
+                ", deleteAt=" + deleteAt +
                 '}';
     }
 
