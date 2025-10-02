@@ -10,11 +10,19 @@ import com.antam.app.entity.NhanVien;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class NhanVien_DAO {
 
+    //danh sách nhân viên truy xuất trực tiếp khi vào tầng Application.
     public static ArrayList<NhanVien> dsNhanViens = NhanVien_DAO.getDsNhanVienformDBS();
 
+    public NhanVien findNhanVienVoiMa(String maVN){
+        return dsNhanViens.stream().
+                filter(t-> t.getMaNV().equalsIgnoreCase(maVN))
+                .findFirst()
+                .orElse(null);
+    }
     /**
      * Phương thức lấy toàn bộ thông tin Nhân viên từ DBS. trả về 1 mảng nhân viên
      * @return Array[NhanVien]
@@ -141,6 +149,12 @@ public class NhanVien_DAO {
         return kq > 0;
     }
 
+    /**
+     * Cập nhật nhân viên với thông tin mới.
+     * @param nv NhanVien
+     * @return true nếu có nhân viên được cập nhật.
+     *          false nếu không có nhân viên nào được cập nhật hoặc nhân viên không tồn tại.
+     */
     public static boolean updateNhanVienTrongDBS(NhanVien nv){
         int kq = 0;
         try {
