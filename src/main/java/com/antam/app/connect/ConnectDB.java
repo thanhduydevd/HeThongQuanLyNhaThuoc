@@ -20,14 +20,21 @@ public class ConnectDB {
     public static Connection con = null;
     private static ConnectDB instance = new ConnectDB();
 
+    private ConnectDB() {
+        // Đảm bảo ConnectDB chỉ có 1 instance
+    }
+
     public static ConnectDB getInstance() {
         return instance;
     }
+
     public Connection connect() throws SQLException {
-        String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
-        String user = "sqlserver";
-        String password = "admin";
-        con = DriverManager.getConnection(url, user, password);
+        if (con == null || con.isClosed()) {
+            String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
+            String user = "sa";
+            String password = "sa123";
+            con = DriverManager.getConnection(url, user, password);
+        }
         return con;
     }
     public void disconnect() {

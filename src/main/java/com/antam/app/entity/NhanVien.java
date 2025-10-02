@@ -24,21 +24,20 @@ public class NhanVien {
     private String taiKhoan;
     private String matKhau;
     private boolean isQuanLy;
-    private NhanVien MaQuanLy;
+
 
     public NhanVien() {
         MaNV = "";
-        hoTen = "";
-        soDienThoai = "";
-        email = "";
-        diaChi = "";
-        luongCoBan = 0;
-        taiKhoan = "";
-        matKhau = "";
-        isQuanLy = false;
-        MaQuanLy = null;
+        setHoTen("");
+        setSoDienThoai("");
+        setEmail("");
+        setDiaChi("");
+        setLuongCoBan(0);
+        setTaiKhoan("");
+        setMatKhau("");
+        this.isQuanLy = false;
     }
-    public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean isQuanLy, NhanVien maQuanLy) {
+    public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean isQuanLy) {
         MaNV = maNV;
         setHoTen(hoTen);
         setSoDienThoai(soDienThoai);
@@ -48,7 +47,6 @@ public class NhanVien {
         setTaiKhoan(taiKhoan);
         setMatKhau(matKhau);
         this.isQuanLy = isQuanLy;
-        setMaQuanLy(maQuanLy);
     }
     public String getMaNV() {
         return MaNV;
@@ -57,7 +55,7 @@ public class NhanVien {
         return hoTen;
     }
     public void setHoTen(String hoTen) {
-        if (hoTen == null || hoTen.isEmpty()) {
+        if (hoTen.isBlank()) {
             throw new IllegalArgumentException("Họ tên không được để trống");
         }
         this.hoTen = hoTen;
@@ -71,7 +69,6 @@ public class NhanVien {
         } else if (!soDienThoai.matches("^0[35679]\\d{8}$")) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ");
         }
-
         this.soDienThoai = soDienThoai;
     }
 
@@ -81,18 +78,22 @@ public class NhanVien {
     public void setEmail(String email) {
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("Email không được để trống");
+        }else if(!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")){
+            throw new IllegalArgumentException("Email không đúng định dạng!");
         }
         this.email = email;
     }
+
     public String getDiaChi() {
         return diaChi;
     }
     public void setDiaChi(String diaChi) {
-        if (diaChi == null || diaChi.isEmpty()) {
+        if (diaChi.isBlank()) {
             throw new IllegalArgumentException("Địa chỉ không được để trống");
         }
         this.diaChi = diaChi;
     }
+
     public double getLuongCoBan() {
         return luongCoBan;
     }
@@ -102,6 +103,7 @@ public class NhanVien {
         }
         this.luongCoBan = luongCoBan;
     }
+
     public String getTaiKhoan() {
         return taiKhoan;
     }
@@ -111,6 +113,7 @@ public class NhanVien {
         }
         this.taiKhoan = taiKhoan;
     }
+
     public String getMatKhau() {
         return matKhau;
     }
@@ -120,33 +123,28 @@ public class NhanVien {
         }
         this.matKhau = matKhau;
     }
+
     public boolean isQuanLy() {
         return isQuanLy;
     }
     public void setQuanLy(boolean quanLy) {
         isQuanLy = quanLy;
     }
-    public NhanVien getMaQuanLy() {
-        return MaQuanLy;
-    }
-    public void setMaQuanLy(NhanVien maQuanLy) {
-        MaQuanLy = maQuanLy;
-    }
+
+
 
     @Override
     public String toString() {
-        return "NhanVien{" +
-                "MaNV='" + MaNV + '\'' +
-                ", hoTen='" + hoTen + '\'' +
-                ", soDienThoai='" + soDienThoai + '\'' +
-                ", email='" + email + '\'' +
-                ", diaChi='" + diaChi + '\'' +
-                ", luongCoBan=" + luongCoBan +
-                ", taiKhoan='" + taiKhoan + '\'' +
-                ", matKhau='" + matKhau + '\'' +
-                ", isQuanLy=" + isQuanLy +
-                ", MaQuanLy='" + MaQuanLy + '\'' +
-                '}';
+        return String.format("%-8s|%-16s|%-12s|%-20s|%-12s|%12.2f|%-12s|%-8s|%-8s",
+                getMaNV(),
+                getHoTen(),
+                getSoDienThoai(),
+                getEmail(),
+                getDiaChi(),
+                getLuongCoBan(),
+                getTaiKhoan(),
+                getMatKhau(),
+                isQuanLy ? "Quản lí" : "Nhân viên");
     }
 
     @Override
@@ -157,6 +155,10 @@ public class NhanVien {
         return Objects.equals(MaNV, nhanVien.MaNV);
     }
 
+    /**
+     * hashCode lấy mã nhân viên làm unique
+     * @return
+     */
     @Override
     public int hashCode() {
         return Objects.hashCode(MaNV);
