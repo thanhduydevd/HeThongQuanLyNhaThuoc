@@ -141,12 +141,42 @@ public class NhanVien_DAO {
         return kq > 0;
     }
 
+    public static boolean updateNhanVienTrongDBS(NhanVien nv){
+        int kq = 0;
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement state = null;
+        String updateSQL = "Update NhanVien Set HoTen = ?,SoDienThoai = ?,Email = ?,DiaChi =?,LuongCoBan =?,TaiKhoan=?," +
+                "MatKhau=?,IsQuanLy=?,DeleteAt = ? where MaNV = ?";
+        try {
+            state = con.prepareStatement(updateSQL);
+            state.setString(10, nv.getMaNV());
+            state.setString(1, nv.getHoTen());
+            state.setString(2, nv.getSoDienThoai());
+            state.setString(3, nv.getEmail());
+            state.setString(4, nv.getDiaChi());
+            state.setDouble(5, nv.getLuongCoBan());
+            state.setString(6, nv.getTaiKhoan());
+            state.setString(7, nv.getMatKhau());
+            state.setBoolean(8, nv.isQuanLy());
+            state.setBoolean(9,false);
+            kq = state.executeUpdate();
+            return kq >0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Là phương thức sử dụng để tắt trạng thái hoạt đông trong dbs sử dụng mã nhân viên.
      * @param manv
      * @return true nếu có nhân viên bị cập nhật ở dbs. false nếu không có nhân viên nào cập nhật trạng thái.
      */
-    public static boolean xoaNhanVientrongDBS(String manv){
+    public static boolean xoaNhanVienTrongDBS(String manv){
         try {
             ConnectDB.getInstance().connect();
         } catch (SQLException e) {
