@@ -38,6 +38,20 @@ public class NhanVien {
         isQuanLy = false;
         deleteAt = false;
     }
+
+    public NhanVien(String MaNV) {
+        this.MaNV = MaNV;
+        hoTen = "";
+        soDienThoai = "";
+        email = "";
+        diaChi = "";
+        luongCoBan = 0;
+        taiKhoan = "";
+        matKhau = "";
+        isQuanLy = false;
+        deleteAt = false;
+    }
+
     public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean deleteAt, boolean isQuanLy) {
         MaNV = maNV;
         setHoTen(hoTen);

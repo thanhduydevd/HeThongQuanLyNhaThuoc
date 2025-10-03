@@ -44,11 +44,27 @@ public class Thuoc {
         this.maDVTCoSo = new DonViTinh();
         this.maKe = new Ke();
     }
+
+    public Thuoc(String maThuoc) {
+        this.maThuoc = maThuoc;
+        this.TenThuoc = "";
+        this.HanSuDung = LocalDate.now();
+        this.NgaySanXuat = LocalDate.now();
+        this.tonKho = 0;
+        this.hamLuong = "";
+        this.giaBan = 0;
+        this.giaGoc = 0;
+        this.thue = 0;
+        this.deleteAt = false;
+        this.dangDieuChe = new DangDieuChe();
+        this.maDVTCoSo = new DonViTinh();
+        this.maKe = new Ke();
+    }
     public Thuoc(String maThuoc, String tenThuoc, LocalDate hanSuDung, LocalDate ngaySanXuat, int tonKho, String hamLuong, double giaBan, double giaGoc, float thue, boolean deleteAt, DangDieuChe dangDieuChe, DonViTinh maDVTCoSo, Ke maKe) {
         this.maThuoc = maThuoc;
         setTenThuoc(tenThuoc);
-        setHanSuDung(hanSuDung);
         setNgaySanXuat(ngaySanXuat);
+        setHanSuDung(hanSuDung);
         setTonKho(tonKho);
         setHamLuong(hamLuong);
         setGiaBan(giaBan);
@@ -59,7 +75,7 @@ public class Thuoc {
         this.maDVTCoSo = maDVTCoSo;
         this.maKe = maKe;
     }
-    public String getSoDangKy() {
+    public String getMaThuoc() {
         return maThuoc;
     }
     public String getTenThuoc() {

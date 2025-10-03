@@ -23,6 +23,11 @@ public class DangDieuChe {
         TenDDC = "";
     }
 
+    public DangDieuChe(String tenDDC) {
+        MaDDC = 0;
+        setTenDDC(tenDDC);
+    }
+
     public DangDieuChe(int maDDC, String tenDDC) {
         MaDDC = maDDC;
         setTenDDC(tenDDC);
@@ -45,10 +50,7 @@ public class DangDieuChe {
 
     @Override
     public String toString() {
-        return "DangDieuChe{" +
-                "MaDDC=" + MaDDC +
-                ", TenDDC='" + TenDDC + '\'' +
-                '}';
+        return TenDDC;
     }
 
     @Override

@@ -21,6 +21,10 @@ public class DonViTinh {
         MaDVT = 0;
         TenDVT = "";
     }
+    public DonViTinh(int maDVT) {
+        MaDVT = maDVT;
+        TenDVT = "";
+    }
     public DonViTinh(int maDVT, String tenDVT) {
         MaDVT = maDVT;
         setTenDVT(tenDVT);
@@ -40,10 +44,7 @@ public class DonViTinh {
 
     @Override
     public String toString() {
-        return "DonViTinh{" +
-                "MaDVT=" + MaDVT +
-                ", TenDVT='" + TenDVT + '\'' +
-                '}';
+        return TenDVT;
     }
 
     @Override
