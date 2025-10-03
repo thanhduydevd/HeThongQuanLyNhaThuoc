@@ -23,6 +23,7 @@ public class PhieuDatThuoc {
     private KhachHang maKH;
     private KhuyenMai maKM;
     private double tongTien;
+    private boolean deleteAt;
 
     public PhieuDatThuoc() {
         this.maPhieu = "";
@@ -32,9 +33,10 @@ public class PhieuDatThuoc {
         this.maKH = new KhachHang();
         this.maKM = new KhuyenMai();
         this.tongTien = 0;
+        this.deleteAt = false;
     }
 
-    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM) {
+    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, boolean deleteAt) {
         this.maPhieu = maPhieu;
         setNgayTao(ngayTao);
         this.isThanhToan = isThanhToan;
@@ -42,6 +44,7 @@ public class PhieuDatThuoc {
         this.maKH = maKH;
         this.maKM = maKM;
         this.tongTien = 0;
+        this.deleteAt = deleteAt;
     }
 
     public String getMaPhieu() {
@@ -99,6 +102,12 @@ public class PhieuDatThuoc {
         }
         this.tongTien = tongTien;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
 
     @Override
     public String toString() {
@@ -110,6 +119,7 @@ public class PhieuDatThuoc {
                 ", maKH=" + maKH +
                 ", maKM=" + maKM +
                 ", tongTien=" + tongTien +
+                ", deleteAt=" + deleteAt +
                 '}';
     }
 

@@ -180,7 +180,7 @@ public class ThemThuocController {
         String ke = cbAddKe.getValue().getTenKe();
 
         if(maThuoc.isEmpty()){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền mã thuốc!");
             return false;
         }else{
             if (maThuoc.matches("^VN-\\d{5}-\\d{2}$")) {
@@ -191,23 +191,23 @@ public class ThemThuocController {
             }
         }
         if (tenThuoc.isEmpty()){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền đầy đủ tên thuốc!");
             return false;
         }
         if (donViCoSo == null){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền đầy đủ đơn vị cơ sở!");
             return false;
         }
         if (dangDieuChe == null){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền dạng điều chế!");
             return false;
         }
         if (hamLuong.isEmpty()){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền đầy đủ hàm lượng!");
             return false;
         }
         if (tonKho.isEmpty()){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng điền đầy đủ tồn kho!");
             return false;
         }else{
             try {
@@ -222,7 +222,7 @@ public class ThemThuocController {
             }
         }
         if (ngaySanXuat == null){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng chọn ngày sản xuất!");
             return false;
         }else{
             if (ngaySanXuat.isAfter(LocalDate.now())) {
@@ -231,7 +231,7 @@ public class ThemThuocController {
             }
         }
         if (hanSuDung == null){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ thông tin!");
+            notification_addThuoc.setText("Vui lòng chọn hạn sử dụng!");
             return false;
         }else{
             if (hanSuDung.isBefore(ngaySanXuat)) {
