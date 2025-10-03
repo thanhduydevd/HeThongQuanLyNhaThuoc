@@ -94,7 +94,7 @@ public class NhanVien_DAO {
                 int status = rs.getInt("DeleteAt");
                 state.close();
                 //Kiểm tra vẫn còn hoạt đông hay không
-                if (status == 1){
+                if (status == 0){
                     //Vẫn hoạt động -> thoát phương thức
                     return false;
                 }else{
