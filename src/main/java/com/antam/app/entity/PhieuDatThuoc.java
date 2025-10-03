@@ -19,26 +19,27 @@ public class PhieuDatThuoc {
     private final String maPhieu;
     private LocalDate ngayTao;
     private boolean isThanhToan;
-    private NhanVien maNV;
-    private KhachHang maKH;
-    private KhuyenMai maKM;
+    private NhanVien nhanVien;
+    private KhachHang khachHang;
+    private KhuyenMai khuyenMai;
+    private double tongTien;
 
     public PhieuDatThuoc() {
         this.maPhieu = "";
         this.ngayTao = LocalDate.now();
         this.isThanhToan = false;
-        this.maNV = new NhanVien();
-        this.maKH = new KhachHang();
-        this.maKM = new KhuyenMai();
+        this.nhanVien = new NhanVien();
+        this.khachHang = new KhachHang();
+        this.khuyenMai = new KhuyenMai();
     }
 
-    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM) {
+    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien nhanVien, KhachHang maKH, KhuyenMai maKM) {
         this.maPhieu = maPhieu;
         setNgayTao(ngayTao);
         this.isThanhToan = isThanhToan;
-        this.maNV = maNV;
-        this.maKH = maKH;
-        this.maKM = maKM;
+        this.nhanVien = nhanVien;
+        this.khachHang = maKH;
+        this.khuyenMai = maKM;
     }
 
     public String getMaPhieu() {
@@ -64,28 +65,36 @@ public class PhieuDatThuoc {
         this.isThanhToan = isThanhToan;
     }
 
-    public NhanVien getMaNV() {
-        return maNV;
+    public NhanVien getNhanVien() {
+        return nhanVien;
     }
 
-    public void setMaNV(NhanVien maNV) {
-        this.maNV = maNV;
+    public void setNhanVien(NhanVien nhanVien) {
+        this.nhanVien = nhanVien;
     }
 
-    public KhachHang getMaKH() {
-        return maKH;
+    public KhachHang getKhachHang() {
+        return khachHang;
     }
 
-    public void setMaKH(KhachHang maKH) {
-        this.maKH = maKH;
+    public void setKhachHang(KhachHang khachHang) {
+        this.khachHang = khachHang;
     }
 
-    public KhuyenMai getMaKM() {
-        return maKM;
+    public KhuyenMai getKhuyenMai() {
+        return khuyenMai;
     }
 
-    public void setMaKM(KhuyenMai maKM) {
-        this.maKM = maKM;
+    public void setKhuyenMai(KhuyenMai khuyenMai) {
+        this.khuyenMai = khuyenMai;
+    }
+
+    public double getTongTien() {
+        return tongTien;
+    }
+
+    public void setTongTien(double tongTien) {
+        this.tongTien = tongTien;
     }
 
     @Override
@@ -94,9 +103,10 @@ public class PhieuDatThuoc {
                 "maPhieu='" + maPhieu + '\'' +
                 ", ngayTao=" + ngayTao +
                 ", isThanhToan=" + isThanhToan +
-                ", maNV=" + maNV +
-                ", maKH=" + maKH +
-                ", maKM=" + maKM +
+                ", nhanVien=" + nhanVien +
+                ", khachHang=" + khachHang +
+                ", khuyenMai=" + khuyenMai +
+                ", tongTien=" + tongTien +
                 '}';
     }
 
