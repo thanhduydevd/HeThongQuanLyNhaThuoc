@@ -69,6 +69,51 @@ public class Thuoc_DAO {
         return listThuoc;
     }
 
+    public Thuoc getThuocTheoMa(String ma) {
+        Thuoc t = null;
+        String sql = """
+            SELECT t.MaThuoc, t.TenThuoc, t.HanSuDung, t.NgaySanXuat, t.TonKho,
+                   t.HamLuong, t.GiaBan, t.GiaGoc, t.Thue, t.MaDVTCoso, t.deleteAt,
+                   ddc.MaDDC, ddc.TenDDC,
+                   k.MaKe, k.TenKe, k.LoaiKe
+            FROM Thuoc t
+            JOIN DangDieuChe ddc ON t.DangDieuChe = ddc.MaDDC
+            JOIN KeThuoc k ON t.MaKe = k.MaKe
+            WHERE t.MaThuoc = ? AND t.deleteAt = 0
+        """;
+        try (Connection con = ConnectDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, ma);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String maThuoc = rs.getString("MaThuoc");
+                    String tenThuoc = rs.getString("TenThuoc");
+                    LocalDate hanSuDung = rs.getDate("HanSuDung").toLocalDate();
+                    LocalDate ngaySanXuat = rs.getDate("NgaySanXuat").toLocalDate();
+                    int tonKho = rs.getInt("TonKho");
+                    String hamLuong = rs.getString("HamLuong");
+                    double giaBan = rs.getDouble("GiaBan");
+                    double giaGoc = rs.getDouble("GiaGoc");
+                    float thue = rs.getFloat("Thue");
+                    int maDonViTinhCoSo = rs.getInt("MaDVTCoso");
+                    boolean deleteAt = rs.getBoolean("deleteAt");
+
+                    // Tạo object DDC và Ke với đủ thông tin
+                    DangDieuChe ddc = new DangDieuChe(rs.getInt("MaDDC"), rs.getString("TenDDC"));
+                    Ke ke = new Ke(rs.getString("MaKe"), rs.getString("TenKe"), rs.getString("LoaiKe"), false);
+                    DonViTinh dvt = new DonViTinh(maDonViTinhCoSo);
+
+                    t = new Thuoc(maThuoc, tenThuoc, hanSuDung, ngaySanXuat,
+                            tonKho, hamLuong, giaBan, giaGoc, thue,
+                            deleteAt, ddc, dvt, ke);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
     public boolean themThuoc(Thuoc t) {
         String sql = "INSERT INTO Thuoc (MaThuoc, TenThuoc, HanSuDung, NgaySanXuat, TonKho, HamLuong, GiaBan, GiaGoc, Thue, DangDieuChe, MaDVTCoso, MaKe, deleteAt) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)";
@@ -136,6 +181,19 @@ public class Thuoc_DAO {
             }
         }
         return n > 0;
+    }
+
+    public boolean congVaoTonKho(String maThuoc, int soLuong) {
+        String sql = "UPDATE Thuoc SET TonKho = TonKho + ? WHERE MaThuoc = ?";
+        try (Connection con = ConnectDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, soLuong);
+            ps.setString(2, maThuoc);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

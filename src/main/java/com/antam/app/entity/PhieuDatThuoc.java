@@ -36,14 +36,14 @@ public class PhieuDatThuoc {
         this.deleteAt = false;
     }
 
-    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, boolean deleteAt) {
+    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, double tongTien, boolean deleteAt) {
         this.maPhieu = maPhieu;
         setNgayTao(ngayTao);
         this.isThanhToan = isThanhToan;
         this.maNV = maNV;
         this.maKH = maKH;
         this.maKM = maKM;
-        this.tongTien = 0;
+        this.tongTien = tongTien;
         this.deleteAt = deleteAt;
     }
 

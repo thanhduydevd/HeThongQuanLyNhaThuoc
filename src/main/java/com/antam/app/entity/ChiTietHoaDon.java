@@ -46,10 +46,10 @@ public class ChiTietHoaDon {
     public void setMaHD(HoaDon maHD) {
         MaHD = maHD;
     }
-    public Thuoc getSoDangKy() {
+    public Thuoc getMaThuoc() {
         return maThuoc;
     }
-    public void setSoDangKy(Thuoc soDangKy) {
+    public void setMaThuoc(Thuoc soDangKy) {
         this.maThuoc = soDangKy;
     }
     public int getSoLuong() {
@@ -79,6 +79,9 @@ public class ChiTietHoaDon {
     }
     public void setThanhTien() {
         this.thanhTien = tinhThanhTien();
+    }
+    public double getThanhTien() {
+        return thanhTien;
     }
     public double tinhThanhTien() {
         double giaBan = maThuoc.getGiaBan();

@@ -26,6 +26,12 @@ public class KhachHang {
         soDienThoai = "";
         deleteAt = false;
     }
+    public KhachHang(String maKH) {
+        MaKH = maKH;
+        tenKH = "";
+        soDienThoai = "";
+        deleteAt = false;
+    }
     public KhachHang(String maKH, String tenKH, String soDienThoai, boolean deleteAt) {
         MaKH = maKH;
         setTenKH(tenKH);
