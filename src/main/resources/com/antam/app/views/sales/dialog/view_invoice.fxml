@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.ViewInvoiceController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -38,22 +38,22 @@
                         <Insets bottom="10.0" left="10.0" right="100.0" top="10.0" />
                      </padding>
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Hóa đơn: HD001">
+                        <Text fx:id="txtInvoiceId" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Hóa đơn: HD001">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày: 9/12/2024">
+                        <Text fx:id="txtDate" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày: 9/12/2024">
                            <font>
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng: Nguyễn Văn A">
+                        <Text fx:id="txtCustomer" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng: Nguyễn Văn A">
                            <font>
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên: Nguyễn Văn An">
+                        <Text fx:id="txtEmployee" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên: Nguyễn Văn An">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -95,12 +95,12 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="500.000đ" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Text fx:id="txtTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="500.000đ" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Text>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="200.000đ" GridPane.columnIndex="1">
+                        <Text fx:id="txtSubTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="200.000đ" GridPane.columnIndex="1">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -110,7 +110,12 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="12.500 ₫" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Text fx:id="txtVAT" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="12.500 ₫" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtPromotion" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="KM001" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="13.0" />
                            </font>

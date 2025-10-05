@@ -121,15 +121,15 @@
                   </Button>
                </children>
             </HBox>
-            <TableView prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
+            <TableView fx:id="table_invoice" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Mã hoá đơn" />
-                  <TableColumn prefWidth="75.0" text="Ngày tạo" />
-                  <TableColumn prefWidth="75.0" text="Khách hàng" />
-                  <TableColumn prefWidth="75.0" text="Nhân viên" />
-                  <TableColumn prefWidth="75.0" text="Khuyến mãi" />
-                  <TableColumn prefWidth="75.0" text="Tổng tiền" />
-                  <TableColumn prefWidth="75.0" text="Trạng thái" />
+                  <TableColumn fx:id="colMaHD" prefWidth="75.0" text="Mã hoá đơn" />
+                  <TableColumn fx:id="colNgayTao" prefWidth="75.0" text="Ngày tạo" />
+                  <TableColumn fx:id="colKhachHang" prefWidth="75.0" text="Khách hàng" />
+                  <TableColumn fx:id="colNhanVien" prefWidth="75.0" text="Nhân viên" />
+                  <TableColumn fx:id="colKhuyenMai" prefWidth="75.0" text="Khuyến mãi" />
+                  <TableColumn fx:id="colTongTien" prefWidth="75.0" text="Tổng tiền" />
+                  <TableColumn fx:id="colTrangThai" prefWidth="75.0" text="Trạng thái" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
