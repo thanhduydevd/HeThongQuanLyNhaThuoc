@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 
 public class GiaoDienCuaSo extends Dialog {
     private String mainFunction;
+    private FXMLLoader loader;
 
     public GiaoDienCuaSo(String mainFunction) {
         this.mainFunction = mainFunction;
@@ -23,7 +24,7 @@ public class GiaoDienCuaSo extends Dialog {
 
         try {
             String fxmlPath = this.getFxmlPath(mainFunction);
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource(fxmlPath));
+            loader = new FXMLLoader(this.getClass().getResource(fxmlPath));
             DialogPane dialogPane = (DialogPane)loader.load();
             this.setDialogPane(dialogPane);
         } catch (IOException var5) {
@@ -45,6 +46,7 @@ public class GiaoDienCuaSo extends Dialog {
         String var10000;
         switch (mainFunction.toLowerCase()) {
             case "themthuoc" -> var10000 = "/com/antam/app/views/product/dialog/add_medicine.fxml";
+            case "thongtinthuoc" -> var10000 = "/com/antam/app/views/product/dialog/deleteAndUpdate_medicine.fxml";
             case "themke" -> var10000 = "/com/antam/app/views/product/dialog/add_shelf.fxml";
             case "themphieunhap" -> var10000 = "/com/antam/app/views/product/dialog/add_goods_receipt.fxml";
             case "themhoadon" -> var10000 = "/com/antam/app/views/sales/dialog/add_invoice.fxml";
@@ -60,5 +62,9 @@ public class GiaoDienCuaSo extends Dialog {
         }
 
         return var10000;
+    }
+
+    public <T> T getController() {
+        return loader.getController();
     }
 }

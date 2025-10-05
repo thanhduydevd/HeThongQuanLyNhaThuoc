@@ -22,6 +22,7 @@ public class HoaDon {
     private KhachHang maKH;
     private KhuyenMai maKM;
     private double tongTien;
+    private boolean deleteAt;
 
     public HoaDon() {
         MaHD = "";
@@ -30,14 +31,16 @@ public class HoaDon {
         maKH = new KhachHang();
         maKM = null;
         tongTien = 0;
+        deleteAt = false;
     }
-    public HoaDon(String maHD, LocalDate ngayTao, NhanVien maNV, KhachHang maKH, KhuyenMai maKM) {
+    public HoaDon(String maHD, LocalDate ngayTao, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, boolean deleteAt) {
         MaHD = maHD;
         setNgayTao(ngayTao);
         this.maNV = maNV;
         this.maKH = maKH;
         this.maKM = maKM;
         this.tongTien = 0;
+        this.deleteAt = deleteAt;
     }
     public String getMaHD() {
         return MaHD;
@@ -78,6 +81,12 @@ public class HoaDon {
         }
         this.tongTien = tongTien;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
     @Override
     public String toString() {
         return "HoaDon{" +
@@ -87,6 +96,7 @@ public class HoaDon {
                 ", maKH=" + maKH +
                 ", maKM=" + maKM +
                 ", tongTien=" + tongTien +
+                ", deleteAt=" + deleteAt +
                 '}';
     }
 

@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.ThemThuocController">
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.ThemThuocController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -57,26 +57,29 @@
                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số đăng ký:" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã thuốc:" />
+                        <TextField fx:id="txtAddMaThuoc" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtAddTenThuoc" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên thuốc:" GridPane.columnIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số đăng ký:" GridPane.rowIndex="2" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên thuốc:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tôn kho:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtAddTonKho" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtAddHamLuong" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Dạng điều chế:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày sản xuất:" GridPane.rowIndex="4" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hạn sử dụng:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <DatePicker maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
-                        <DatePicker maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
-                        <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="9" />
+                        <DatePicker fx:id="dpAddNgaySanXuat" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
+                        <DatePicker fx:id="dpAddHanSuDung" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Spinner fx:id="spAddGiaGoc" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
+                        <Spinner fx:id="spAddGiaBan" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Spinner fx:id="spAddThue" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="9" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá gốc:" GridPane.rowIndex="6" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá bán:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuế (%):" GridPane.rowIndex="8" />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kệ thuốc:" GridPane.rowIndex="10" />
-                        <ComboBox maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="11" />
+                        <ComboBox fx:id="cbAddKe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="11" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hàm lượng:" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <ComboBox fx:id="cbAddDangDieuChe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Text fx:id="notification_addThuoc" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="387.6441345214844" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                      </children>
                   </GridPane>
                   <VBox spacing="10.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-background-radius: 8px; -fx-background-radius: 8px;">
@@ -107,20 +110,20 @@
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị cơ sở (tự động):" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Giá tính theo:" GridPane.columnIndex="1" />
-                              <ComboBox maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                              <Text fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <ComboBox fx:id="cbAddDVCS" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                              <Text fx:id="txtAddGiaByDV" fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font></Text>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="1 Vỉ =" GridPane.rowIndex="2" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="1 Hộp =" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                              <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Text fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.rowIndex="4">
+                              <Text fx:id="txtAddTitleQuyDoi1" strokeType="OUTSIDE" strokeWidth="0.0" text="1 Vỉ =" GridPane.rowIndex="2" />
+                              <Text fx:id="txtAddTitleQuyDoi2" strokeType="OUTSIDE" strokeWidth="0.0" text="1 Hộp =" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Spinner fx:id="spAddQuyDoi1" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                              <Spinner fx:id="spAddQuyDoi2" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Text fx:id="txtAddQuyDoi1" fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.rowIndex="4">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font></Text>
-                              <Text fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text="Vỉ" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Text fx:id="txtAddQuyDoi2" fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text="Vỉ" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font name="System Italic" size="12.0" />
                                  </font></Text>

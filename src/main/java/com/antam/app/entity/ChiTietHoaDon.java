@@ -6,6 +6,10 @@
 
 package com.antam.app.entity;
 
+import com.antam.app.controller.dialog.ThemThuocController;
+
+import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
+
 /*
  * @description
  * @author: Duong Nguyen
@@ -79,7 +83,8 @@ public class ChiTietHoaDon {
     public double tinhThanhTien() {
         double giaBan = maThuoc.getGiaBan();
         float thue = maThuoc.getThue();
-        return soLuong * giaBan * (1 + thue);
+        int soLuongCoSo = quyDoiVeCoSo(maThuoc.getMaThuoc(), soLuong, maDVT.getMaDVT());
+        return soLuongCoSo  * giaBan * (1 + thue);
     }
     @Override
     public String toString() {

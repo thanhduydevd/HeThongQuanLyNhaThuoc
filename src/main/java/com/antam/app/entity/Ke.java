@@ -26,6 +26,12 @@ public class Ke {
         LoaiKe = "";
         deleteAt = false;
     }
+    public Ke(String maKe) {
+        MaKe = maKe;
+        tenKe = "";
+        LoaiKe = "";
+        deleteAt = false;
+    }
     public Ke(String maKe, String tenKe, String loaiKe, boolean deleteAt) {
         MaKe = maKe;
         this.tenKe = tenKe;
@@ -56,12 +62,7 @@ public class Ke {
 
     @Override
     public String toString() {
-        return "Ke{" +
-                "MaKe=" + MaKe +
-                ", tenKe='" + tenKe + '\'' +
-                ", LoaiKe='" + LoaiKe + '\'' +
-                ", deleteAt=" + deleteAt +
-                '}';
+        return tenKe;
     }
 
     @Override

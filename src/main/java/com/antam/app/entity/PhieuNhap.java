@@ -25,6 +25,7 @@ public class PhieuNhap {
     private String lyDo;
     private double tongTien;
     private NhanVien maNV;
+    private boolean deleteAt;
 
     public PhieuNhap() {
         MaPhieuNhap = "";
@@ -33,9 +34,9 @@ public class PhieuNhap {
         diaChi = "";
         lyDo = "";
         maNV = new NhanVien();
-
+        deleteAt = false;
     }
-    public PhieuNhap(String maPhieuNhap, String nhaCungCap, LocalDate ngayNhap, String diaChi, String lyDo, NhanVien maNV) {
+    public PhieuNhap(String maPhieuNhap, String nhaCungCap, LocalDate ngayNhap, String diaChi, String lyDo, NhanVien maNV, boolean deleteAt) {
         MaPhieuNhap = maPhieuNhap;
         setNhaCungCap(nhaCungCap);
         setNgayNhap(ngayNhap);
@@ -43,7 +44,7 @@ public class PhieuNhap {
         setLyDo(lyDo);
         this.tongTien = 0;
         this.maNV = maNV;
-
+        this.deleteAt = deleteAt;
     }
     public String getMaPhieuNhap() {
         return MaPhieuNhap;
@@ -100,6 +101,12 @@ public class PhieuNhap {
         }
         this.tongTien = tongTien;
     }
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
+    }
 
     @Override
     public String toString() {
@@ -110,6 +117,7 @@ public class PhieuNhap {
                 ", diaChi='" + diaChi + '\'' +
                 ", lyDo='" + lyDo + '\'' +
                 ", maNV=" + maNV +
+                ", deleteAt=" + deleteAt +
                 '}';
     }
 
