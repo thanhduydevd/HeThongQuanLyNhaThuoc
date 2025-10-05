@@ -33,8 +33,8 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <TextField prefHeight="40.0" prefWidth="300.0" promptText="Tim kiếm khách hàng..." style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
+                  <TextField fx:id="txtSearchEmployee" prefHeight="40.0" prefWidth="300.0" promptText="Tim kiếm khách hàng..." style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                  <Button fx:id="btnSearchEmployee" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
                      <graphic>
                         <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
                      </graphic>
@@ -54,7 +54,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+                                    <Text fx:id="textCustomerQuantity" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -90,7 +90,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                                    <Text fx:id="textVipCustomer" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -126,7 +126,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
+                                    <Text fx:id="textOrderQuantity" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -162,7 +162,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="56.000đ">
+                                    <Text fx:id="textRevenueQuantity" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="56.000đ">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
