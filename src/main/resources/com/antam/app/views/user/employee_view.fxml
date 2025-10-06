@@ -34,7 +34,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <TextField fx:id="textFindNV" prefHeight="40.0" prefWidth="300.0" promptText="Tìm kiếm nhân viên..." style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
+                  <TextField fx:id="txtFindNV" prefHeight="40.0" prefWidth="300.0" promptText="Tìm kiếm nhân viên..." style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;" />
                   <Button fx:id="btnFindNV" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" textFill="WHITE">
                      <graphic>
                         <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
@@ -42,7 +42,7 @@
                   </Button>
                </children>
             </HBox>
-            <TableView fx:id="tbNhanVien" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
+            <TableView fx:id="tbNhanVien" prefHeight="480.0" prefWidth="858.0" stylesheets="@../../styles/dashboard_style.css">
                <columns>
                   <TableColumn fx:id="colMaNV" prefWidth="75.0" text="Mã nhân viên" />
                   <TableColumn fx:id="colHoTen" prefWidth="75.0" text="Họ tên" />

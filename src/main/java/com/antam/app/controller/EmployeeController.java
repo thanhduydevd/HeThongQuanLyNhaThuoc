@@ -13,10 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.util.ArrayList;
 
@@ -28,7 +25,7 @@ public class EmployeeController {
     @FXML
     private Button btnFindNV;
     @FXML
-    private TextField textFindNV;
+    private TextField txtFindNV;
     @FXML
     private TableColumn<NhanVien, String> colMaNV, colHoTen, colChucVu, colSDT, colDiaChi,colEmail;
     @FXML
@@ -45,13 +42,25 @@ public class EmployeeController {
         this.btnAddEmployee.setOnAction((e) -> {
             (new ShowDialog("themnhanvien")).showAndWait();
         });
-        this.btnFindNV.setOnAction((e)->{
 
+        btnFindNV.setOnAction( e -> {
+            if(!txtFindNV.getText().isBlank()){
+                String x = txtFindNV.getText();
+                for (NhanVien a : tbNhanVien.getItems()){
+                    if (a.getMaNV().toLowerCase().contains(x.toLowerCase())){
+                        tbNhanVien.getSelectionModel().select(a);
+                        tbNhanVien.scrollTo(a);
+                    }
+                }
+            }
         });
+
         //setup dữ liệu cho table view
         setupTableNhanVien();
         // Load dữ liệu nhân viên
         loadNhanVien();
+        //Thêm sự kiện;
+        setupListener();
     }
 
     private void setupTableNhanVien() {
@@ -67,5 +76,19 @@ public class EmployeeController {
     public void loadNhanVien(){
         TVNhanVien = FXCollections.observableArrayList(listNV);
         tbNhanVien.setItems(TVNhanVien);
+    }
+
+    public void setupListener(){
+
+        txtFindNV.textProperty().addListener((ob , oldT, newT) -> {
+            tbNhanVien.getSelectionModel().clearSelection();
+            for (NhanVien a : tbNhanVien.getItems()){
+                if (a.getMaNV().toLowerCase().contains(newT.toLowerCase())){
+                    tbNhanVien.getSelectionModel().select(a);
+                    tbNhanVien.scrollTo(a);
+                }
+            }
+        });
+
     }
 }
