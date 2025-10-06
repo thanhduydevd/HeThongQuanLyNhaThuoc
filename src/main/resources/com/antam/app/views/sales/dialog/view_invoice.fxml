@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.ViewInvoiceController">
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.XemChiTietHoaDonController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -61,14 +61,15 @@
                      </children>
                   </VBox>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh sách thuốc:" />
-                  <TableView prefWidth="200.0" stylesheets="@../../../styles/dashboard_style.css">
+                  <TableView fx:id="tableListsThuoc" prefWidth="200.0" stylesheets="@../../../styles/dashboard_style.css">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="STT" />
-                      <TableColumn prefWidth="75.0" text="Tên thuốc" />
-                        <TableColumn prefWidth="75.0" text="Số lượng" />
-                        <TableColumn prefWidth="75.0" text="Đơn giá" />
-                        <TableColumn prefWidth="75.0" text="Thành tiền" />
-                        <TableColumn prefWidth="75.0" text="Trạng thái" />
+                      <TableColumn fx:id="sttCol" prefWidth="50.0" text="STT" />
+                      <TableColumn fx:id="tenThuocCol" prefWidth="100.0" text="Tên thuốc" />
+                        <TableColumn fx:id="soLuongCol" prefWidth="75.0" text="Số lượng" />
+                        <TableColumn fx:id="dvtCol" prefWidth="75.0" text="Đơn vị tính" />
+                        <TableColumn fx:id="donGiaCol" prefWidth="75.0" text="Đơn giá" />
+                        <TableColumn fx:id="thanhTienCol" prefWidth="75.0" text="Thành tiền" />
+                        <TableColumn fx:id="trangThaiCol" prefWidth="75.0" text="Trạng thái" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

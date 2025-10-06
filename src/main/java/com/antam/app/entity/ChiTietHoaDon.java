@@ -40,6 +40,21 @@ public class ChiTietHoaDon {
         setTinhTrang(tinhTrang);
         setThanhTien();
     }
+    public ChiTietHoaDon(String maHD, Thuoc thuoc, int soLuong, DonViTinh donViTinh, String tinhTrang, double thanhTien) {
+        this.MaHD = new HoaDon();
+        try {
+            java.lang.reflect.Field f = this.MaHD.getClass().getDeclaredField("MaHD");
+            f.setAccessible(true);
+            f.set(this.MaHD, maHD);
+        } catch (Exception e) {
+            // Nếu không set được thì bỏ qua
+        }
+        this.maThuoc = thuoc;
+        this.soLuong = soLuong;
+        this.maDVT = donViTinh;
+        this.tinhTrang = tinhTrang;
+        this.thanhTien = thanhTien;
+    }
     public HoaDon getMaHD() {
         return MaHD;
     }
@@ -85,6 +100,12 @@ public class ChiTietHoaDon {
         float thue = maThuoc.getThue();
         int soLuongCoSo = quyDoiVeCoSo(maThuoc.getMaThuoc(), soLuong, maDVT.getMaDVT());
         return soLuongCoSo  * giaBan * (1 + thue);
+    }
+    public double getThanhTien() {
+        return tinhThanhTien();
+    }
+    public double getGiaBan() {
+        return maThuoc != null ? maThuoc.getGiaBan() : 0;
     }
     @Override
     public String toString() {

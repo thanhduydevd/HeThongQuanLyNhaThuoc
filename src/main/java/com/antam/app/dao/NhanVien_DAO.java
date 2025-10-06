@@ -45,4 +45,30 @@ public class NhanVien_DAO {
         }
         return nhanVien;
     }
+
+    public ArrayList<NhanVien> getAllNhanVien() {
+        ArrayList<NhanVien> ds = new ArrayList<>();
+        String sql = "SELECT * FROM NhanVien";
+        try {
+            Connection con = ConnectDB.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                String maNV = rs.getString("MaNV");
+                NhanVien nv = new NhanVien(maNV);
+                nv.setHoTen(rs.getString("HoTen"));
+                nv.setSoDienThoai(rs.getString("SoDienThoai"));
+                nv.setEmail(rs.getString("Email"));
+                nv.setDiaChi(rs.getString("DiaChi"));
+                nv.setLuongCoBan(rs.getDouble("LuongCoBan"));
+                nv.setTaiKhoan(rs.getString("TaiKhoan"));
+                nv.setMatKhau(rs.getString("MatKhau"));
+                nv.setQuanLy(rs.getBoolean("IsQuanLi"));
+                ds.add(nv);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ds;
+    }
 }

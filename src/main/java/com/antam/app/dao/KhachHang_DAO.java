@@ -42,6 +42,27 @@ public class KhachHang_DAO {
         }
         return list;
     }
+
+    /**
+     * Thêm khách hàng mới vào CSDL
+     * @param kh KhachHang
+     * @return true nếu thành công, false nếu thất bại
+     */
+    public boolean insertKhachHang(KhachHang kh) {
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            String sql = "INSERT INTO KhachHang (MaKH, TenKH, SoDienThoai, DeleteAt) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, kh.getMaKH());
+            ps.setString(2, kh.getTenKH());
+            ps.setString(3, kh.getSoDienThoai());
+            ps.setBoolean(4, kh.isDeleteAt());
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
-
-

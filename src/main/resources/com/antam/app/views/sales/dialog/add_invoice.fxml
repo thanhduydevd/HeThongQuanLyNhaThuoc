@@ -49,9 +49,9 @@
                     </rowConstraints>
                      <children>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã hóa đơn:" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng:" GridPane.columnIndex="1" />
+                        <TextField fx:id="txtMaHoaDon" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtTenKhachHang" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc bán:" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
@@ -64,8 +64,8 @@
                            <children>
                               <ComboBox prefWidth="150.0" promptText="Chọn thuốc" stylesheets="@../../../styles/dashboard_style.css" />
                               <ComboBox prefWidth="150.0" promptText="Chọn đơn vị" stylesheets="@../../../styles/dashboard_style.css" />
-                              <Spinner stylesheets="@../../../styles/dashboard_style.css" />
-                              <Spinner stylesheets="@../../../styles/dashboard_style.css" />
+                              <TextField promptText="Số lượng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
+                              <TextField promptText="Đơn giá" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
                               <Button mnemonicParsing="false" style="-fx-background-color: #ef4444; -fx-background-radius: 50%;">
                                  <graphic>
                                     <FontAwesomeIcon fill="WHITE" glyphName="REMOVE" />

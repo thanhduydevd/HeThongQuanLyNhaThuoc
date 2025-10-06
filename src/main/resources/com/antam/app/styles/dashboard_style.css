@@ -108,6 +108,14 @@
     -fx-background-color: #eaf2ff; /* màu khi chọn */
 }
 
+.table-row-cell:selected {
+    -fx-text-fill: black;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: black;
+}
+
 /* Box */
 .box-pane{
     -fx-background-color: white;
