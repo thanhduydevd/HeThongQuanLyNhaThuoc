@@ -16,7 +16,6 @@ import javafx.scene.text.Text;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +31,9 @@ public class ThemThuocController {
     @FXML
     private DialogPane dialogPane;
     @FXML
-    private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddTonKho, txtAddHamLuong;
+    private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddHamLuong;
     @FXML
     private Text txtAddGiaByDV, notification_addThuoc, txtAddQuyDoi1, txtAddQuyDoi2, txtAddTitleQuyDoi1, txtAddTitleQuyDoi2;
-    @FXML
-    private DatePicker dpAddNgaySanXuat, dpAddHanSuDung;
     @FXML
     private Spinner<Double> spAddGiaGoc, spAddGiaBan, spAddThue;
     @FXML
@@ -72,10 +69,6 @@ public class ThemThuocController {
                 DonViTinh donViCoSo = cbAddDVCS.getValue();
                 DangDieuChe dangDieuChe =  cbAddDangDieuChe.getValue();
                 String hamLuong = txtAddHamLuong.getText();
-                int tonKho = Integer.parseInt(txtAddTonKho.getText());
-                int tonKhoInt = 0;
-                LocalDate ngaySanXuat = dpAddNgaySanXuat.getValue();
-                LocalDate hanSuDung = dpAddHanSuDung.getValue();
                 Double giaGoc = spAddGiaGoc.getValue();
                 Double giaBan = spAddGiaBan.getValue();
                 Double thue = spAddThue.getValue();
@@ -87,7 +80,7 @@ public class ThemThuocController {
                 int donVi1 = spAddQuyDoi1.getValue();
                 int donVi2 = spAddQuyDoi2.getValue();
 
-                Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hanSuDung, ngaySanXuat, tonKhoInt, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
+                Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
                         dangDieuChe, donViCoSo, ke);
                 thuoc_dao = new Thuoc_DAO();
                 boolean success = thuoc_dao.themThuoc(thuoc);
@@ -107,9 +100,6 @@ public class ThemThuocController {
                             event.consume();
                         }
                     }
-                    int tonKhoCoSo = quyDoiVeCoSo(maThuoc, tonKho, donViCoSo.getMaDVT());
-                    thuoc.setTonKho(tonKhoCoSo);
-                    thuoc_dao.capNhatThuoc(thuoc);
                 } else {
                     notification_addThuoc.setText("Thêm thuốc thất bại!");
                     event.consume();
@@ -170,10 +160,6 @@ public class ThemThuocController {
         String donViCoSo = cbAddDVCS.getValue().getTenDVT();
         String dangDieuChe = cbAddDangDieuChe.getValue().getTenDDC();
         String hamLuong = txtAddHamLuong.getText();
-        String tonKho = txtAddTonKho.getText();
-        int tonKhoInt = 0;
-        LocalDate ngaySanXuat = dpAddNgaySanXuat.getValue();
-        LocalDate hanSuDung = dpAddHanSuDung.getValue();
         Double giaGoc = 0.0;
         Double giaBan = 0.0;
         Double thue = 0.0;
@@ -205,39 +191,6 @@ public class ThemThuocController {
         if (hamLuong.isEmpty()){
             notification_addThuoc.setText("Vui lòng điền đầy đủ hàm lượng!");
             return false;
-        }
-        if (tonKho.isEmpty()){
-            notification_addThuoc.setText("Vui lòng điền đầy đủ tồn kho!");
-            return false;
-        }else{
-            try {
-                tonKhoInt = Integer.parseInt(tonKho);
-                if (tonKhoInt < 0) {
-                    notification_addThuoc.setText("Tồn kho không được âm!");
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                notification_addThuoc.setText("Tồn kho phải là số nguyên!");
-                return false;
-            }
-        }
-        if (ngaySanXuat == null){
-            notification_addThuoc.setText("Vui lòng chọn ngày sản xuất!");
-            return false;
-        }else{
-            if (ngaySanXuat.isAfter(LocalDate.now())) {
-                notification_addThuoc.setText("Ngày sản xuất phải trước ngày hiện tại!");
-                return false;
-            }
-        }
-        if (hanSuDung == null){
-            notification_addThuoc.setText("Vui lòng chọn hạn sử dụng!");
-            return false;
-        }else{
-            if (hanSuDung.isBefore(ngaySanXuat)) {
-                notification_addThuoc.setText("Hạn sử dụng phải sau ngày sản xuất!");
-                return false;
-            }
         }
         try {
             giaGoc = spAddGiaGoc.getValue();

@@ -17,9 +17,6 @@ import java.time.LocalDate;
 public class Thuoc {
     private final String maThuoc;
     private String TenThuoc;
-    private LocalDate HanSuDung;
-    private LocalDate NgaySanXuat;
-    private int tonKho;
     private String hamLuong;
     private double giaBan;
     private double giaGoc;
@@ -32,9 +29,6 @@ public class Thuoc {
     public Thuoc() {
         this.maThuoc = "";
         this.TenThuoc = "";
-        this.HanSuDung = LocalDate.now();
-        this.NgaySanXuat = LocalDate.now();
-        this.tonKho = 0;
         this.hamLuong = "";
         this.giaBan = 0;
         this.giaGoc = 0;
@@ -48,9 +42,6 @@ public class Thuoc {
     public Thuoc(String maThuoc) {
         this.maThuoc = maThuoc;
         this.TenThuoc = "";
-        this.HanSuDung = LocalDate.now();
-        this.NgaySanXuat = LocalDate.now();
-        this.tonKho = 0;
         this.hamLuong = "";
         this.giaBan = 0;
         this.giaGoc = 0;
@@ -60,12 +51,9 @@ public class Thuoc {
         this.maDVTCoSo = new DonViTinh();
         this.maKe = new Ke();
     }
-    public Thuoc(String maThuoc, String tenThuoc, LocalDate hanSuDung, LocalDate ngaySanXuat, int tonKho, String hamLuong, double giaBan, double giaGoc, float thue, boolean deleteAt, DangDieuChe dangDieuChe, DonViTinh maDVTCoSo, Ke maKe) {
+    public Thuoc(String maThuoc, String tenThuoc, String hamLuong, double giaBan, double giaGoc, float thue, boolean deleteAt, DangDieuChe dangDieuChe, DonViTinh maDVTCoSo, Ke maKe) {
         this.maThuoc = maThuoc;
         setTenThuoc(tenThuoc);
-        setNgaySanXuat(ngaySanXuat);
-        setHanSuDung(hanSuDung);
-        setTonKho(tonKho);
         setHamLuong(hamLuong);
         setGiaBan(giaBan);
         setGiaGoc(giaGoc);
@@ -86,33 +74,6 @@ public class Thuoc {
             throw new IllegalArgumentException("Tên thuốc không được để trống");
         }
         TenThuoc = tenThuoc;
-    }
-    public LocalDate getHanSuDung() {
-        return HanSuDung;
-    }
-    public void setHanSuDung(LocalDate hanSuDung) {
-        if (hanSuDung.isBefore(NgaySanXuat)) {
-            throw new IllegalArgumentException("Hạn sử dụng phải sau ngày sản xuất");
-        }
-        HanSuDung = hanSuDung;
-    }
-    public LocalDate getNgaySanXuat() {
-        return NgaySanXuat;
-    }
-    public void setNgaySanXuat(LocalDate ngaySanXuat) {
-        if (ngaySanXuat.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Ngày sản xuất phải trước hạn sử dụng");
-        }
-        NgaySanXuat = ngaySanXuat;
-    }
-    public int getTonKho() {
-        return tonKho;
-    }
-    public void setTonKho(int tonKho) {
-        if (tonKho < 0) {
-            throw new IllegalArgumentException("Tồn kho không được âm");
-        }
-        this.tonKho = tonKho;
     }
     public String getHamLuong() {
         return hamLuong;
@@ -179,9 +140,6 @@ public class Thuoc {
         return "Thuoc{" +
                 "MaThuoc='" + maThuoc + '\'' +
                 ", TenThuoc='" + TenThuoc + '\'' +
-                ", HanSuDung=" + HanSuDung +
-                ", NgaySanXuat=" + NgaySanXuat +
-                ", tonKho=" + tonKho +
                 ", hamLuong='" + hamLuong + '\'' +
                 ", giaBan=" + giaBan +
                 ", giaGoc=" + giaGoc +

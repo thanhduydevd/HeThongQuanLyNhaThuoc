@@ -55,7 +55,7 @@
                         <TextField fx:id="txtKhachHangDoi" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng:" GridPane.columnIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Lý do đổi:" GridPane.rowIndex="2" />
-                        <ComboBox prefWidth="150.0" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="cbLyDoDoi" prefWidth="150.0" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <VBox fx:id="vhDSCTHD" maxWidth="1.7976931348623157E308" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">

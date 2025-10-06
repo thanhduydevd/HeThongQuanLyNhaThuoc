@@ -36,6 +36,16 @@ public class PhieuNhap {
         maNV = new NhanVien();
         deleteAt = false;
     }
+
+    public PhieuNhap(String maPhieuNhap) {
+        MaPhieuNhap = maPhieuNhap;
+        nhaCungCap = "";
+        ngayNhap = LocalDate.now();
+        diaChi = "";
+        lyDo = "";
+        maNV = new NhanVien();
+        deleteAt = false;
+    }
     public PhieuNhap(String maPhieuNhap, String nhaCungCap, LocalDate ngayNhap, String diaChi, String lyDo, NhanVien maNV, double tongTien, boolean deleteAt) {
         MaPhieuNhap = maPhieuNhap;
         setNhaCungCap(nhaCungCap);

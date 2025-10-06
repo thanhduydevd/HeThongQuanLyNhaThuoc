@@ -3,7 +3,6 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
@@ -51,37 +50,27 @@
                                 <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
                                 <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã thuốc:" />
                                 <TextField fx:id="txtDUMaThuoc" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
                                 <TextField fx:id="txtDUTenThuoc" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                 <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên thuốc:" GridPane.columnIndex="1" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tôn kho:" GridPane.rowIndex="2" />
-                                <TextField fx:id="txtDUTonKho" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                                <TextField fx:id="txtDUHamLuong" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Dạng điều chế:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày sản xuất:" GridPane.rowIndex="4" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hạn sử dụng:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                <DatePicker fx:id="dpDUNgaySanXuat" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
-                                <DatePicker fx:id="dpDUHanSuDung" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                <Spinner fx:id="spDUGiaGoc" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
-                                <Spinner fx:id="spDUGiaBan" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                <Spinner fx:id="spDUThue" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="9" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá gốc:" GridPane.rowIndex="6" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá bán:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuế (%):" GridPane.rowIndex="8" />
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kệ thuốc:" GridPane.rowIndex="10" />
-                                <ComboBox fx:id="cbDUKe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="11" />
-                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hàm lượng:" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                <ComboBox fx:id="cbDUDangDieuChe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                <Text fx:id="notification_DUThuoc" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="387.6441345214844" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                <TextField fx:id="txtDUHamLuong" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Dạng điều chế:" GridPane.rowIndex="4" />
+                                <Spinner fx:id="spDUGiaGoc" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <Spinner fx:id="spDUGiaBan" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                                <Spinner fx:id="spDUThue" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá gốc:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Giá bán:" GridPane.rowIndex="2" />
+                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuế (%):" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kệ thuốc:" GridPane.rowIndex="6" />
+                                <ComboBox fx:id="cbDUKe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
+                                <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hàm lượng:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <ComboBox fx:id="cbDUDangDieuChe" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
                             </children>
                         </GridPane>
+                  <Text fx:id="notification_DUThuoc" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="786.9366512298584" />
                         <VBox spacing="10.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-background-radius: 8px; -fx-background-radius: 8px;">
                             <children>
                                 <Text fill="#4a5568" strokeType="OUTSIDE" strokeWidth="0.0" text="Quy đổi đơn vị:">

@@ -1,10 +1,13 @@
 package com.antam.app.controller;
 
 import com.antam.app.connect.ConnectDB;
+import com.antam.app.controller.dialog.ChiTietThuocController;
 import com.antam.app.controller.dialog.XoaSuaThuocController;
+import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.DangDieuChe_DAO;
 import com.antam.app.dao.Ke_DAO;
 import com.antam.app.dao.Thuoc_DAO;
+import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.DangDieuChe;
 import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
@@ -18,25 +21,26 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ThuocController {
 
     private Ke_DAO ke_dao;
     private DangDieuChe_DAO ddc_dao;
     private Thuoc_DAO thuoc_dao;
+    private ChiTietThuoc_DAO chiTietThuoc_dao;
+    private HashMap<String, Integer> mapTonKho = new HashMap<>();
 
     @FXML private Button btnAddMedicine;
     @FXML private ComboBox<Ke> cbKe;
     @FXML private ComboBox<DangDieuChe> cbDangDieuChe;
-    @FXML private ComboBox<String>cbTonKho, cbHanSuDung;
+    @FXML private ComboBox<String>cbTonKho;
     @FXML private TextField searchNameThuoc;
-    @FXML private Button btnSearchThuoc;
+    @FXML private Button btnSearchThuoc, btnXoaSua;
     @FXML private TableView<Thuoc> tableThuoc;
-    @FXML private TableColumn<Thuoc, String> colMaThuoc, colTenThuoc, colHamLuong, colDangDieuChe, colGiaBan, colHanSuDung, colKe;
-    @FXML private TableColumn<Thuoc, Integer> colTonKho;
+    @FXML private TableColumn<Thuoc, String> colMaThuoc, colTenThuoc, colHamLuong, colDangDieuChe, colGiaBan, colKe;
+    @FXML private TableColumn<Thuoc, String> colTonKho;
 
     private ObservableList<Thuoc> thuocList = FXCollections.observableArrayList();
     private ArrayList<Thuoc> arrayThuoc = new ArrayList<>();
@@ -46,8 +50,32 @@ public class ThuocController {
         btnAddMedicine.setOnAction(e -> {
             new GiaoDienCuaSo("themthuoc").showAndWait();
             updateTable();
+            loadTonKho();
         });
 
+        btnXoaSua.setOnAction(e ->{
+            Thuoc selectedThuoc = tableThuoc.getSelectionModel().getSelectedItem();
+
+            if (selectedThuoc == null){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn thuốc");
+                alert.setContentText("Vui lòng chọn ít nhất một thuốc.");
+                alert.showAndWait();
+            }else{
+                GiaoDienCuaSo dialog = new GiaoDienCuaSo("xoasuathuoc");
+                // Lấy controller và set Thuoc vào
+                XoaSuaThuocController controller = dialog.getController();
+                controller.setThuoc(selectedThuoc);
+                controller.showData(selectedThuoc);
+                // Show dialog
+                dialog.showAndWait();
+                updateTable();
+                loadTonKho();
+            }
+        });
+
+        loadTonKho();
 
         // Kết nối DB
         try { Connection con = ConnectDB.getInstance().connect(); }
@@ -58,8 +86,11 @@ public class ThuocController {
         colTenThuoc.setCellValueFactory(new PropertyValueFactory<>("tenThuoc"));
         colHamLuong.setCellValueFactory(new PropertyValueFactory<>("hamLuong"));
         colGiaBan.setCellValueFactory(new PropertyValueFactory<>("giaBan"));
-        colTonKho.setCellValueFactory(new PropertyValueFactory<>("tonKho"));
-        colHanSuDung.setCellValueFactory(new PropertyValueFactory<>("hanSuDung"));
+        colTonKho.setCellValueFactory(data -> {
+            int tonKho = TinhTonKho(data.getValue());
+            return new SimpleStringProperty(String.valueOf(tonKho));
+        });
+
         colDangDieuChe.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDangDieuChe().getTenDDC()));
         colKe.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaKe().getTenKe()));
 
@@ -67,7 +98,6 @@ public class ThuocController {
         addComBoBoxKe();
         addComBoBoxDDC();
         addComboboxTonKho();
-        addComboboxHanSuDung();
 
         // Load dữ liệu
         thuoc_dao = new Thuoc_DAO();
@@ -79,7 +109,6 @@ public class ThuocController {
         cbKe.setOnAction(e -> filterAndSearchThuoc());
         cbDangDieuChe.setOnAction(e -> filterAndSearchThuoc());
         cbTonKho.setOnAction(e -> filterAndSearchThuoc());
-        cbHanSuDung.setOnAction(e -> filterAndSearchThuoc());
 
         // Event tìm kiếm
         btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
@@ -93,12 +122,11 @@ public class ThuocController {
                     // Mở dialog
                     GiaoDienCuaSo dialog = new GiaoDienCuaSo("thongtinthuoc");
                     // Lấy controller và set Thuoc vào
-                    XoaSuaThuocController controller = dialog.getController();
+                    ChiTietThuocController controller = dialog.getController();
                     controller.setThuoc(selectedThuoc);
-                    controller.showData(selectedThuoc);
+                    controller.showData();
                     // Show dialog
                     dialog.showAndWait();
-                    updateTable();
                 }
             });
             return row;
@@ -140,19 +168,12 @@ public class ThuocController {
         cbTonKho.getSelectionModel().selectFirst();
     }
 
-    // them value vao combobox Han su dung
-    public void addComboboxHanSuDung() {
-        cbHanSuDung.getItems().clear();
-        cbHanSuDung.getItems().addAll("Tất cả","Đã hết hạn","Sắp hết hạn (< 30 ngày)","Trong 3 tháng","Còn lâu hết hạn");
-        cbHanSuDung.getSelectionModel().selectFirst();
-    }
 
     // ham loc va tim kiem thuoc
     public void filterAndSearchThuoc() {
         String selectedKe = cbKe.getSelectionModel().getSelectedItem().getTenKe();
         String selectedDDC = cbDangDieuChe.getSelectionModel().getSelectedItem().getTenDDC();
         String selectedTonKho = (String) cbTonKho.getSelectionModel().getSelectedItem();
-        String selectedHanSuDung = (String) cbHanSuDung.getSelectionModel().getSelectedItem();
         String searchText = searchNameThuoc.getText().trim().toLowerCase();
 
         ObservableList<Thuoc> filteredList = FXCollections.observableArrayList();
@@ -168,24 +189,11 @@ public class ThuocController {
 
             // Filter TonKho
             if (!selectedTonKho.equals("Tất cả")) {
-                if (selectedTonKho.equals("Tồn kho thấp (< 50)") && p.getTonKho() >= 50) match = false;
-                else if (selectedTonKho.equals("Bình thường (50-200)") && (p.getTonKho() < 50 || p.getTonKho() > 200)) match = false;
-                else if (selectedTonKho.equals("Dồi dào (> 200)") && p.getTonKho() <= 200) match = false;
+                if (selectedTonKho.equals("Tồn kho thấp (< 50)") && TinhTonKho(p) >= 50) match = false;
+                else if (selectedTonKho.equals("Bình thường (50-200)") && TinhTonKho(p) < 50 || TinhTonKho(p) > 200) match = false;
+                else if (selectedTonKho.equals("Dồi dào (> 200)") && TinhTonKho(p) <= 200) match = false;
             }
 
-            // Filter HanSuDung
-            if (!selectedHanSuDung.equals("Tất cả")) {
-                LocalDate today = LocalDate.now();
-                LocalDate expiry = p.getHanSuDung();
-                long daysToExpiry = ChronoUnit.DAYS.between(today, expiry);
-
-                switch (selectedHanSuDung) {
-                    case "Đã hết hạn": match = daysToExpiry < 0; break;
-                    case "Sắp hết hạn (< 30 ngày)": match = daysToExpiry >= 0 && daysToExpiry < 30; break;
-                    case "Trong 3 tháng": match = daysToExpiry >= 30 && daysToExpiry <= 90; break;
-                    case "Còn lâu hết hạn": match = daysToExpiry > 90; break;
-                }
-            }
 
             // Search theo tên
             if (!searchText.isEmpty() && !p.getTenThuoc().toLowerCase().contains(searchText)) match = false;
@@ -205,5 +213,27 @@ public class ThuocController {
         thuocList.setAll(listThuoc);
         tableThuoc.setItems(thuocList);
     }
+
+    public void loadTonKho() {
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        chiTietThuoc_dao = new ChiTietThuoc_DAO();
+        ArrayList<ChiTietThuoc> list = chiTietThuoc_dao.getAllChiTietThuoc();
+        mapTonKho.clear();
+
+        for (ChiTietThuoc ct : list) {
+            String maThuoc = ct.getMaThuoc().getMaThuoc();
+            mapTonKho.put(maThuoc, mapTonKho.getOrDefault(maThuoc, 0) + ct.getSoLuong());
+        }
+    }
+
+
+    public int TinhTonKho(Thuoc thuoc) {
+        return mapTonKho.getOrDefault(thuoc.getMaThuoc(), 0);
+    }
+
 
 }

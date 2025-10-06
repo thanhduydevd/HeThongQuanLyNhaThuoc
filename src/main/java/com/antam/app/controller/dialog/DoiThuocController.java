@@ -5,14 +5,10 @@
 
 package com.antam.app.controller.dialog;
 
-import com.antam.app.dao.ChiTietHoaDon_DAO;
-import com.antam.app.dao.HoaDon_DAO;
-import com.antam.app.dao.KhachHang_DAO;
-import com.antam.app.dao.Thuoc_DAO;
-import com.antam.app.entity.ChiTietHoaDon;
-import com.antam.app.entity.DonViTinh;
-import com.antam.app.entity.HoaDon;
-import com.antam.app.entity.Thuoc;
+import com.antam.app.dao.*;
+import com.antam.app.entity.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -24,9 +20,6 @@ import javafx.scene.text.Text;
 
 
 import java.util.ArrayList;
-import java.util.List;
-
-import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
 
 public class DoiThuocController {
     @FXML
@@ -40,11 +33,14 @@ public class DoiThuocController {
     private Text txtTongTienDoi, txtTongTienTra, txtTongTienMua;
     @FXML
     private Button btnAddThuocMoi;
+    @FXML
+    private ComboBox<String> cbLyDoDoi;
 
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
     private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
+    private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
     private HoaDon hoaDon;
     private ArrayList<ChiTietHoaDon> selectedItems = new ArrayList<>();
     private ArrayList<ChiTietHoaDon> chiTietHoaDons;
@@ -92,7 +88,7 @@ public class DoiThuocController {
             }
             else {
                 for (ChiTietHoaDon ct : selectedItems) {
-                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaThuoc().getMaThuoc(), "Đổi");
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Đổi");
                 }
                 for (Node node : vhDSCTHDM.getChildren()) {
                     if (node instanceof HBox hBox) {
@@ -100,31 +96,28 @@ public class DoiThuocController {
                         ComboBox<DonViTinh> comboDonVi = (ComboBox<DonViTinh>) hBox.getChildren().get(1);
                         Spinner<Integer> spinnerSoLuong = (Spinner<Integer>) hBox.getChildren().get(2);
 
-                        ChiTietHoaDon cthd = new ChiTietHoaDon(
-                                new HoaDon(hoaDon.getMaHD()),
-                                comboThuoc.getValue(),
-                                spinnerSoLuong.getValue(),
-                                comboDonVi.getValue(),
-                                "Bán"
-                        );
-                        int soLuongTon = thuoc_dao.getThuocTheoMa(cthd.getMaThuoc().getMaThuoc()).getTonKho();
-                        int soLuongMua = quyDoiVeCoSo(cthd.getMaThuoc().getMaThuoc(), cthd.getSoLuong(), cthd.getMaDVT().getMaDVT());
-                        if (soLuongMua > soLuongTon) {
-                            Alert alert = new Alert(Alert.AlertType.WARNING);
-                            alert.setTitle("Cảnh báo");
-                            alert.setHeaderText("Số lượng thuốc trong kho không đủ");
-                            alert.setContentText("Số lượng thuốc " + cthd.getMaThuoc().getMaThuoc() + " trong kho không đủ. Vui lòng kiểm tra lại.");
-                            alert.showAndWait();
-                            event.consume();
-                            return;
-                        }
-                        chiTietHoaDon_dao.themChiTietHoaDon(cthd);
-                        thuoc_dao.congVaoTonKho(cthd.getMaThuoc().getMaThuoc(), -cthd.getSoLuong());
+
                     }
                 }
 
             }
         });
+        // Them gia tri cho combobox ly do
+        addValueCombobox();
+    }
+
+    public void addValueCombobox(){
+        ObservableList<String> lyDoList = FXCollections.observableArrayList(
+                "Hết hạn sử dụng",
+                "Bao bì bị hư hỏng",
+                "Khách hàng đổi ý",
+                "Thuốc lỗi / hư hỏng",
+                "Nhập nhầm lô / dư",
+                "Thuốc bị thu hồi",
+                "Sai thông tin đơn / bảo hiểm",
+                "Chính sách đổi / khuyến mãi"
+        );
+        cbLyDoDoi.setItems(lyDoList);
     }
 
     public HBox renderChiTietHoaDon(ChiTietHoaDon chiTietHoaDon) {
@@ -147,7 +140,8 @@ public class DoiThuocController {
             }
         });
 
-        Thuoc t = thuoc_dao.getThuocTheoMa(chiTietHoaDon.getMaThuoc().getMaThuoc());
+        ChiTietThuoc ctt = chiTietThuoc_dao.getChiTietThuoc(chiTietHoaDon.getMaCTT().getMaCTT());
+        Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
         Text txtMaThuoc = new Text(t.getMaThuoc());
         txtMaThuoc.setStyle("-fx-font-size: 15px;");
         Text txtSoLuong = new Text(String.valueOf(chiTietHoaDon.getSoLuong()));

@@ -6,13 +6,13 @@
 package com.antam.app.controller.dialog;
 
 import com.antam.app.connect.ConnectDB;
-import com.antam.app.dao.ChiTietHoaDon_DAO;
-import com.antam.app.dao.HoaDon_DAO;
-import com.antam.app.dao.KhachHang_DAO;
-import com.antam.app.dao.Thuoc_DAO;
+import com.antam.app.dao.*;
 import com.antam.app.entity.ChiTietHoaDon;
+import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.HoaDon;
 import com.antam.app.entity.Thuoc;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -33,12 +33,15 @@ public class TraThuocController {
     private TextField txtMaHoaDonTra, txtKhachHangTra;
     @FXML
     private Text txtTongTienTra;
+    @FXML
+    private ComboBox<String> cbLyDoTra;
 
 
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
     private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
+    private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
     private HoaDon hoaDon;
     private ArrayList<ChiTietHoaDon> selectedItems = new ArrayList<>();
 
@@ -79,7 +82,7 @@ public class TraThuocController {
                 event.consume();
             } else {
                 for (ChiTietHoaDon ct : selectedItems) {
-                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaThuoc().getMaThuoc(), "Trả");
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả");
                 }
                 if (chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD()).isEmpty()) {
                     hoaDon_dao.xoaMemHoaDon(hoaDon.getMaHD());
@@ -100,6 +103,9 @@ public class TraThuocController {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        // Thêm giá trị vào combobox lý do trả
+        addValueCombobox();
     }
 
     public void tinhTongTienTra(){
@@ -110,6 +116,19 @@ public class TraThuocController {
         txtTongTienTra.setText(String.valueOf(tongTien));
     }
 
+    public void addValueCombobox(){
+        ObservableList<String> lyDoList = FXCollections.observableArrayList(
+                "Hết hạn sử dụng",
+                "Bao bì bị hư hỏng",
+                "Khách hàng đổi ý",
+                "Thuốc lỗi / hư hỏng",
+                "Nhập nhầm lô / dư",
+                "Thuốc bị thu hồi",
+                "Sai thông tin đơn / bảo hiểm",
+                "Chính sách đổi / khuyến mãi"
+        );
+        cbLyDoTra.setItems(lyDoList);
+    }
 
     public HBox renderChiTietHoaDon(ChiTietHoaDon chiTietHoaDon) {
         HBox hBox = new HBox();
@@ -131,7 +150,8 @@ public class TraThuocController {
             }
             tinhTongTienTra();
         });
-        Thuoc t = thuoc_dao.getThuocTheoMa(chiTietHoaDon.getMaThuoc().getMaThuoc());
+        ChiTietThuoc ctt = chiTietThuoc_dao.getChiTietThuoc(chiTietHoaDon.getMaCTT().getMaCTT());
+        Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
         Text txtMaThuoc = new Text(t.getMaThuoc());
         txtMaThuoc.setStyle("-fx-font-size: 15px;");
         Text txtSoLuong = new Text(String.valueOf(chiTietHoaDon.getSoLuong()));

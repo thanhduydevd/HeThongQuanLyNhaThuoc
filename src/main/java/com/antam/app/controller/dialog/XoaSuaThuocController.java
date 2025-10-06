@@ -25,13 +25,11 @@ public class XoaSuaThuocController {
     private DialogPane dialogPane;
 
     @FXML
-    private TextField txtDUMaThuoc, txtDUTenThuoc, txtDUTonKho, txtDUHamLuong;
+    private TextField txtDUMaThuoc, txtDUTenThuoc, txtDUHamLuong;
 
     @FXML
     private Text txtDUGiaByDV, notification_DUThuoc, txtDUQuyDoi1, txtDUQuyDoi2, txtDUTitleQuyDoi1, txtDUTitleQuyDoi2;
 
-    @FXML
-    private DatePicker dpDUNgaySanXuat, dpDUHanSuDung;
 
     @FXML
     private Spinner<Double> spDUGiaGoc, spDUGiaBan, spDUThue;
@@ -65,10 +63,7 @@ public class XoaSuaThuocController {
         txtDUMaThuoc.setText(t.getMaThuoc());
         txtDUMaThuoc.setEditable(false);
         txtDUTenThuoc.setText(t.getTenThuoc());
-        txtDUTonKho.setText(String.valueOf(t.getTonKho()));
         cbDUDangDieuChe.setValue(t.getDangDieuChe());
-        dpDUHanSuDung.setValue(t.getHanSuDung());
-        dpDUNgaySanXuat.setValue(t.getNgaySanXuat());
         spDUGiaGoc.getValueFactory().setValue(t.getGiaGoc());
         spDUGiaBan.getValueFactory().setValue(t.getGiaBan());
         spDUThue.getValueFactory().setValue((double) t.getThue());
@@ -185,9 +180,6 @@ public class XoaSuaThuocController {
                 DonViTinh donViCoSo = cbDUDVCS.getValue();
                 DangDieuChe dangDieuChe =  cbDUDangDieuChe.getValue();
                 String hamLuong = txtDUHamLuong.getText();
-                int tonKho = Integer.parseInt(txtDUTonKho.getText());
-                LocalDate ngaySanXuat = dpDUNgaySanXuat.getValue();
-                LocalDate hanSuDung = dpDUHanSuDung.getValue();
                 Double giaGoc = spDUGiaGoc.getValue();
                 Double giaBan = spDUGiaBan.getValue();
                 Double thue = spDUThue.getValue();
@@ -198,9 +190,8 @@ public class XoaSuaThuocController {
                 String unit2 = txtDUQuyDoi2.getText();
                 int donVi1 = spDUQuyDoi1.getValue();
                 int donVi2 = spDUQuyDoi2.getValue();
-                int tonKhoCoSo = quyDoiVeCoSo(maThuoc, tonKho, donViCoSo.getMaDVT());
 
-                Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hanSuDung, ngaySanXuat, tonKhoCoSo, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
+                Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
                         dangDieuChe, donViCoSo, ke);
                 boolean success = thuoc_dao.capNhatThuoc(thuoc);
 
@@ -219,8 +210,6 @@ public class XoaSuaThuocController {
                             event.consume();
                         }
                     }
-                    thuoc.setTonKho(tonKhoCoSo);
-                    thuoc_dao.capNhatThuoc(thuoc);
                 } else {
                     notification_DUThuoc.setText("Sửa thuốc thất bại!");
                     event.consume();
@@ -304,10 +293,6 @@ public class XoaSuaThuocController {
         String donViCoSo = cbDUDVCS.getValue().getTenDVT();
         String dangDieuChe = cbDUDangDieuChe.getValue().getTenDDC();
         String hamLuong = txtDUHamLuong.getText();
-        String tonKho = txtDUTonKho.getText();
-        int tonKhoInt = 0;
-        LocalDate ngaySanXuat = dpDUNgaySanXuat.getValue();
-        LocalDate hanSuDung = dpDUHanSuDung.getValue();
         Double giaGoc = 0.0;
         Double giaBan = 0.0;
         Double thue = 0.0;
@@ -339,39 +324,6 @@ public class XoaSuaThuocController {
         if (hamLuong.isEmpty()){
             notification_DUThuoc.setText("Vui lòng điền đầy đủ hàm lượng!");
             return false;
-        }
-        if (tonKho.isEmpty()){
-            notification_DUThuoc.setText("Vui lòng điền đầy đủ tồn kho!");
-            return false;
-        }else{
-            try {
-                tonKhoInt = Integer.parseInt(tonKho);
-                if (tonKhoInt < 0) {
-                    notification_DUThuoc.setText("Tồn kho không được âm!");
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                notification_DUThuoc.setText("Tồn kho phải là số nguyên!");
-                return false;
-            }
-        }
-        if (ngaySanXuat == null){
-            notification_DUThuoc.setText("Vui lòng chọn ngày sản xuất!");
-            return false;
-        }else{
-            if (ngaySanXuat.isAfter(LocalDate.now())) {
-                notification_DUThuoc.setText("Ngày sản xuất phải trước ngày hiện tại!");
-                return false;
-            }
-        }
-        if (hanSuDung == null){
-            notification_DUThuoc.setText("Vui lòng chọn hạn sử dụng!");
-            return false;
-        }else{
-            if (hanSuDung.isBefore(ngaySanXuat)) {
-                notification_DUThuoc.setText("Hạn sử dụng phải sau ngày sản xuất!");
-                return false;
-            }
         }
         try {
             giaGoc = spDUGiaGoc.getValue();

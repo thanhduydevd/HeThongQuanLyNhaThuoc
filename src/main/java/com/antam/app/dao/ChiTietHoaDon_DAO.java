@@ -7,10 +7,7 @@
 package com.antam.app.dao;
 
 import com.antam.app.connect.ConnectDB;
-import com.antam.app.entity.ChiTietHoaDon;
-import com.antam.app.entity.DonViTinh;
-import com.antam.app.entity.HoaDon;
-import com.antam.app.entity.Thuoc;
+import com.antam.app.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,12 +31,12 @@ public class ChiTietHoaDon_DAO {
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
                 String maHoaDon = rs.getString("MaHD");
-                String maThuoc = rs.getString("MaThuoc");
+                int maChiTietThuoc = rs.getInt("MaCTT");
                 int soLuong = rs.getInt("SoLuong");
                 int maDonViTinh = rs.getInt("MaDVT");
                 String tinhTrang = rs.getString("TinhTrang");
                 double thanhTien = rs.getDouble("ThanhTien");
-                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new Thuoc(maThuoc), soLuong, new DonViTinh(maDonViTinh), tinhTrang);
+                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new ChiTietThuoc(maChiTietThuoc), soLuong, new DonViTinh(maDonViTinh), tinhTrang, thanhTien);
                 ds.add(cthd);
             }
         } catch (Exception e) {
@@ -58,12 +55,12 @@ public class ChiTietHoaDon_DAO {
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
                 String maHoaDon = rs.getString("MaHD");
-                String maThuoc = rs.getString("MaThuoc");
+                int maChiTietThuoc = rs.getInt("MaCTT");
                 int soLuong = rs.getInt("SoLuong");
                 int maDonViTinh = rs.getInt("MaDVT");
                 String tinhTrang = rs.getString("TinhTrang");
                 double thanhTien = rs.getDouble("ThanhTien");
-                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new Thuoc(maThuoc), soLuong, new DonViTinh(maDonViTinh), tinhTrang);
+                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new ChiTietThuoc(), soLuong, new DonViTinh(maDonViTinh), tinhTrang, thanhTien);
                 ds.add(cthd);
             }
         } catch (Exception e) {
@@ -72,14 +69,14 @@ public class ChiTietHoaDon_DAO {
         return ds;
     }
 
-    public boolean xoaMemChiTietHoaDon(String maHD, String maThuoc, String tinhTrang){
-        String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaThuoc = ?";
+    public boolean xoaMemChiTietHoaDon(String maHD, int maCTT, String tinhTrang){
+        String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaCTT = ?";
         Connection con = ConnectDB.getConnection();
         try{
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, tinhTrang);
             statement.setString(2, maHD);
-            statement.setString(3, maThuoc);
+            statement.setInt(3, maCTT);
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -88,12 +85,12 @@ public class ChiTietHoaDon_DAO {
         return false;
     }
     public boolean themChiTietHoaDon(ChiTietHoaDon cthd){
-        String sql = "INSERT INTO ChiTietHoaDon (MaHD, MaThuoc, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
         Connection con = ConnectDB.getConnection();
         try{
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, cthd.getMaHD().getMaHD());
-            statement.setString(2, cthd.getMaThuoc().getMaThuoc());
+            statement.setInt(2, cthd.getMaCTT().getMaCTT());
             statement.setInt(3, cthd.getSoLuong());
             statement.setInt(4, cthd.getMaDVT().getMaDVT());
             statement.setString(5, cthd.getTinhTrang());

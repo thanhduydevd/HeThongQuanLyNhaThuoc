@@ -49,7 +49,7 @@
                     </rowConstraints>
                      <children>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã hóa đơn gốc:" />
-                        <TextField fx:id="txtMaHoaDOnTra" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtMaHoaDonTra" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
                         <TextField fx:id="txtKhachHangTra" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Khách hàng:" GridPane.columnIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Lý do trả:" GridPane.rowIndex="2" />
