@@ -40,6 +40,15 @@ public class ChiTietHoaDon {
         setTinhTrang(tinhTrang);
         setThanhTien();
     }
+
+    public ChiTietHoaDon(HoaDon maHD, Thuoc maThuoc, int soLuong, DonViTinh maDVT, String tinhTrang, double thanhTien) {
+        this.MaHD = maHD;
+        this.maThuoc = maThuoc;
+        setSoLuong(soLuong);
+        this.maDVT = maDVT;
+        setTinhTrang(tinhTrang);
+        this.thanhTien = thanhTien;
+    }
     public HoaDon getMaHD() {
         return MaHD;
     }

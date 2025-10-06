@@ -13,6 +13,7 @@ import com.antam.app.dao.Thuoc_DAO;
 import com.antam.app.entity.ChiTietHoaDon;
 import com.antam.app.entity.HoaDon;
 import com.antam.app.entity.Thuoc;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -29,7 +30,7 @@ public class TraThuocController {
     @FXML
     private VBox vbListChiTietHoaDon;
     @FXML
-    private TextField txtMaHoaDOnTra, txtKhachHangTra;
+    private TextField txtMaHoaDonTra, txtKhachHangTra;
     @FXML
     private Text txtTongTienTra;
 
@@ -52,7 +53,7 @@ public class TraThuocController {
     public void showData(HoaDon hoaDon) {
         HoaDon hd = hoaDon_dao.getHoaDonTheoMa(hoaDon.getMaHD());
         ArrayList<ChiTietHoaDon> chiTietHoaDons = chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHD(hoaDon.getMaHD());
-        txtMaHoaDOnTra.setText(hoaDon.getMaHD());
+        txtMaHoaDonTra.setText(hoaDon.getMaHD());
         txtKhachHangTra.setText(khachHang_dao.getKhachHangTheoMa(hd.getMaKH().getMaKH()).getTenKH());
         for (ChiTietHoaDon ct : chiTietHoaDons) {
             HBox hBox = renderChiTietHoaDon(ct);
@@ -65,6 +66,35 @@ public class TraThuocController {
         ButtonType applyButton = new ButtonType("Xác nhận trả thuốc", ButtonData.APPLY);
         this.dialogPane.getButtonTypes().add(cancelButton);
         this.dialogPane.getButtonTypes().add(applyButton);
+
+        Button applyBtn = (Button) dialogPane.lookupButton(applyButton);
+
+        applyBtn.addEventFilter(ActionEvent.ACTION, event -> {
+            if (selectedItems.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn thuốc để trả");
+                alert.setContentText("Vui lòng chọn ít nhất một thuốc để trả.");
+                alert.showAndWait();
+                event.consume();
+            } else {
+                for (ChiTietHoaDon ct : selectedItems) {
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaThuoc().getMaThuoc(), "Trả");
+                }
+                if (chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD()).isEmpty()) {
+                    hoaDon_dao.xoaMemHoaDon(hoaDon.getMaHD());
+                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), 0);
+                } else {
+                    double tongTienMoi = 0;
+                    ArrayList<ChiTietHoaDon> cths = chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD());
+                    for (ChiTietHoaDon ct : cths) {
+                        tongTienMoi += ct.getThanhTien();
+                    }
+                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienMoi);
+                }
+            }
+        });
+
         try{
             Connection con = ConnectDB.getInstance().getConnection();
         }catch (Exception e){
@@ -90,6 +120,9 @@ public class TraThuocController {
         );
 
         CheckBox checkBox = new CheckBox();
+        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+            checkBox.setDisable(true);
+        }
         checkBox.setOnAction(event -> {
             if (checkBox.isSelected()) {
                 selectedItems.add(chiTietHoaDon);
@@ -100,9 +133,18 @@ public class TraThuocController {
         });
         Thuoc t = thuoc_dao.getThuocTheoMa(chiTietHoaDon.getMaThuoc().getMaThuoc());
         Text txtMaThuoc = new Text(t.getMaThuoc());
+        txtMaThuoc.setStyle("-fx-font-size: 15px;");
         Text txtSoLuong = new Text(String.valueOf(chiTietHoaDon.getSoLuong()));
+        txtSoLuong.setStyle("-fx-font-size: 15px;");
         Text txtDonGia = new Text(String.valueOf(chiTietHoaDon.getThanhTien()));
-        Button btn = new Button("Bình thường");
+        txtDonGia.setStyle("-fx-font-size: 15px;");
+        String valueBtn = "Bình thường";
+        if (chiTietHoaDon.getTinhTrang().equals("Trả")) {
+            valueBtn = "Đã trả";
+        } else if (chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+            valueBtn = "Đã đổi";
+        }
+        Button btn = new Button(valueBtn);
         btn.setStyle(
                 "-fx-background-color: #e0f2fe;" +
                 "-fx-text-fill: #0369a1;" +

@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class NhanVien_DAO {
-    public NhanVien getNhanVien(String id) {
+    public NhanVien getNhanVienTaiKHoan(String id) {
         NhanVien nhanVien = null;
         String sql = "SELECT * FROM NhanVien WHERE TaiKhoan = ?";
         try {

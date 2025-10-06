@@ -48,6 +48,30 @@ public class ChiTietHoaDon_DAO {
         return ds;
     }
 
+    public ArrayList<ChiTietHoaDon> getAllChiTietHoaDonTheoMaHDConBan(String maHD){
+        ArrayList<ChiTietHoaDon> ds = new ArrayList<ChiTietHoaDon>();
+        String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ? AND TinhTrang = 'Bán'";
+        Connection con = ConnectDB.getConnection();
+        try{
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, maHD);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                String maHoaDon = rs.getString("MaHD");
+                String maThuoc = rs.getString("MaThuoc");
+                int soLuong = rs.getInt("SoLuong");
+                int maDonViTinh = rs.getInt("MaDVT");
+                String tinhTrang = rs.getString("TinhTrang");
+                double thanhTien = rs.getDouble("ThanhTien");
+                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new Thuoc(maThuoc), soLuong, new DonViTinh(maDonViTinh), tinhTrang);
+                ds.add(cthd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ds;
+    }
+
     public boolean xoaMemChiTietHoaDon(String maHD, String maThuoc, String tinhTrang){
         String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaThuoc = ?";
         Connection con = ConnectDB.getConnection();
@@ -56,6 +80,24 @@ public class ChiTietHoaDon_DAO {
             statement.setString(1, tinhTrang);
             statement.setString(2, maHD);
             statement.setString(3, maThuoc);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean themChiTietHoaDon(ChiTietHoaDon cthd){
+        String sql = "INSERT INTO ChiTietHoaDon (MaHD, MaThuoc, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+        Connection con = ConnectDB.getConnection();
+        try{
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, cthd.getMaHD().getMaHD());
+            statement.setString(2, cthd.getMaThuoc().getMaThuoc());
+            statement.setInt(3, cthd.getSoLuong());
+            statement.setInt(4, cthd.getMaDVT().getMaDVT());
+            statement.setString(5, cthd.getTinhTrang());
+            statement.setDouble(6, cthd.getThanhTien());
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (Exception e) {

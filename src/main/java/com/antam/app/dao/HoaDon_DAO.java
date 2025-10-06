@@ -13,6 +13,7 @@ import com.antam.app.entity.KhuyenMai;
 import com.antam.app.entity.NhanVien;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 /*
  * @description
@@ -41,6 +42,20 @@ public class HoaDon_DAO {
             e.printStackTrace();
         }
         return hd;
+    }
+    public boolean CapNhatTongTienHoaDon(String maHD, double tongTien){
+        String sql = "UPDATE HoaDon SET TongTien = ? WHERE MaHD = ?";
+        Connection con = ConnectDB.getConnection();
+        try{
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setDouble(1, tongTien);
+            statement.setString(2, maHD);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     public boolean xoaMemHoaDon(String maHD){
         String sql = "UPDATE HoaDon SET DeleteAt = 1 WHERE MaHD = ?";
