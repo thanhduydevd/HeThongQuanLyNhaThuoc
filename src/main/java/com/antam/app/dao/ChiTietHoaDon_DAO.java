@@ -72,8 +72,7 @@ public class ChiTietHoaDon_DAO {
     public boolean xoaMemChiTietHoaDon(String maHD, int maCTT, String tinhTrang){
         String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaCTT = ?";
         Connection con = ConnectDB.getConnection();
-        try{
-            PreparedStatement statement = con.prepareStatement(sql);
+        try{ PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, tinhTrang);
             statement.setString(2, maHD);
             statement.setInt(3, maCTT);

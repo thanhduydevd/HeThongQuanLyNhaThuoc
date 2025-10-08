@@ -50,8 +50,8 @@ public class XemChiTietHoaDonController {
 
     @FXML
     public void initialize() {
-        tenThuocCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
-            cellData.getValue().getSoDangKy().getTenThuoc()));
+        //tenThuocCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
+//            cellData.getValue().get().getTenThuoc()));
         soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
         donGiaCol.setCellValueFactory(new PropertyValueFactory<>("giaBan"));
         thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
@@ -90,7 +90,7 @@ public class XemChiTietHoaDonController {
         // Lấy danh sách chi tiết hóa đơn từ DAO
         ChiTietHoaDon_DAO cthdDAO = new ChiTietHoaDon_DAO();
         ObservableList<ChiTietHoaDon> data = FXCollections.observableArrayList(
-            cthdDAO.getChiTietHoaDonByMaHD(hoaDon.getMaHD())
+//            cthdDAO.getChiTietHoaDonByMaHD(hoaDon.getMaHD())
         );
         tableListsThuoc.setItems(data);
     }

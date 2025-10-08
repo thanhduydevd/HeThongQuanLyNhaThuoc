@@ -7,7 +7,7 @@ package com.antam.app.controller;
 
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
-import com.antam.app.gui.ShowDialog;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,7 @@ import javafx.scene.control.*;
 
 import java.util.ArrayList;
 
-public class EmployeeController {
+public class NhanVienController {
     @FXML
     private Button btnAddEmployee;
     @FXML
@@ -35,12 +35,12 @@ public class EmployeeController {
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
     ObservableList<NhanVien> TVNhanVien = FXCollections.observableArrayList();
 
-    public EmployeeController() {
+    public NhanVienController() {
     }
 
     public void initialize() {
         this.btnAddEmployee.setOnAction((e) -> {
-            (new ShowDialog("themnhanvien")).showAndWait();
+            (new GiaoDienCuaSo("themnhanvien")).showAndWait();
         });
 
         btnFindNV.setOnAction( e -> {

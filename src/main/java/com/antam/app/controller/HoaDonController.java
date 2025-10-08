@@ -116,7 +116,7 @@ public class HoaDonController {
 
         // --- Khởi tạo ComboBox nhân viên ---
         NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
-        ObservableList<NhanVien> dsNhanVien = FXCollections.observableArrayList(nhanVienDAO.getAllNhanVien());
+        ObservableList<NhanVien> dsNhanVien = FXCollections.observableArrayList(NhanVien_DAO.getDsNhanVienformDBS());
         // Thêm lựa chọn "Tất cả" vào đầu danh sách
         NhanVien tatCaNV = new NhanVien("Tất cả");
         dsNhanVien.add(0, tatCaNV);
@@ -169,7 +169,7 @@ public class HoaDonController {
             if (allNV && allStatus) {
                 baseList = new ArrayList<>(hoaDonDAO1.getAllHoaDon());
             } else if (!allNV && allStatus) {
-                baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByMaNV(selectedNV.getMaNV()));
+                baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByMaHd(selectedNV.getMaNV()));
             } else if (allNV && !allStatus) {
                 baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByStatus(selectedStatus));
             } else {

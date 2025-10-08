@@ -38,12 +38,6 @@ public class KhachHang {
         setSoDienThoai(soDienThoai);
         this.deleteAt = deleteAt;
     }
-    public KhachHang(String maKH) {
-        this.MaKH = maKH;
-        this.tenKH = "";
-        this.soDienThoai = "";
-        this.deleteAt = false;
-    }
     public String getMaKH() {
         return MaKH;
     }

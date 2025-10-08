@@ -65,4 +65,23 @@ public class KhachHang_DAO {
             return false;
         }
     }
+
+    public KhachHang getKhachHangTheoMa(String maKH){
+        KhachHang kh = new KhachHang(maKH);
+        String sql = "SELECT * FROM KhachHang WHERE MaKH = ?";
+        Connection con = ConnectDB.getConnection();
+        try{
+            java.sql.PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, maKH);
+            java.sql.ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                kh.setTenKH(rs.getString("TenKH"));
+                kh.setSoDienThoai(rs.getString("SoDienThoai"));
+                kh.setDeleteAt(rs.getBoolean("DeleteAt"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return kh;
+    }
 }

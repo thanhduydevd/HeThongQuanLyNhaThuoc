@@ -51,9 +51,10 @@ public class NhanVien_DAO {
                     double luongCb = result.getDouble("LuongCoBan");
                     String taiKhoan = result.getNString("TaiKhoan");
                     String matKhau = result.getNString("MatKhau");
+                    boolean deleteAt = result.getBoolean("DeleteAt");
                     boolean isQL = result.getBoolean("IsQuanLi");
                     NhanVien e = new NhanVien(maNV,hoTen,soDT,email,diaChi,luongCb
-                    ,taiKhoan,matKhau,isQL);
+                    ,taiKhoan,matKhau,deleteAt,isQL);
                     list.add(e);
                 }
 
@@ -218,4 +219,83 @@ public class NhanVien_DAO {
         }
         return kq > 0;
     }
+
+    public NhanVien getNhanVienTaiKhoan(String id) {
+        NhanVien nhanVien = null;
+        String sql = "SELECT * FROM NhanVien WHERE TaiKhoan = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement state = con.prepareStatement(sql);
+            state.setString(1, id);
+            ResultSet rs = state.executeQuery();
+            if (rs.next()) {
+                String maNV = rs.getString("MaNV");
+                nhanVien = new NhanVien(maNV);
+                nhanVien.setHoTen(rs.getString("HoTen"));
+                nhanVien.setSoDienThoai(rs.getString("SoDienThoai"));
+                nhanVien.setEmail(rs.getString("Email"));
+                nhanVien.setDiaChi(rs.getString("DiaChi"));
+                nhanVien.setLuongCoBan(rs.getDouble("LuongCoBan"));
+                nhanVien.setTaiKhoan(rs.getString("TaiKhoan"));
+                nhanVien.setMatKhau(rs.getString("MatKhau"));
+                nhanVien.setQuanLy(rs.getBoolean("IsQuanLi"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nhanVien;
+    }
+    // hung
+    public NhanVien getNhanVien(String id) {
+        NhanVien nhanVien = null;
+        String sql = "SELECT * FROM NhanVien WHERE TaiKhoan = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement state = con.prepareStatement(sql);
+            state.setString(1, id);
+            ResultSet rs = state.executeQuery();
+            if (rs.next()) {
+                String maNV = rs.getString("MaNV");
+                nhanVien = new NhanVien(maNV);
+                nhanVien.setHoTen(rs.getString("HoTen"));
+                nhanVien.setSoDienThoai(rs.getString("SoDienThoai"));
+                nhanVien.setEmail(rs.getString("Email"));
+                nhanVien.setDiaChi(rs.getString("DiaChi"));
+                nhanVien.setLuongCoBan(rs.getDouble("LuongCoBan"));
+                nhanVien.setTaiKhoan(rs.getString("TaiKhoan"));
+                nhanVien.setMatKhau(rs.getString("MatKhau"));
+                nhanVien.setQuanLy(rs.getBoolean("IsQuanLi"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nhanVien;
+    }
+
+    public ArrayList<NhanVien> getAllNhanVien() {
+        ArrayList<NhanVien> ds = new ArrayList<>();
+        String sql = "SELECT * FROM NhanVien";
+        try {
+            Connection con = ConnectDB.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                String maNV = rs.getString("MaNV");
+                NhanVien nv = new NhanVien(maNV);
+                nv.setHoTen(rs.getString("HoTen"));
+                nv.setSoDienThoai(rs.getString("SoDienThoai"));
+                nv.setEmail(rs.getString("Email"));
+                nv.setDiaChi(rs.getString("DiaChi"));
+                nv.setLuongCoBan(rs.getDouble("LuongCoBan"));
+                nv.setTaiKhoan(rs.getString("TaiKhoan"));
+                nv.setMatKhau(rs.getString("MatKhau"));
+                nv.setQuanLy(rs.getBoolean("IsQuanLi"));
+                ds.add(nv);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ds;
+    }
+
 }
