@@ -42,6 +42,15 @@ public class ChiTietPhieuNhap {
         setThanhTien();
     }
 
+    public ChiTietPhieuNhap(HoaDon maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap, double thanhTien) {
+        this.MaPN = maPN;
+        this.maThuoc = maThuoc;
+        this.maDVT = maDVT;
+        setSoLuong(soLuong);
+        setGiaNhap(giaNhap);
+        this.thanhTien = thanhTien;
+    }
+
     public HoaDon getMaPN() {
         return MaPN;
     }

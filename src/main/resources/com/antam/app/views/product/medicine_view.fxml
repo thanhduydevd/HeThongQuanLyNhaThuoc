@@ -29,6 +29,11 @@
                      </font>
                   </Text>
                   <Pane HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnXoaSua" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #6b7280; -fx-background-radius: 5px;" text="Tùy Chọn" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
                   <Button fx:id="btnAddMedicine" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thêm thuốc" textFill="WHITE">
                      <graphic>
                         <FontAwesomeIcon fill="WHITE" glyphName="PLUS" text="" />
@@ -68,16 +73,6 @@
                         <ComboBox fx:id="cbTonKho" prefHeight="40.0" prefWidth="200.0" promptText="Chọn tình trạng tồn kho:" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
-                  <VBox spacing="5.0">
-                     <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Hạn sử dụng:">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </Text>
-                        <ComboBox fx:id="cbHanSuDung" prefHeight="40.0" prefWidth="200.0" promptText="Chọn hạn sử dụng" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
-                     </children>
-                  </VBox>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -108,7 +103,6 @@
                   <TableColumn fx:id="colDangDieuChe" prefWidth="75.0" text="Dạng điều chế" />
                   <TableColumn fx:id="colGiaBan" prefWidth="75.0" text="Giá bán" />
                   <TableColumn fx:id="colTonKho" prefWidth="75.0" text="Tồn kho" />
-                  <TableColumn fx:id="colHanSuDung" prefWidth="75.0" text="Hạn sử dụng" />
                   <TableColumn fx:id="colKe" prefWidth="75.0" text="Kệ thuốc" />
                </columns>
                <columnResizePolicy>

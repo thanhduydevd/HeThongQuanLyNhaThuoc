@@ -18,7 +18,7 @@ import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
  */
 public class ChiTietHoaDon {
     private HoaDon MaHD;
-    private Thuoc maThuoc;
+    private ChiTietThuoc maCTT;
     private int soLuong;
     private DonViTinh maDVT;
     private String tinhTrang;
@@ -26,19 +26,20 @@ public class ChiTietHoaDon {
 
     public ChiTietHoaDon() {
         this.MaHD = new HoaDon();
-        this.maThuoc = new Thuoc();
+        this.maCTT = new ChiTietThuoc();
         this.soLuong = 0;
         this.maDVT = new DonViTinh();
         this.tinhTrang = "";
         this.thanhTien = 0;
     }
-    public ChiTietHoaDon(HoaDon maHD, Thuoc maThuoc, int soLuong, DonViTinh maDVT, String tinhTrang) {
+
+    public ChiTietHoaDon(HoaDon maHD, ChiTietThuoc maCTT, int soLuong, DonViTinh maDVT, String tinhTrang, double thanhTien) {
         this.MaHD = maHD;
-        this.maThuoc = maThuoc;
+        this.maCTT = maCTT;
         setSoLuong(soLuong);
         this.maDVT = maDVT;
         setTinhTrang(tinhTrang);
-        setThanhTien();
+        this.thanhTien = thanhTien;
     }
     public ChiTietHoaDon(String maHD, Thuoc thuoc, int soLuong, DonViTinh donViTinh, String tinhTrang, double thanhTien) {
         this.MaHD = new HoaDon();
@@ -61,12 +62,12 @@ public class ChiTietHoaDon {
     public void setMaHD(HoaDon maHD) {
         MaHD = maHD;
     }
-    public Thuoc getSoDangKy() {
-        return maThuoc;
+
+    public ChiTietThuoc getMaCTT() {
+        return maCTT;
     }
-    public void setSoDangKy(Thuoc soDangKy) {
-        this.maThuoc = soDangKy;
-    }
+
+
     public int getSoLuong() {
         return soLuong;
     }
@@ -75,7 +76,6 @@ public class ChiTietHoaDon {
             throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
         }
         this.soLuong = soLuong;
-        setThanhTien();
     }
     public DonViTinh getMaDVT() {
         return maDVT;
@@ -92,14 +92,11 @@ public class ChiTietHoaDon {
         }
         this.tinhTrang = tinhTrang;
     }
-    public void setThanhTien() {
-        this.thanhTien = tinhThanhTien();
+    public void setThanhTien(double thanhTien) {
+        this.thanhTien = thanhTien;
     }
-    public double tinhThanhTien() {
-        double giaBan = maThuoc.getGiaBan();
-        float thue = maThuoc.getThue();
-        int soLuongCoSo = quyDoiVeCoSo(maThuoc.getMaThuoc(), soLuong, maDVT.getMaDVT());
-        return soLuongCoSo  * giaBan * (1 + thue);
+    public double getThanhTien() {
+        return thanhTien;
     }
     public double getThanhTien() {
         return tinhThanhTien();
@@ -111,7 +108,7 @@ public class ChiTietHoaDon {
     public String toString() {
         return "ChiTietHoaDon{" +
                 "MaHD=" + MaHD +
-                ", soDangKy=" + maThuoc +
+                "MaCTT" + maCTT +
                 ", soLuong=" + soLuong +
                 ", maDVT=" + maDVT +
                 ", tinhTrang='" + tinhTrang + '\'' +

@@ -24,6 +24,16 @@ public class HoaDon {
     private double tongTien;
     private boolean deleteAt;
 
+    public HoaDon(String maHD) {
+        MaHD = maHD;
+        ngayTao = LocalDate.now();
+        maNV = new NhanVien();
+        maKH = new KhachHang();
+        maKM = null;
+        tongTien = 0;
+        deleteAt = false;
+    }
+
     public HoaDon() {
         MaHD = "";
         ngayTao = LocalDate.now();
@@ -33,13 +43,14 @@ public class HoaDon {
         tongTien = 0;
         deleteAt = false;
     }
-    public HoaDon(String maHD, LocalDate ngayTao, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, boolean deleteAt) {
+
+    public HoaDon(String maHD, LocalDate ngayTao, NhanVien maNV, KhachHang maKH, KhuyenMai maKM, double tongTien , boolean deleteAt) {
         MaHD = maHD;
         setNgayTao(ngayTao);
         this.maNV = maNV;
         this.maKH = maKH;
         this.maKM = maKM;
-        this.tongTien = 0;
+        this.tongTien = tongTien;
         this.deleteAt = deleteAt;
     }
     public String getMaHD() {

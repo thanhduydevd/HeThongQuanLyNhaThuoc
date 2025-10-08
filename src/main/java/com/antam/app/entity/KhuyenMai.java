@@ -34,6 +34,16 @@ public class KhuyenMai {
         soLuongToiDa = 0;
         deleteAt = false;
     }
+    public KhuyenMai(String maKM) {
+        MaKM = maKM;
+        TenKM = "";
+        NgayBatDau = LocalDate.now();
+        NgayKetThuc = LocalDate.now();
+        loaiKhuyenMai = new LoaiKhuyenMai();
+        so = 0;
+        soLuongToiDa = 0;
+        deleteAt = false;
+    }
     public KhuyenMai(String maKM, String tenKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, LoaiKhuyenMai loaiKhuyenMai, double so, int soLuongToiDa, boolean deleteAt) {
         this.MaKM = maKM;
         setTenKM(tenKM);

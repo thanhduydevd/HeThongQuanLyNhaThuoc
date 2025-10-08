@@ -37,6 +37,14 @@ public class ChiTietPhieuDatThuoc {
         setThanhTien();
     }
 
+    public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, Thuoc maThuoc, int soLuong, DonViTinh donViTinh, double thanhTien) {
+        this.maPhieu = maPhieu;
+        this.maThuoc = maThuoc;
+        setSoLuong(soLuong);
+        this.donViTinh = donViTinh;
+        this.thanhTien = thanhTien;
+    }
+
     public PhieuDatThuoc getMaPhieu() {
         return maPhieu;
     }

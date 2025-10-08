@@ -126,10 +126,10 @@ public class DangNhapController {
         nv_dao = new NhanVien_DAO();
         String id = txtname_login.getText();
         String pass = txtpass_login.getText();
-        if (nv_dao.getNhanVien(id) == null){
+        if (nv_dao.getNhanVienTaiKHoan(id) == null){
             notification_login.setText("Tên đăng nhập không tồn tại");
             return false;
-        }else if (!nv_dao.getNhanVien(id).getMatKhau().equals(pass)) {
+        }else if (!nv_dao.getNhanVienTaiKHoan(id).getMatKhau().equals(pass)) {
             notification_login.setText("Mật khẩu không đúng");
             return false;
         }

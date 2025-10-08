@@ -46,7 +46,8 @@ public class GiaoDienCuaSo extends Dialog {
         String var10000;
         switch (mainFunction.toLowerCase()) {
             case "themthuoc" -> var10000 = "/com/antam/app/views/product/dialog/add_medicine.fxml";
-            case "thongtinthuoc" -> var10000 = "/com/antam/app/views/product/dialog/deleteAndUpdate_medicine.fxml";
+            case "xoasuathuoc" -> var10000 = "/com/antam/app/views/product/dialog/deleteAndUpdate_medicine.fxml";
+            case "thongtinthuoc" -> var10000 = "/com/antam/app/views/product/dialog/view_detail_medicine.fxml";
             case "themke" -> var10000 = "/com/antam/app/views/product/dialog/add_shelf.fxml";
             case "themphieunhap" -> var10000 = "/com/antam/app/views/product/dialog/add_goods_receipt.fxml";
             case "themhoadon" -> var10000 = "/com/antam/app/views/sales/dialog/add_invoice.fxml";
