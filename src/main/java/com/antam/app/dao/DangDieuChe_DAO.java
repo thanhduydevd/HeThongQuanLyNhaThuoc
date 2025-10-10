@@ -20,6 +20,10 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class DangDieuChe_DAO {
+    /**
+     * Lấy tất cả dạng điều chế từ database
+     * @return danh sách dạng điều chế
+     */
     public ArrayList<DangDieuChe> getAllDDC() {
         ArrayList<DangDieuChe> listDDC = new ArrayList<>();
         String sql = "SELECT * FROM DangDieuChe";
@@ -38,6 +42,11 @@ public class DangDieuChe_DAO {
         }
         return listDDC;
     }
+    /**
+     * Lấy dạng điều chế theo tên
+     * @param name tên dạng điều chế
+     * @return dạng điều chế
+     */
     public DangDieuChe getDDCTheoName(String name) {
         DangDieuChe ddc = null;
         String sql = "SELECT * FROM DangDieuChe WHERE TenDDC =  ?";

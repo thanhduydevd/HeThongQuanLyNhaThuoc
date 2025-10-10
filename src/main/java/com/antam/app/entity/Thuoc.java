@@ -137,18 +137,7 @@ public class Thuoc {
     }
     @Override
     public String toString() {
-        return "Thuoc{" +
-                "MaThuoc='" + maThuoc + '\'' +
-                ", TenThuoc='" + TenThuoc + '\'' +
-                ", hamLuong='" + hamLuong + '\'' +
-                ", giaBan=" + giaBan +
-                ", giaGoc=" + giaGoc +
-                ", thue=" + thue +
-                ", deleteAt=" + deleteAt +
-                ", dangDieuChe=" + dangDieuChe +
-                ", maDVTCoSo=" + maDVTCoSo +
-                ", maKe=" + maKe +
-                '}';
+        return getTenThuoc();
     }
     @Override
     public boolean equals(Object o) {

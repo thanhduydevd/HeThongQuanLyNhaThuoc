@@ -27,6 +27,10 @@ import java.util.Map;
  * version: 1.0
  */
 public class QuyDoi_DAO {
+    /**
+     * Lấy tất cả quy đổi đơn vị từ database
+     * @return bản đồ quy đổi đơn vị
+     */
     public Map<String, List<QuyDoi>> getAllQuyDoi() {
         Map<String, List<QuyDoi>> tatCaQuyDoi = new HashMap<>();
         String sql = "SELECT * FROM QuyDoiDonVi";
@@ -49,6 +53,11 @@ public class QuyDoi_DAO {
         return tatCaQuyDoi;
     }
 
+    /**
+     * Thêm quy đổi đơn vị vào database
+     * @param qd Quy đổi đơn vị
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
     public boolean themQuyDoi(QuyDoi qd) {
         String sql = "INSERT INTO QuyDoiDonVi (MaThuoc, MaDVTCha, MaDVTCon, TyLe) VALUES (?, ?, ?, ?)";
         try {
@@ -65,6 +74,11 @@ public class QuyDoi_DAO {
         }
         return false;
     }
+    /**
+     * Cập nhật quy đổi đơn vị trong database
+     * @param qd Quy đổi đơn vị
+     * @return true nếu cập nhật thành công, false nếu cập nhật thất bại
+     */
     public boolean capNhatQuyDoi(QuyDoi qd) {
         String sql = "UPDATE QuyDoiDonVi SET TyLe = ? WHERE MaThuoc = ? AND MaDVTCha = ? AND MaDVTCon = ?";
         try {
@@ -81,6 +95,11 @@ public class QuyDoi_DAO {
         }
         return false;
     }
+    /**
+     * Lấy quy đổi đơn vị theo mã thuốc từ database
+     * @param id mã thuốc
+     * @return danh sách quy đổi đơn vị
+     */
     public ArrayList<QuyDoi> getQuyDoiTheoMa(String id) {
         ArrayList<QuyDoi> dsQuyDoi = new ArrayList<>();
         String sql = "SELECT * FROM QuyDoiDonVi WHERE MaThuoc = ?";
@@ -109,6 +128,11 @@ public class QuyDoi_DAO {
         return dsQuyDoi;
     }
 
+    /**
+     * Xóa quy đổi đơn vị theo mã thuốc từ database
+     * @param ma mã thuốc
+     * @return true nếu xóa thành công, false nếu xóa thất bại
+     */
     public boolean xoaQuyDoiTheoMaThuoc(String ma) {
         String sql = "DELETE FROM QuyDoiDonVi WHERE MaThuoc = ?";
         Connection con = ConnectDB.getConnection();

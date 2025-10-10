@@ -20,6 +20,10 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class DonViTinh_DAO {
+    /**
+     * Lấy tất cả đơn vị tính từ database
+     * @return danh sách đơn vị tính
+     */
     public ArrayList<DonViTinh> getAllDonViTinh() {
         ArrayList<DonViTinh> listDVT = new ArrayList<>();
         String sql = "SELECT * FROM DonViTinh";
@@ -39,6 +43,11 @@ public class DonViTinh_DAO {
         return listDVT;
     }
 
+    /**
+     * Lấy đơn vị tính theo tên
+     * @param ten tên đơn vị tính
+     * @return đơn vị tính
+     */
     public DonViTinh getDVTTheoTen(String ten) {
         DonViTinh dvt = null;
         String sql = "SELECT * FROM DonViTinh WHERE TenDVT = ?";
@@ -57,6 +66,11 @@ public class DonViTinh_DAO {
         }
         return dvt;
     }
+    /**
+     * Lấy đơn vị tính theo mã
+     * @param ma mã đơn vị tính
+     * @return đơn vị tính
+     */
     public DonViTinh getDVTTheoMa(int ma) {
         DonViTinh dvt = null;
         String sql = "SELECT * FROM DonViTinh WHERE MaDVT = ?";

@@ -5,6 +5,9 @@
 
 package com.antam.app.controller;
 
+import com.antam.app.controller.dialog.DoiThuocController;
+import com.antam.app.controller.dialog.TraThuocController;
+import com.antam.app.controller.dialog.XoaSuaThuocController;
 import com.antam.app.dao.HoaDon_DAO;
 import com.antam.app.entity.HoaDon;
 import com.antam.app.gui.GiaoDienCuaSo;
@@ -43,9 +46,9 @@ public class HoaDonController {
     @FXML
     private Button btnAddInvoice; // Nút tạo hóa đơn mới
     @FXML
-    private Button btnReturnMedicine; // Nút trả thuốc
+    private Button btnReturnMedicine; // Nút doi thuốc
     @FXML
-    private Button btnExchangeMedicine; // Nút đổi thuốc
+    private Button btnExchangeMedicine; // Nút trả thuốc
 
     // TableView và các cột hiển thị danh sách hóa đơn
     @FXML
@@ -93,11 +96,52 @@ public class HoaDonController {
         this.btnAddInvoice.setOnAction((e) -> {
             (new GiaoDienCuaSo("themhoadon")).showAndWait();
         });
-        this.btnReturnMedicine.setOnAction((e) -> {
-            (new GiaoDienCuaSo("trathuoc")).showAndWait();
-        });
+        // duong
         this.btnExchangeMedicine.setOnAction((e) -> {
-            (new GiaoDienCuaSo("doithuoc")).showAndWait();
+            HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
+            if (selectedHoaDon == null) {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn hóa đơn");
+                alert.setContentText("Vui lòng chọn ít nhất một hóa đơn.");
+                alert.showAndWait();
+                return;
+            }else{
+                GiaoDienCuaSo dialog = new GiaoDienCuaSo("doithuoc");
+                // Lấy controller và set Thuoc vào
+                DoiThuocController controller = dialog.getController();
+                controller.setHoaDon(selectedHoaDon);
+                controller.showData(selectedHoaDon);
+                dialog.showAndWait();
+                HoaDon_DAO hoaDonDAO = new HoaDon_DAO();
+                ObservableList<HoaDon> hoaDonList = FXCollections.observableArrayList(hoaDonDAO.getAllHoaDon());
+                table_invoice.refresh();
+                table_invoice.setItems(hoaDonList);
+            }
+        });
+        // duong
+        this.btnReturnMedicine.setOnAction((e) -> {
+            HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
+            if (selectedHoaDon == null) {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn hóa đơn");
+                alert.setContentText("Vui lòng chọn ít nhất một hóa đơn.");
+                alert.showAndWait();
+                return;
+            }else{
+
+                GiaoDienCuaSo dialog = new GiaoDienCuaSo("trathuoc");
+                // Lấy controller và set Thuoc vào
+                TraThuocController controller = dialog.getController();
+                controller.setHoaDon(selectedHoaDon);
+                controller.showData(selectedHoaDon);
+                dialog.showAndWait();
+                HoaDon_DAO hoaDonDAO = new HoaDon_DAO();
+                ObservableList<HoaDon> hoaDonList = FXCollections.observableArrayList(hoaDonDAO.getAllHoaDon());
+                table_invoice.refresh();
+                table_invoice.setItems(hoaDonList);
+            }
         });
 
         // Thiết lập cách lấy dữ liệu cho từng cột TableView

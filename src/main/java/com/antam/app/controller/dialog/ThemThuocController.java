@@ -50,12 +50,13 @@ public class ThemThuocController {
     }
 
     public void initialize() {
+        // them button vao dialog
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
         this.dialogPane.getButtonTypes().add(cancelButton);
         this.dialogPane.getButtonTypes().add(applyButton);
 
-
+        // su kien button luu
         Button applyBtn = (Button) dialogPane.lookupButton(applyButton);
 
         applyBtn.addEventFilter(ActionEvent.ACTION, event -> {
@@ -89,14 +90,14 @@ public class ThemThuocController {
                     if (donVi1 != 0 && title1 != null && unit1 != null) {
                         QuyDoi qd1 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title1), dvt_dao.getDVTTheoTen(unit1), donVi1);
                         if (quyDoi_dao.themQuyDoi(qd1) == false) {
-                            notification_addThuoc.setText("Thêm thuốc thất bại!");
+                            notification_addThuoc.setText("Thêm quy đổi thất bại!");
                             event.consume();
                         }
                     }
                     if (donVi2 != 0 && title2 != null && unit2 != null) {
                         QuyDoi qd2 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title2), dvt_dao.getDVTTheoTen(unit2), donVi2);
                         if (quyDoi_dao.themQuyDoi(qd2) == false) {
-                            notification_addThuoc.setText("Thêm thuốc thất bại!");
+                            notification_addThuoc.setText("Thêm quy đổi thất bại!");
                             event.consume();
                         }
                     }
@@ -109,10 +110,11 @@ public class ThemThuocController {
 
         });
 
+        // ket noi database
         try { Connection con = ConnectDB.getInstance().connect(); }
         catch (SQLException e) { throw new RuntimeException(e); }
 
-        // su kien up down spinner
+        // su kien up down spinner gia goc
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryGiaGoc =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
@@ -123,7 +125,7 @@ public class ThemThuocController {
 
         spAddGiaGoc.setValueFactory(valueFactoryGiaGoc);
         spAddGiaGoc.setEditable(true);
-
+        // su kien up down spinner gia ban
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryGiaBan =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
@@ -133,7 +135,7 @@ public class ThemThuocController {
                 );
         spAddGiaBan.setValueFactory(valueFactoryGiaBan);
         spAddGiaBan.setEditable(true);
-
+        // su kien up down spinner thue
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryThue =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
@@ -261,7 +263,7 @@ public class ThemThuocController {
         txtAddGiaByDV.setText(cbAddDVCS.getValue().toString());
     }
 
-    // Cat chuoi
+    // Cat chuoi lay don vi
     public static String extractUnit(String input) {
         if (input == null) return null;
 
@@ -282,9 +284,9 @@ public class ThemThuocController {
         txtAddGiaByDV.setText(donViCoSo);
         switch (donViCoSo) {
             case "Viên":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spAddQuyDoi2.setEditable(true);
                 txtAddQuyDoi1.setText("Vỉ");
                 txtAddTitleQuyDoi1.setText("1 Hộp =");
@@ -292,7 +294,7 @@ public class ThemThuocController {
                 txtAddTitleQuyDoi2.setText("1 Vỉ =");
                 break;
             case "Vỉ":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spAddQuyDoi1.setEditable(true);
                 spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
                 spAddQuyDoi2.setEditable(false);
@@ -322,9 +324,9 @@ public class ThemThuocController {
                 txtAddTitleQuyDoi2.setText("");
                 break;
             case "Lọ":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1, 1));
+                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
                 spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spAddQuyDoi2.setEditable(true);
                 txtAddQuyDoi1.setText("Lọ");
                 txtAddTitleQuyDoi1.setText("1 Hộp =");
@@ -332,7 +334,7 @@ public class ThemThuocController {
                 txtAddTitleQuyDoi2.setText("1 Lọ =");
                 break;
             case "Ống":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1, 1));
+                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
                 spAddQuyDoi1.setEditable(true);
                 spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
                 spAddQuyDoi2.setEditable(false);
@@ -358,6 +360,11 @@ public class ThemThuocController {
     }
     // Ham quy doi so luong thuoc ve don vi co so
     public static int quyDoiVeCoSo(String maThuoc, int soLuong, int donViHienTai) {
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         Map<String, List<QuyDoi>> map = quyDoi_dao.getAllQuyDoi();
         List<QuyDoi> list = map.get(maThuoc);
         int soLuongCoSo = soLuong;
