@@ -158,7 +158,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <ComboBox prefHeight="40.0" prefWidth="200.0" promptText="Chọn nhân viên nhập" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                                          <ComboBox fx:id="cbNhanVienNhap" prefHeight="40.0" prefWidth="200.0" promptText="Chọn nhân viên nhập" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                                        </children>
                                     </VBox>
                                     <VBox spacing="5.0">
@@ -168,7 +168,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <DatePicker prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                                          <DatePicker fx:id="dpTuNgay" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                                        </children>
                                     </VBox>
                                     <VBox spacing="5.0">
@@ -178,7 +178,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <DatePicker prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                                          <DatePicker fx:id="dpDenNgay" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                                        </children>
                                     </VBox>
                                     <VBox spacing="5.0">
@@ -188,14 +188,14 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <ComboBox prefHeight="40.0" prefWidth="200.0" promptText="Chọn khoảng giá" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                                          <ComboBox fx:id="cbKhoangGia" prefHeight="40.0" prefWidth="200.0" promptText="Chọn khoảng giá" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                                        </children>
                                     </VBox>
                                  </children>
                               </FlowPane>
                               <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="888.0" spacing="10.0">
                                  <children>
-                                    <TextField maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="300.0" promptText="Tìm kiếm theo mã phiếu hoặc nhà cung cấp" style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;">
+                                    <TextField fx:id="tfTimPhieuNhap" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="300.0" promptText="Tìm kiếm theo mã phiếu hoặc nhà cung cấp" style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;">
                                        <padding>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
@@ -207,14 +207,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <TableView maxWidth="1.7976931348623157E308" stylesheets="@../../styles/dashboard_style.css">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="Mã phiếu" />
-                                    <TableColumn prefWidth="75.0" text="Ngày nhập" />
-                                    <TableColumn prefWidth="75.0" text="Nhà cung cấp" />
-                                    <TableColumn prefWidth="75.0" text="Tổng tiền" />
-                                    <TableColumn prefWidth="75.0" text="Người nhập" />
-                                 </columns>
+                              <TableView fx:id="tbPhieuNhap" maxWidth="1.7976931348623157E308" stylesheets="@../../styles/dashboard_style.css">
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
