@@ -426,7 +426,8 @@ public class ThemHoaDonController {
                     taxPercent = selectedThuoc.getThue();
                 }
                 double tamTinh = quantity * price;
-                double thue = tamTinh * taxPercent / 100.0;
+                // Tính thuế VAT: giá chưa bao gồm thuế, thuế = thành tiền × tỷ lệ thuế
+                double thue = tamTinh * taxPercent;
                 tongTamTinh += tamTinh;
                 tongThue += thue;
             }

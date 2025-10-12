@@ -383,15 +383,9 @@ public class HoaDonController {
                 }
             }
         });
-        // Bỏ chọn khi click 1 lần vào dòng đã chọn (chỉ double click mới bỏ chọn)
+        // Chỉ gán duy nhất một handler cho sự kiện click
         this.table_invoice.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                int selectedIndex = table_invoice.getSelectionModel().getSelectedIndex();
-                if (selectedIndex >= 0 && table_invoice.getFocusModel().getFocusedIndex() == selectedIndex) {
-                    table_invoice.getSelectionModel().clearSelection();
-                }
-            }
-            // Sự kiện double click mở chi tiết hóa đơn
+            // Nếu double click và có dòng được chọn thì mở dialog chi tiết hóa đơn
             if (event.getClickCount() == 2 && table_invoice.getSelectionModel().getSelectedItem() != null) {
                 HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
                 try {

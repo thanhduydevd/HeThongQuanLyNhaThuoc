@@ -51,6 +51,9 @@ public class ChiTietHoaDon {
     public ChiTietThuoc getMaCTT() {
         return maCTT;
     }
+    public void setMaCTT(ChiTietThuoc maCTT) {
+        this.maCTT = maCTT;
+    }
 
 
     public int getSoLuong() {
