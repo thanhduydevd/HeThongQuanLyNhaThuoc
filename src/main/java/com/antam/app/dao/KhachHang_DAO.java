@@ -84,4 +84,11 @@ public class KhachHang_DAO {
         }
         return kh;
     }
+
+    /**
+     * Trả về danh sách tất cả khách hàng trong CSDL
+     */
+    public ArrayList<KhachHang> getAllKhachHang() {
+        return loadBanFromDB();
+    }
 }

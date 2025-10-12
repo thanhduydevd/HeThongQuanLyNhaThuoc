@@ -30,6 +30,7 @@ public class ChiTietHoaDon_DAO {
         ArrayList<ChiTietHoaDon> ds = new ArrayList<ChiTietHoaDon>();
         String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ?";
         Connection con = ConnectDB.getConnection();
+        ChiTietThuoc_DAO chiTietThuocDAO = new ChiTietThuoc_DAO();
         try{
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, maHD);
@@ -41,7 +42,9 @@ public class ChiTietHoaDon_DAO {
                 int maDonViTinh = rs.getInt("MaDVT");
                 String tinhTrang = rs.getString("TinhTrang");
                 double thanhTien = rs.getDouble("ThanhTien");
-                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), new ChiTietThuoc(maChiTietThuoc), soLuong, new DonViTinh(maDonViTinh), tinhTrang, thanhTien);
+                // Lấy đầy đủ thông tin ChiTietThuoc (bao gồm cả Thuoc)
+                ChiTietThuoc chiTietThuoc = chiTietThuocDAO.getChiTietThuoc(maChiTietThuoc);
+                ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), chiTietThuoc, soLuong, new DonViTinh(maDonViTinh), tinhTrang, thanhTien);
                 ds.add(cthd);
             }
         } catch (Exception e) {

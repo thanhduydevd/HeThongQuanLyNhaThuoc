@@ -39,6 +39,14 @@ public class ConnectDB {
             }
     }
     public static Connection getConnection() {
+        try {
+            if (con == null || con.isClosed()) {
+                // Tự động mở lại kết nối nếu chưa có hoặc đã đóng
+                ConnectDB.getInstance().connect();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return con;
     }
 }

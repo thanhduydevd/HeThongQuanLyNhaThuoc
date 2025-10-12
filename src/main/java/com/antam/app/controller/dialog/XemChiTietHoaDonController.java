@@ -11,6 +11,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import com.antam.app.entity.ChiTietHoaDon;
 import com.antam.app.dao.ChiTietHoaDon_DAO;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class XemChiTietHoaDonController {
     @FXML
@@ -48,13 +50,51 @@ public class XemChiTietHoaDonController {
     @FXML
     private TableColumn<ChiTietHoaDon, String> dvtCol;
 
+    // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
+    private static final DecimalFormat VND_FORMAT;
+    static {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        VND_FORMAT = new DecimalFormat("#,##0", symbols);
+    }
+
     @FXML
     public void initialize() {
-        //tenThuocCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
-//            cellData.getValue().get().getTenThuoc()));
+        tenThuocCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getMaCTT().getMaThuoc().getTenThuoc()
+            )
+        );
         soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
-        donGiaCol.setCellValueFactory(new PropertyValueFactory<>("giaBan"));
+        donGiaCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleDoubleProperty(
+                cellData.getValue().getMaCTT().getMaThuoc().getGiaBan()
+            ).asObject()
+        );
+        donGiaCol.setCellFactory(col -> new javafx.scene.control.TableCell<ChiTietHoaDon, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(VND_FORMAT.format(item) + "đ");
+                }
+            }
+        });
         thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
+        thanhTienCol.setCellFactory(col -> new javafx.scene.control.TableCell<ChiTietHoaDon, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(VND_FORMAT.format(item) + "đ");
+                }
+            }
+        });
         trangThaiCol.setCellValueFactory(new PropertyValueFactory<>("tinhTrang"));
         dvtCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
             cellData.getValue().getMaDVT().getTenDVT()));
@@ -82,15 +122,15 @@ public class XemChiTietHoaDonController {
         double tongTien = hoaDon.getTongTien();
         double vat = tongTien * 0.1; // Giả sử VAT 10%
         double subTotal = tongTien - vat;
-        txtTotal.setText(String.format("%.0f₫", tongTien));
-        txtVAT.setText(String.format("%.0f₫", vat));
-        txtSubTotal.setText(String.format("%.0f₫", subTotal));
+        txtTotal.setText(VND_FORMAT.format(tongTien) + "đ");
+        txtVAT.setText(VND_FORMAT.format(vat) + "đ");
+        txtSubTotal.setText(VND_FORMAT.format(subTotal) + "đ");
         txtPromotion.setText(hoaDon.getMaKM() != null ? hoaDon.getMaKM().getMaKM() : "Không có");
 
         // Lấy danh sách chi tiết hóa đơn từ DAO
         ChiTietHoaDon_DAO cthdDAO = new ChiTietHoaDon_DAO();
         ObservableList<ChiTietHoaDon> data = FXCollections.observableArrayList(
-//            cthdDAO.getChiTietHoaDonByMaHD(hoaDon.getMaHD())
+            cthdDAO.getAllChiTietHoaDonTheoMaHD(hoaDon.getMaHD())
         );
         tableListsThuoc.setItems(data);
     }

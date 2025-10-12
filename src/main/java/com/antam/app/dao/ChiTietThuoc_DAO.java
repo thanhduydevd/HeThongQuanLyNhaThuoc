@@ -183,4 +183,26 @@ public class ChiTietThuoc_DAO {
         }
         return listChiTietThuoc;
     }
+
+    /**
+     * Lấy tổng số lượng tồn kho (TonKho) của một mã thuốc
+     * @param maThuoc mã thuốc
+     * @return tổng số lượng tồn kho
+     */
+    public int getTongTonKhoTheoMaThuoc(String maThuoc) {
+        int tong = 0;
+        Connection con = ConnectDB.getConnection();
+        String sql = "SELECT SUM(TonKho) AS TongTonKho FROM ChiTietThuoc WHERE MaThuoc = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maThuoc);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                tong = rs.getInt("TongTonKho");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tong;
+    }
 }

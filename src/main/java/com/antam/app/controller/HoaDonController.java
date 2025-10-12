@@ -31,6 +31,8 @@ import com.antam.app.controller.dialog.XemChiTietHoaDonController;
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -82,6 +84,15 @@ public class HoaDonController {
     @FXML
     private DatePicker cbEndDate;   // DatePicker chọn ngày kết thúc
 
+    // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
+    private static final DecimalFormat VND_FORMAT;
+    static {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        VND_FORMAT = new DecimalFormat("#,##0", symbols);
+    }
+
     public HoaDonController() {
     }
 
@@ -94,7 +105,29 @@ public class HoaDonController {
     public void initialize() {
         // Gán sự kiện cho các nút chức năng
         this.btnAddInvoice.setOnAction((e) -> {
-            (new GiaoDienCuaSo("themhoadon")).showAndWait();
+            GiaoDienCuaSo dialog = new GiaoDienCuaSo("themhoadon");
+            dialog.showAndWait();
+            // Sau khi dialog đóng, cập nhật lại bảng và chọn/tô màu dòng mới
+            HoaDon_DAO hoaDonDAO = new HoaDon_DAO();
+            ObservableList<HoaDon> hoaDonList = FXCollections.observableArrayList(hoaDonDAO.getAllHoaDon());
+            table_invoice.setItems(hoaDonList);
+            // Tìm hoá đơn mới nhất (theo mã lớn nhất)
+            HoaDon newest = null;
+            int maxNum = -1;
+            for (HoaDon hd : hoaDonList) {
+                String ma = hd.getMaHD();
+                if (ma != null && ma.matches("HD\\d+")) {
+                    int num = Integer.parseInt(ma.substring(2));
+                    if (num > maxNum) {
+                        maxNum = num;
+                        newest = hd;
+                    }
+                }
+            }
+            if (newest != null) {
+                table_invoice.getSelectionModel().select(newest);
+                table_invoice.scrollTo(newest);
+            }
         });
         // duong
         this.btnExchangeMedicine.setOnAction((e) -> {
@@ -146,15 +179,23 @@ public class HoaDonController {
 
         // Thiết lập cách lấy dữ liệu cho từng cột TableView
 
-
-
-
         colMaHD.setCellValueFactory(new PropertyValueFactory<>("MaHD"));
         colNgayTao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
         colKhachHang.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKH().getMaKH()));
         colNhanVien.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaNV().getMaNV()));
         colKhuyenMai.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKM() != null ? cellData.getValue().getMaKM().getMaKM() : ""));
         colTongTien.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTongTien()).asObject());
+        colTongTien.setCellFactory(column -> new javafx.scene.control.TableCell<HoaDon, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(VND_FORMAT.format(item) + "đ");
+                }
+            }
+        });
         colTrangThai.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().isDeleteAt() ? "Đã huỷ" : "Hoạt động"));
 
         // Load dữ liệu hóa đơn từ DB lên bảng
@@ -217,7 +258,7 @@ public class HoaDonController {
             if (allNV && allStatus) {
                 baseList = new ArrayList<>(hoaDonDAO1.getAllHoaDon());
             } else if (!allNV && allStatus) {
-                baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByMaHd(selectedNV.getMaNV()));
+                baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByMaNV(selectedNV.getMaNV()));
             } else if (allNV && !allStatus) {
                 baseList = new ArrayList<>(hoaDonDAO1.searchHoaDonByStatus(selectedStatus));
             } else {
@@ -328,6 +369,51 @@ public class HoaDonController {
             } else {
                 ObservableList<HoaDon> searchResult = FXCollections.observableArrayList(hoaDonDAO.searchHoaDonByMaHd(maHd));
                 table_invoice.setItems(searchResult);
+            }
+        });
+        // Đặt row factory để tô màu dòng được chọn
+        this.table_invoice.setRowFactory(tv -> new javafx.scene.control.TableRow<>() {
+            @Override
+            protected void updateItem(HoaDon item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null && isSelected()) {
+                    setStyle("-fx-background-color: #d1fae5;"); // Màu xanh nhạt
+                } else {
+                    setStyle("");
+                }
+            }
+        });
+        // Bỏ chọn khi click 1 lần vào dòng đã chọn (chỉ double click mới bỏ chọn)
+        this.table_invoice.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                int selectedIndex = table_invoice.getSelectionModel().getSelectedIndex();
+                if (selectedIndex >= 0 && table_invoice.getFocusModel().getFocusedIndex() == selectedIndex) {
+                    table_invoice.getSelectionModel().clearSelection();
+                }
+            }
+            // Sự kiện double click mở chi tiết hóa đơn
+            if (event.getClickCount() == 2 && table_invoice.getSelectionModel().getSelectedItem() != null) {
+                HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/antam/app/views/sales/dialog/view_invoice.fxml"));
+                    Parent root = loader.load();
+                    Object controllerObj = loader.getController();
+                    if (controllerObj == null) {
+                        System.err.println("[DEBUG] Controller is null after loading FXML! Check fx:controller and FXML path.");
+                    } else {
+                        // Truyền hóa đơn được chọn sang dialog chi tiết
+                        XemChiTietHoaDonController controller = (XemChiTietHoaDonController) controllerObj;
+                        controller.setInvoice(selectedHoaDon);
+                    }
+                    // Hiển thị dialog chi tiết hóa đơn
+                    Stage dialogStage = new Stage();
+                    dialogStage.initModality(Modality.APPLICATION_MODAL);
+                    dialogStage.setTitle("Chi tiết hóa đơn");
+                    dialogStage.setScene(new Scene(root));
+                    dialogStage.showAndWait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

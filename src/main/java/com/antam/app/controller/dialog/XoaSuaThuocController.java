@@ -189,7 +189,6 @@ public class XoaSuaThuocController {
                 String unit2 = txtDUQuyDoi2.getText();
                 int donVi1 = spDUQuyDoi1.getValue();
                 int donVi2 = spDUQuyDoi2.getValue();
-
                 Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
                         dangDieuChe, donViCoSo, ke);
                 boolean success = thuoc_dao.capNhatThuoc(thuoc);
