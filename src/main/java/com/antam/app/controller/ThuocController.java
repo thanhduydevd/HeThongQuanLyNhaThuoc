@@ -49,10 +49,11 @@ public class ThuocController {
         // Nút thêm thuốc
         btnAddMedicine.setOnAction(e -> {
             new GiaoDienCuaSo("themthuoc").showAndWait();
-            updateTable();
+            updateTableThuoc();
             loadTonKho();
         });
 
+        // Nút xóa sửa thuốc
         btnXoaSua.setOnAction(e ->{
             Thuoc selectedThuoc = tableThuoc.getSelectionModel().getSelectedItem();
 
@@ -70,11 +71,12 @@ public class ThuocController {
                 controller.showData(selectedThuoc);
                 // Show dialog
                 dialog.showAndWait();
-                updateTable();
+                updateTableThuoc();
                 loadTonKho();
             }
         });
 
+        // Load tồn kho
         loadTonKho();
 
         // Kết nối DB
@@ -168,15 +170,24 @@ public class ThuocController {
         cbTonKho.getSelectionModel().selectFirst();
     }
 
+    // ham update table
+    public void updateTableThuoc(){
+        thuocList.clear();
+        tableThuoc.refresh();
+        thuoc_dao = new Thuoc_DAO();
+        arrayThuoc = thuoc_dao.getAllThuoc();
+        thuocList.addAll(arrayThuoc);
+        tableThuoc.setItems(thuocList);
+    }
 
     // ham loc va tim kiem thuoc
     public void filterAndSearchThuoc() {
-        String selectedKe = cbKe.getSelectionModel().getSelectedItem().getTenKe();
-        String selectedDDC = cbDangDieuChe.getSelectionModel().getSelectedItem().getTenDDC();
-        String selectedTonKho = (String) cbTonKho.getSelectionModel().getSelectedItem();
+        String selectedKe = cbKe.getValue().getTenKe();
+        String selectedDDC = cbDangDieuChe.getValue().getTenDDC();
+        String selectedTonKho =  cbTonKho.getValue();
         String searchText = searchNameThuoc.getText().trim().toLowerCase();
 
-        ObservableList<Thuoc> filteredList = FXCollections.observableArrayList();
+        ArrayList<Thuoc> filteredList = new ArrayList<>();
 
         for (Thuoc p : arrayThuoc) { // luôn thao tác trên danh sách gốc
             boolean match = true;
@@ -205,15 +216,7 @@ public class ThuocController {
         tableThuoc.setItems(thuocList);
     }
 
-    // ham update Table
-    public void updateTable(){
-        ArrayList<Thuoc> listThuoc = thuoc_dao.getAllThuoc();
-        thuocList.clear();
-        tableThuoc.refresh();
-        thuocList.setAll(listThuoc);
-        tableThuoc.setItems(thuocList);
-    }
-
+    // ham load ton kho
     public void loadTonKho() {
         try {
             Connection con = ConnectDB.getInstance().connect();
@@ -230,7 +233,16 @@ public class ThuocController {
         }
     }
 
+    // ham xoa trang thai tim kiem
+    public void clearSearchAndFilter() {
+        cbKe.getSelectionModel().selectFirst();
+        cbDangDieuChe.getSelectionModel().selectFirst();
+        cbTonKho.getSelectionModel().selectFirst();
+        searchNameThuoc.clear();
+        updateTableThuoc();
+    }
 
+    // ham tinh ton kho
     public int TinhTonKho(Thuoc thuoc) {
         return mapTonKho.getOrDefault(thuoc.getMaThuoc(), 0);
     }

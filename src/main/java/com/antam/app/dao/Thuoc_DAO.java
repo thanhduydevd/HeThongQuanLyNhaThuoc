@@ -23,6 +23,10 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class Thuoc_DAO {
+    /**
+     * Phương thức thao tác với bảng Thuoc trong CSDL
+     * return: ArrayList<Thuoc> - danh sách thuốc
+     */
     public ArrayList<Thuoc> getAllThuoc() {
         ArrayList<Thuoc> listThuoc = new ArrayList<>();
         String sql = """
@@ -65,6 +69,11 @@ public class Thuoc_DAO {
         return listThuoc;
     }
 
+    /**
+     * Lấy thông tin thuốc theo mã thuốc
+     * @param ma
+     * @return Thuoc
+     */
     public Thuoc getThuocTheoMa(String ma) {
         Thuoc t = null;
         String sql = """
@@ -106,6 +115,11 @@ public class Thuoc_DAO {
         return t;
     }
 
+    /**
+     * Thêm thuốc mới vào CSDL
+     * @param t
+     * @return boolean
+     */
     public boolean themThuoc(Thuoc t) {
         String sql = "INSERT INTO Thuoc (MaThuoc, TenThuoc, HamLuong, GiaBan, GiaGoc, Thue, DangDieuChe, MaDVTCoso, MaKe, deleteAt) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,0)";
@@ -127,6 +141,12 @@ public class Thuoc_DAO {
         }
         return false;
     }
+
+    /**
+     * Cập nhật thông tin thuốc
+     * @param t
+     * @return boolean
+     */
     public boolean capNhatThuoc(Thuoc t) {
         String sql = "UPDATE Thuoc SET TenThuoc = ?, HamLuong = ?, GiaBan = ?, GiaGoc = ?, Thue = ?, DangDieuChe = ?, MaDVTCoso = ?, MaKe = ?, DeleteAt = ? WHERE MaThuoc = ?";
         try {
@@ -148,6 +168,12 @@ public class Thuoc_DAO {
         }
         return false;
     }
+
+    /**
+     * Xóa thuốc theo mã (cập nhật DeleteAt = 1)
+     * @param ma
+     * @return boolean
+     */
     public boolean xoaThuocTheoMa(String ma) {
         String sql = "UPDATE Thuoc SET DeleteAt = 1 WHERE MaThuoc = ?";
         Connection con = ConnectDB.getConnection();

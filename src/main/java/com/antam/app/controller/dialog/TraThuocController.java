@@ -22,7 +22,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
 
 public class TraThuocController {
     @FXML
@@ -53,6 +57,7 @@ public class TraThuocController {
         return hoaDon;
     }
 
+    // Hiển thị thông tin hóa đơn và chi tiết hóa đơn
     public void showData(HoaDon hoaDon) {
         HoaDon hd = hoaDon_dao.getHoaDonTheoMa(hoaDon.getMaHD());
         ArrayList<ChiTietHoaDon> chiTietHoaDons = chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHD(hoaDon.getMaHD());
@@ -62,16 +67,21 @@ public class TraThuocController {
             HBox hBox = renderChiTietHoaDon(ct);
             vbListChiTietHoaDon.getChildren().add(hBox);
         }
+        txtTongTienTra.setText("0.0 đ");
     }
 
     public void initialize() {
+        // Thêm nút Huỷ và Xác nhận trả thuốc
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Xác nhận trả thuốc", ButtonData.APPLY);
         this.dialogPane.getButtonTypes().add(cancelButton);
         this.dialogPane.getButtonTypes().add(applyButton);
 
+        // Kết nối DB
+        try { Connection con = ConnectDB.getInstance().connect(); }
+        catch (SQLException e) { throw new RuntimeException(e); }
+        // Xử lý sự kiện khi nhấn nút Xác nhận trả thuốc
         Button applyBtn = (Button) dialogPane.lookupButton(applyButton);
-
         applyBtn.addEventFilter(ActionEvent.ACTION, event -> {
             if (selectedItems.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -81,8 +91,58 @@ public class TraThuocController {
                 alert.showAndWait();
                 event.consume();
             } else {
+                try {
+                    Connection con = ConnectDB.getInstance().connect();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                String lyDoTra = cbLyDoTra.getValue();
+                if (lyDoTra == null || lyDoTra.trim().isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Cảnh báo");
+                    alert.setHeaderText("Chưa chọn lý do trả thuốc");
+                    alert.setContentText("Vui lòng chọn lý do trả trước khi xác nhận.");
+                    alert.showAndWait();
+                    event.consume();
+                    return;
+                }
+
                 for (ChiTietHoaDon ct : selectedItems) {
                     chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả");
+
+                    switch (lyDoTra) {
+                        // Các lý do KHÔNG cộng lại vào kho
+                        case "Hết hạn sử dụng":
+                        case "Bao bì bị hư hỏng":
+                        case "Thuốc lỗi / hư hỏng":
+                        case "Thuốc bị thu hồi":
+                            // Không làm gì cả
+                            break;
+
+                        // Các lý do CÓ cộng lại vào kho
+                        case "Khách hàng đổi ý":
+                        case "Nhập nhầm lô / dư":
+                        case "Sai thông tin đơn / bảo hiểm":
+                        case "Chính sách đổi / khuyến mãi":
+                            Thuoc t = thuoc_dao.getThuocTheoMa(
+                                    chiTietThuoc_dao
+                                            .getChiTietThuoc(ct.getMaCTT().getMaCTT())
+                                            .getMaThuoc()
+                                            .getMaThuoc()
+                            );
+                            chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(
+                                    ct.getMaCTT().getMaCTT(),
+                                    quyDoiVeCoSo(t.getMaThuoc(), ct.getSoLuong(), ct.getMaDVT().getMaDVT())
+                            );
+                            break;
+
+                        default:
+                            // Nếu có giá trị không nằm trong danh sách trên
+                            System.out.println("Lý do trả không hợp lệ: " + lyDoTra);
+                            break;
+                    }
+
                 }
                 if (chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD()).isEmpty()) {
                     hoaDon_dao.xoaMemHoaDon(hoaDon.getMaHD());
@@ -98,24 +158,19 @@ public class TraThuocController {
             }
         });
 
-        try{
-            Connection con = ConnectDB.getInstance().getConnection();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
         // Thêm giá trị vào combobox lý do trả
         addValueCombobox();
     }
-
+    // Tính tổng tiền trả
     public void tinhTongTienTra(){
         double tongTien = 0;
         for (ChiTietHoaDon ct : selectedItems){
             tongTien += ct.getThanhTien();
         }
-        txtTongTienTra.setText(String.valueOf(tongTien));
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        txtTongTienTra.setText(df.format(tongTien));
     }
-
+    // Thêm giá trị vào combobox lý do trả
     public void addValueCombobox(){
         ObservableList<String> lyDoList = FXCollections.observableArrayList(
                 "Hết hạn sử dụng",
@@ -129,7 +184,7 @@ public class TraThuocController {
         );
         cbLyDoTra.setItems(lyDoList);
     }
-
+    // Render chi tiết hóa đơn
     public HBox renderChiTietHoaDon(ChiTietHoaDon chiTietHoaDon) {
         HBox hBox = new HBox();
         hBox.setSpacing(20);
@@ -150,13 +205,19 @@ public class TraThuocController {
             }
             tinhTongTienTra();
         });
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         ChiTietThuoc ctt = chiTietThuoc_dao.getChiTietThuoc(chiTietHoaDon.getMaCTT().getMaCTT());
         Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
-        Text txtMaThuoc = new Text(t.getMaThuoc());
+        Text txtMaThuoc = new Text(t.getTenThuoc());
         txtMaThuoc.setStyle("-fx-font-size: 15px;");
-        Text txtSoLuong = new Text(String.valueOf(chiTietHoaDon.getSoLuong()));
+        Text txtSoLuong = new Text("SL " + chiTietHoaDon.getSoLuong());
         txtSoLuong.setStyle("-fx-font-size: 15px;");
-        Text txtDonGia = new Text(String.valueOf(chiTietHoaDon.getThanhTien()));
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        Text txtDonGia = new Text(df.format(chiTietHoaDon.getThanhTien()));
         txtDonGia.setStyle("-fx-font-size: 15px;");
         String valueBtn = "Bình thường";
         if (chiTietHoaDon.getTinhTrang().equals("Trả")) {
@@ -168,8 +229,8 @@ public class TraThuocController {
         btn.setStyle(
                 "-fx-background-color: #e0f2fe;" +
                 "-fx-text-fill: #0369a1;" +
-                "-fx-cursor: 10px;" +
-                "-fx-font: 12px;"
+                "-fx-background-radius: 10;" +
+                "-fx-font-size: 12px;"
         );
 
         hBox.getChildren().addAll(checkBox, txtMaThuoc, txtSoLuong, txtDonGia, btn);

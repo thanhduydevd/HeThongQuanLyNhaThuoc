@@ -220,6 +220,12 @@ public class NhanVien_DAO {
         return kq > 0;
     }
 
+    // duong
+    /**
+     * Lấy nhân viên theo tài khoản
+     * @param id Tài khoản
+     * @return Nhân viên
+     */
     public NhanVien getNhanVienTaiKhoan(String id) {
         NhanVien nhanVien = null;
         String sql = "SELECT * FROM NhanVien WHERE TaiKhoan = ?";
@@ -245,6 +251,7 @@ public class NhanVien_DAO {
         }
         return nhanVien;
     }
+    // duong
     // hung
     public NhanVien getNhanVien(String id) {
         NhanVien nhanVien = null;

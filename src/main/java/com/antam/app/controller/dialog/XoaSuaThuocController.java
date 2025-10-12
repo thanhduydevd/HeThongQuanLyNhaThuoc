@@ -59,6 +59,7 @@ public class XoaSuaThuocController {
     public Thuoc getThuoc(){
         return thuoc;
     }
+    // Hiển thị dữ liệu lên dialog
     public void showData(Thuoc t) {
         txtDUMaThuoc.setText(t.getMaThuoc());
         txtDUMaThuoc.setEditable(false);
@@ -102,7 +103,7 @@ public class XoaSuaThuocController {
             default:
                 max = 1000;
         }
-
+        // Reset quy đổi
         spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0,0,0,0));
         spDUQuyDoi1.setEditable(false);
         spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0,0,0,0));
@@ -153,22 +154,20 @@ public class XoaSuaThuocController {
 
     @FXML
     public void initialize() {
-
+        // ket noi csdl
         try {
             Connection con = ConnectDB.getInstance().connect();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        // them button vao dialog
         ButtonType closeButton = new ButtonType("Đóng", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType applyButtonUpdate = new ButtonType("Sửa", ButtonBar.ButtonData.APPLY);
         ButtonType applyButtonDelete = new ButtonType("Xóa", ButtonBar.ButtonData.APPLY);
-
+        // them button vao dialog
         dialogPane.getButtonTypes().addAll(applyButtonUpdate, applyButtonDelete, closeButton);
-
-
+        // su kien button sua
         Button applyBtnUpdate = (Button) dialogPane.lookupButton(applyButtonUpdate);
-
         applyBtnUpdate.addEventFilter(ActionEvent.ACTION, event -> {
             boolean isValid = validate();
 
@@ -218,9 +217,8 @@ public class XoaSuaThuocController {
             }
 
         });
-
+        // su kien button xoa
         Button applyBtnDelete = (Button) dialogPane.lookupButton(applyButtonDelete);
-
         applyBtnDelete.addEventFilter(ActionEvent.ACTION, event -> {
             boolean isValid = showConfirmDeleteDialog(getThuoc().getTenThuoc());
 
@@ -235,7 +233,7 @@ public class XoaSuaThuocController {
         });
 
 
-        // su kien up down spinner
+        // su kien up down spinner gia goc, gia ban, thue
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryGiaGoc =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
@@ -275,7 +273,7 @@ public class XoaSuaThuocController {
         eventComboBoxDVCS();
         cbDUDVCS.setOnAction(event -> eventComboBoxDVCS());
     }
-
+    // hien thi hop thoai xac nhan xoa
     public boolean showConfirmDeleteDialog(String tenThuoc) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Xác nhận xóa");
@@ -286,7 +284,7 @@ public class XoaSuaThuocController {
 
         return result.isPresent() && result.get() == ButtonType.OK;
     }
-
+    // ham kiem tra du lieu hop le
     public boolean validate(){
         String maThuoc = txtDUMaThuoc.getText();
         String tenThuoc = txtDUTenThuoc.getText();
@@ -412,9 +410,9 @@ public class XoaSuaThuocController {
         txtDUGiaByDV.setText(donViCoSo);
         switch (donViCoSo) {
             case "Viên":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spDUQuyDoi1.setEditable(true);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spDUQuyDoi2.setEditable(true);
                 txtDUQuyDoi1.setText("Vỉ");
                 txtDUTitleQuyDoi1.setText("1 Hộp =");
@@ -422,7 +420,7 @@ public class XoaSuaThuocController {
                 txtDUTitleQuyDoi2.setText("1 Vỉ =");
                 break;
             case "Vỉ":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spDUQuyDoi1.setEditable(true);
                 spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
                 spDUQuyDoi2.setEditable(false);
@@ -452,9 +450,9 @@ public class XoaSuaThuocController {
                 txtDUTitleQuyDoi2.setText("");
                 break;
             case "Lọ":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1, 1));
+                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
                 spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 10, 1));
+                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
                 spDUQuyDoi2.setEditable(false);
                 txtDUQuyDoi1.setText("Lọ");
                 txtDUTitleQuyDoi1.setText("1 Hộp =");
@@ -462,7 +460,7 @@ public class XoaSuaThuocController {
                 txtDUTitleQuyDoi2.setText("1 Lọ =");
                 break;
             case "Ống":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1, 1));
+                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
                 spDUQuyDoi1.setEditable(false);
                 spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
                 spDUQuyDoi2.setEditable(false);

@@ -21,6 +21,11 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class ChiTietHoaDon_DAO {
+    /**
+     * Lấy tất cả chi tiết hóa đơn theo mã hóa đơn
+     * @param maHD mã hóa đơn
+     * @return danh sách chi tiết hóa đơn
+     */
     public ArrayList<ChiTietHoaDon> getAllChiTietHoaDonTheoMaHD(String maHD){
         ArrayList<ChiTietHoaDon> ds = new ArrayList<ChiTietHoaDon>();
         String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ?";
@@ -45,6 +50,11 @@ public class ChiTietHoaDon_DAO {
         return ds;
     }
 
+    /**
+     * Lấy tất cả chi tiết hóa đơn theo mã hóa đơn còn trạng thái bán
+     * @param maHD mã hóa đơn
+     * @return danh sách chi tiết hóa đơn
+     */
     public ArrayList<ChiTietHoaDon> getAllChiTietHoaDonTheoMaHDConBan(String maHD){
         ArrayList<ChiTietHoaDon> ds = new ArrayList<ChiTietHoaDon>();
         String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ? AND TinhTrang = 'Bán'";
@@ -69,6 +79,13 @@ public class ChiTietHoaDon_DAO {
         return ds;
     }
 
+    /**
+     * Xóa mềm chi tiết hóa đơn
+     * @param maHD mã hóa đơn
+     * @param maCTT mã chi tiết thuốc
+     * @param tinhTrang trạng thái mới
+     * @return true nếu xóa thành công, false nếu xóa thất bại
+     */
     public boolean xoaMemChiTietHoaDon(String maHD, int maCTT, String tinhTrang){
         String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaCTT = ?";
         Connection con = ConnectDB.getConnection();
@@ -83,6 +100,11 @@ public class ChiTietHoaDon_DAO {
         }
         return false;
     }
+    /**
+     * Thêm chi tiết hóa đơn
+     * @param cthd chi tiết hóa đơn
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
     public boolean themChiTietHoaDon(ChiTietHoaDon cthd){
         String sql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
         Connection con = ConnectDB.getConnection();

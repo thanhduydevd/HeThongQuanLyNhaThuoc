@@ -149,18 +149,7 @@ public class NhanVien {
 
     @Override
     public String toString() {
-        return "NhanVien{" +
-                "MaNV='" + MaNV + '\'' +
-                ", hoTen='" + hoTen + '\'' +
-                ", soDienThoai='" + soDienThoai + '\'' +
-                ", email='" + email + '\'' +
-                ", diaChi='" + diaChi + '\'' +
-                ", luongCoBan=" + luongCoBan +
-                ", taiKhoan='" + taiKhoan + '\'' +
-                ", matKhau='" + matKhau + '\'' +
-                ", deleteAt=" + deleteAt +
-                ", isQuanLy=" + isQuanLy +
-                '}';
+        return MaNV;
     }
 
     @Override

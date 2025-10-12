@@ -27,9 +27,14 @@ import java.util.Date;
  * version: 1.0
  */
 public class HoaDon_DAO {
+    // duong
+    /**
+     * Lấy tất cả hóa đơn từ database
+     * @return danh sách hóa đơn
+     */
     public ArrayList<HoaDon> getAllHoaDon() {
         ArrayList<HoaDon> dsHoaDon = new ArrayList<>();
-        String sql = "SELECT * FROM HoaDon WHERE DeleteAt = 0";
+        String sql = "SELECT * FROM HoaDon";
         try {
             Connection con = ConnectDB.getConnection();
             if (con == null || con.isClosed()) {
@@ -66,6 +71,11 @@ public class HoaDon_DAO {
         return dsHoaDon;
     }
 
+    /**
+     * Thêm hóa đơn vào database
+     * @param maHD hóa đơn cần thêm
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
     public HoaDon getHoaDonTheoMa(String maHD){
         HoaDon hd = new HoaDon(maHD);
         String sql = "SELECT * FROM HoaDon WHERE MaHD = ?";
@@ -87,6 +97,13 @@ public class HoaDon_DAO {
         }
         return hd;
     }
+
+    /**
+     * Cập nhật tổng tiền của hóa đơn
+     * @param maHD mã hóa đơn cần cập nhật
+     * @param tongTien tổng tiền mới
+     * @return true nếu cập nhật thành công, false nếu cập nhật thất bại
+     */
     public boolean CapNhatTongTienHoaDon(String maHD, double tongTien){
         String sql = "UPDATE HoaDon SET TongTien = ? WHERE MaHD = ?";
         Connection con = ConnectDB.getConnection();
@@ -101,12 +118,17 @@ public class HoaDon_DAO {
         }
         return false;
     }
+    /**
+     * Thêm hóa đơn vào database
+     * @param maHD hóa đơn cần thêm
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
     public boolean xoaMemHoaDon(String maHD){
         String sql = "UPDATE HoaDon SET DeleteAt = 1 WHERE MaHD = ?";
         Connection con = ConnectDB.getConnection();
         try{
             java.sql.PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(2, maHD);
+            statement.setString(1, maHD);
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -114,6 +136,7 @@ public class HoaDon_DAO {
         }
         return false;
     }
+    // duong
 
     //hung
     /**

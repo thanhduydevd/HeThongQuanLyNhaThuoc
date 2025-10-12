@@ -19,6 +19,10 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class Ke_DAO {
+    /**
+     * Lấy tất cả kệ chưa bị xóa
+     * @return Danh sách kệ
+     */
     public ArrayList<Ke> getAllKe() {
         ArrayList<Ke> listKe = new ArrayList<>();
         String sql = "SELECT * FROM KeThuoc WHERE DeleteAt = 0";
@@ -40,6 +44,11 @@ public class Ke_DAO {
         return listKe;
     }
 
+    /**
+     * Lấy kệ theo mã
+     * @param ma Mã kệ
+     * @return Kệ
+     */
     public Ke getKeTheoMa(String ma) {
         Ke ke = null;
         String sql = "SELECT * FROM KeThuoc WHERE MaKe = ? AND DeleteAt = 0";
@@ -60,6 +69,11 @@ public class Ke_DAO {
         }
         return ke;
     }
+    /**
+     * Lấy kệ theo tên
+     * @param name Tên kệ
+     * @return Kệ
+     */
     public Ke getKeTheoName(String name) {
         Ke ke = null;
         String sql = "SELECT * FROM KeThuoc WHERE TenKe = ? AND DeleteAt = 0";
