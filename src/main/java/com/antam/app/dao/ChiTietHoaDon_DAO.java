@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * @description
@@ -21,27 +22,80 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class ChiTietHoaDon_DAO {
+
     /**
-     * Lấy tất cả chi tiết hóa đơn theo mã hóa đơn
+     * Lấy danh sách chi tiết hóa đơn theo mã hóa đơn
      * @param maHD mã hóa đơn
      * @return danh sách chi tiết hóa đơn
      */
-    public ArrayList<ChiTietHoaDon> getAllChiTietHoaDonTheoMaHD(String maHD){
-        ArrayList<ChiTietHoaDon> ds = new ArrayList<ChiTietHoaDon>();
+    public static List<ChiTietHoaDon> getChiTietByMaHD(String maHD) {
+        List<ChiTietHoaDon> ds = new ArrayList<>();
+        String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ?";
+        ChiTietThuoc_DAO chiTietThuocDAO = new ChiTietThuoc_DAO();
+        DonViTinh_DAO donViTinhDAO = new DonViTinh_DAO();
+
+        // Sử dụng try-with-resources để quản lý connection tự động
+        try (Connection con = ConnectDB.getInstance().connect();
+             PreparedStatement statement = con.prepareStatement(sql)) {
+
+            statement.setString(1, maHD);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    String maHoaDon = rs.getString("MaHD");
+                    int maChiTietThuoc = rs.getInt("MaCTT");
+                    int soLuong = rs.getInt("SoLuong");
+                    int maDonViTinh = rs.getInt("MaDVT");
+                    String tinhTrang = rs.getString("TinhTrang");
+                    double thanhTien = rs.getDouble("ThanhTien");
+
+                    // Lấy đầy đủ thông tin ChiTietThuoc (bao gồm cả Thuoc)
+                    ChiTietThuoc chiTietThuoc = chiTietThuocDAO.getChiTietThuoc(maChiTietThuoc);
+
+                    // Lấy đầy đủ thông tin DonViTinh
+                    DonViTinh donViTinh = donViTinhDAO.getDVTTheoMa(maDonViTinh);
+                    if (donViTinh == null) {
+                        donViTinh = new DonViTinh(maDonViTinh);
+                    }
+
+                    // Tạo HoaDon object
+                    HoaDon hoaDon = new HoaDon(maHoaDon);
+
+                    ChiTietHoaDon cthd = new ChiTietHoaDon(hoaDon, chiTietThuoc, soLuong, donViTinh, tinhTrang, thanhTien);
+                    ds.add(cthd);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy chi tiết hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return ds;
+    }
+
+    /**
+     * Lấy tất cả chi tiết hóa đơn theo mã hóa đơn (phương thức cũ)
+     * @param maHD mã hóa đơn
+     * @return danh sách chi tiết hóa đơn
+     */
+    public ArrayList<ChiTietHoaDon> getAllChiTietHoaDonTheoMaHD(String maHD) {
+        ArrayList<ChiTietHoaDon> ds = new ArrayList<>();
         String sql = "SELECT * FROM ChiTietHoaDon WHERE MaHD = ?";
         Connection con = ConnectDB.getConnection();
         ChiTietThuoc_DAO chiTietThuocDAO = new ChiTietThuoc_DAO();
-        try{
+
+        try {
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setString(1, maHD);
             ResultSet rs = statement.executeQuery();
-            while(rs.next()){
+
+            while (rs.next()) {
                 String maHoaDon = rs.getString("MaHD");
                 int maChiTietThuoc = rs.getInt("MaCTT");
                 int soLuong = rs.getInt("SoLuong");
                 int maDonViTinh = rs.getInt("MaDVT");
                 String tinhTrang = rs.getString("TinhTrang");
                 double thanhTien = rs.getDouble("ThanhTien");
+
                 // Lấy đầy đủ thông tin ChiTietThuoc (bao gồm cả Thuoc)
                 ChiTietThuoc chiTietThuoc = chiTietThuocDAO.getChiTietThuoc(maChiTietThuoc);
                 ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), chiTietThuoc, soLuong, new DonViTinh(maDonViTinh), tinhTrang, thanhTien);
@@ -50,6 +104,7 @@ public class ChiTietHoaDon_DAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return ds;
     }
 
