@@ -51,6 +51,7 @@ public class DoiThuocController {
     private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
     private QuyDoi_DAO quyDoi_dao = new QuyDoi_DAO();
     private DonViTinh_DAO donViTinh_dao = new DonViTinh_DAO();
+    private KhuyenMai_DAO khuyenMai_dao = new KhuyenMai_DAO();
     private HoaDon hoaDon;
     private ArrayList<ChiTietHoaDon> selectedItems = new ArrayList<>();
     private ArrayList<ChiTietHoaDon> chiTietHoaDons;
@@ -136,7 +137,6 @@ public class DoiThuocController {
                         case "Khách hàng đổi ý":
                         case "Nhập nhầm lô / dư":
                         case "Sai thông tin đơn / bảo hiểm":
-                        case "Chính sách đổi / khuyến mãi":
                             Thuoc t = thuoc_dao.getThuocTheoMa(
                                     chiTietThuoc_dao
                                             .getChiTietThuoc(ct.getMaCTT().getMaCTT())
@@ -166,6 +166,7 @@ public class DoiThuocController {
                             int soLuongCoSo = quyDoiVeCoSo(t.getMaThuoc(), soLuong, comboDonVi.getValue().getMaDVT());
                             ArrayList<ChiTietThuoc> listCTT = chiTietThuoc_dao.getChiTietThuocHanSuDungGiamDan(t.getMaThuoc());
                             int tongSoLuong = 0;
+                            double tongTienMua = 0;
                             for (ChiTietThuoc cts : listCTT) {
                                 tongSoLuong += cts.getSoLuong();
                             }
@@ -190,6 +191,7 @@ public class DoiThuocController {
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuongCoSo);
+                                        tongTienMua += newCTHD.getThanhTien();
                                         break;
                                     }else{
                                         soLuongCoSo -= ctt.getSoLuong();
@@ -203,15 +205,19 @@ public class DoiThuocController {
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -ctt.getSoLuong());
+                                        tongTienMua += newCTHD.getThanhTien();
                                     }
                                 }
                             }
-                            double tongTienMoi = 0;
-                            ArrayList<ChiTietHoaDon> cths = chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD());
-                            for (ChiTietHoaDon ct : cths) {
-                                tongTienMoi += ct.getThanhTien();
+                            double tongTienCu = hoaDon.getTongTien();
+                            double tongTienTra = 0;
+                            for (ChiTietHoaDon ct : selectedItems) {
+                                tongTienTra += ct.getThanhTien();
                             }
-                            hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienMoi);
+                            if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
+                                tongTienTra = TinhTienKhuyenMai(tongTienTra, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                            }
+                            hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra + tongTienMua);
                         } else {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Cảnh báo");
@@ -243,8 +249,7 @@ public class DoiThuocController {
                 "Thuốc lỗi / hư hỏng",
                 "Nhập nhầm lô / dư",
                 "Thuốc bị thu hồi",
-                "Sai thông tin đơn / bảo hiểm",
-                "Chính sách đổi / khuyến mãi"
+                "Sai thông tin đơn / bảo hiểm"
         );
         cbLyDoDoi.setItems(lyDoList);
     }
@@ -392,11 +397,16 @@ public class DoiThuocController {
         }
 
         DecimalFormat df = new DecimalFormat("#,### đ");
-        txtTongTienTra.setText(df.format(tongTienTra));
+        if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
+            tongTienTra = TinhTienKhuyenMai(tongTienTra, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+            txtTongTienTra.setText(df.format(tongTienTra) + " (Có áp dụng KM)");
+        }else{
+            txtTongTienTra.setText(df.format(tongTienTra));
+        }
         txtTongTienMua.setText(df.format(tongTienMua));
 
         double tienDoi = tongTienMua - tongTienTra;
-        if (tienDoi > 0) {
+        if (tienDoi >= 0) {
             txtTongTienDoi.setText("Tổng kết: " + df.format(tienDoi));
             txtThongBaoDoi.setText("Khách hàng cần trả thêm");
         } else {
@@ -404,6 +414,16 @@ public class DoiThuocController {
             txtThongBaoDoi.setText("Tiền thừa trả khách");
         }
     }
-
+    public double TinhTienKhuyenMai(double tongTien, double giaSo){
+        double giam = 0;
+        if (giaSo < 100) {
+            giam = tongTien * giaSo / 100.0;
+        } else if (giaSo >= 1000) {
+            giam = giaSo;
+        }
+        if (giam > tongTien) giam = tongTien;
+        tongTien -= giam;
+        return tongTien;
+    }
 
 }

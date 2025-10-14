@@ -38,4 +38,34 @@ public class KhuyenMai_DAO {
         }
         return list;
     }
+
+    public KhuyenMai getKhuyenMaiTheoMa(String maKM) {
+        KhuyenMai km = null;
+        String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
+                "FROM KhuyenMai km JOIN LoaiKhuyenMai lkm ON km.LoaiKhuyenMai = lkm.MaLKM " +
+                "WHERE km.MaKM = ? AND km.deleteAt = 0";
+        try (Connection con = ConnectDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maKM);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String tenKM = rs.getString("TenKM");
+                    java.sql.Date sqlNgayBatDau = rs.getDate("NgayBatDau");
+                    LocalDate ngayBatDau = sqlNgayBatDau != null ? sqlNgayBatDau.toLocalDate() : LocalDate.now();
+                    java.sql.Date sqlNgayKetThuc = rs.getDate("NgayKetThuc");
+                    LocalDate ngayKetThuc = sqlNgayKetThuc != null ? sqlNgayKetThuc.toLocalDate() : LocalDate.now();
+                    int maLoaiKM = rs.getInt("LoaiKhuyenMai");
+                    String tenLoaiKM = rs.getString("TenLKM");
+                    double so = rs.getDouble("So");
+                    int soLuongToiDa = rs.getInt("SoLuongToiDa");
+                    boolean deleteAt = rs.getBoolean("deleteAt");
+                    LoaiKhuyenMai loai = new LoaiKhuyenMai(maLoaiKM, tenLoaiKM);
+                    km = new KhuyenMai(maKM, tenKM, ngayBatDau, ngayKetThuc, loai, so, soLuongToiDa, deleteAt);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return km;
+    }
 }
