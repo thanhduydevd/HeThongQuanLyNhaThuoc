@@ -76,6 +76,24 @@ public class NhanVien {
         this.deleteAt = false;
         this.isQuanLy = isQuanLy;
     }
+
+    /**
+     * Sử dụng riêng cho đặt thuốc
+     * @param hoten
+     * @param ql
+     */
+    public NhanVien(String hoten, boolean ql){
+        this.MaNV = "";
+        hoTen = hoten;
+        soDienThoai = "";
+        email = "";
+        diaChi = "";
+        luongCoBan = 0;
+        taiKhoan = "";
+        matKhau = "";
+        isQuanLy = ql;
+        deleteAt = false;
+    }
     public String getMaNV() {
         return MaNV;
     }

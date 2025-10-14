@@ -66,7 +66,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <DatePicker fx:id="DPstart" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                        <DatePicker fx:id="dpstart" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
@@ -76,7 +76,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <DatePicker fx:id="DPend" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                        <DatePicker fx:id="dpend" prefHeight="40.0" prefWidth="200.0" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">

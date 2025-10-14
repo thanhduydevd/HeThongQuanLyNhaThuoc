@@ -53,7 +53,7 @@ public class NhanVienController {
 
         btnFindNV.setOnAction( e -> {
             if(!txtFindNV.getText().isBlank()){
-//                tbNhanVien.setItems(TVNhanVien);
+                tbNhanVien.setItems(TVNhanVien);
                 String x = txtFindNV.getText();
                 for (NhanVien a : tbNhanVien.getItems()){
                     if (a.getMaNV().toLowerCase().contains(x.toLowerCase()) ||

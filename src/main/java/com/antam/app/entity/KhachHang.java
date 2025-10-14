@@ -125,15 +125,7 @@ public class KhachHang {
 
     @Override
     public String toString() {
-        return "KhachHang{" +
-                "MaKH='" + MaKH + '\'' +
-                ", tenKH='" + tenKH + '\'' +
-                ", soDienThoai='" + soDienThoai + '\'' +
-                ", deleteAt=" + deleteAt +
-                ", tongChiTieu=" + tongChiTieu +
-                ", soDonHang=" + soDonHang +
-                ", ngayMuaGanNhat=" + ngayMuaGanNhat +
-                '}';
+        return tenKH;
     }
 
     @Override
