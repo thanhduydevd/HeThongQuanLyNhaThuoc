@@ -87,7 +87,7 @@
                               </Button>
                               <VBox fx:id="subMenuOverview">
                                  <children>
-                                    <Button fx:id="btnDashboard" graphicTextGap="5.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-sub-item" stylesheets="@../styles/dashboard_style.css" text="Dashboard">
+                                    <Button fx:id="btnDashboard" graphicTextGap="5.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-sub-item" stylesheets="@../styles/dashboard_style.css" text="Trang chủ">
                                        <graphic>
                                           <FontAwesomeIcon fill="#333333" glyphName="DASHBOARD" />
                                        </graphic>

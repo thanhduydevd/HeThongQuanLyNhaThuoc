@@ -1,89 +1,200 @@
-/*
- * @ (#) ThongKe_DAO.java   1.0 1/10/25
- *
- * Copyright (c) 2025 IUH. All rights reserved.
- */
 package com.antam.app.dao;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.entity.ThongKeDoanhThu;
+import com.antam.app.entity.NhanVien;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/*
- * @description DAO cho thống kê doanh thu - Xử lý các truy vấn liên quan đến báo cáo và thống kê
- * @author: Tran Tuan Hung
- * @date: 1/10/25
- * @version: 1.0
+/**
+ * DAO class cho thống kê doanh thu
  */
 public class ThongKe_DAO {
 
     /**
-     * Lấy tổng doanh thu theo khoảng thời gian và nhân viên
-     * @param tuNgay Ngày bắt đầu tính doanh thu
-     * @param denNgay Ngày kết thúc tính doanh thu
-     * @param maNV Mã nhân viên (null nếu tính cho tất cả nhân viên)
-     * @return Tổng doanh thu trong khoảng thời gian
+     * Lấy doanh thu theo khoảng thời gian
      */
-    public double getTongDoanhThu(LocalDate tuNgay, LocalDate denNgay, String maNV) {
-        double tongDoanhThu = 0;
-        // Câu SQL cơ bản - tính tổng tiền từ bảng HoaDon
-        String sql = "SELECT SUM(TongTien) as TongDoanhThu FROM HoaDon WHERE NgayTao BETWEEN ? AND ? AND DeleteAt = 0";
+    public ArrayList<ThongKeDoanhThu> getDoanhThuTheoThoiGian(LocalDate tuNgay, LocalDate denNgay, String maNV) {
+        ArrayList<ThongKeDoanhThu> dsThongKe = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT CAST(hd.NgayTao AS DATE) as Ngay, " +
+            "COUNT(hd.MaHD) as SoDonHang, " +
+            "SUM(hd.TongTien) as DoanhThu, " +
+            "AVG(hd.TongTien) as DonHangTB, " +
+            "COUNT(DISTINCT hd.MaKH) as KhachHangMoi, " +
+            "(SELECT TOP 1 nv2.HoTen FROM NhanVien nv2 WHERE nv2.MaNV = MIN(hd.MaNV)) as NhanVien " +
+            "FROM HoaDon hd " +
+            "WHERE hd.DeleteAt = 0 AND hd.NgayTao BETWEEN ? AND ? "
+        );
 
-        // Nếu có chọn nhân viên cụ thể thì thêm điều kiện lọc theo mã nhân viên
         if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-            sql += " AND MaNV = ?";
+            sql.append("AND hd.MaNV = ? ");
         }
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        sql.append("GROUP BY CAST(hd.NgayTao AS DATE) ORDER BY Ngay ASC");
 
-            // Set tham số ngày bắt đầu và ngày kết thúc
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+
+            PreparedStatement ps = con.prepareStatement(sql.toString());
             ps.setDate(1, Date.valueOf(tuNgay));
             ps.setDate(2, Date.valueOf(denNgay));
 
-            // Set tham số mã nhân viên nếu có
             if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
                 ps.setString(3, maNV);
             }
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    tongDoanhThu = rs.getDouble("TongDoanhThu");
-                }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ThongKeDoanhThu tk = new ThongKeDoanhThu(
+                    rs.getDate("Ngay").toLocalDate(),
+                    rs.getInt("SoDonHang"),
+                    rs.getDouble("DoanhThu"),
+                    rs.getDouble("DonHangTB"),
+                    rs.getInt("KhachHangMoi"),
+                    rs.getString("NhanVien")
+                );
+                dsThongKe.add(tk);
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy tổng doanh thu: " + e.getMessage());
+            System.err.println("Lỗi getDoanhThuTheoThoiGian: " + e.getMessage());
             e.printStackTrace();
         }
+        return dsThongKe;
+    }
 
+    /**
+     * Lấy doanh thu theo tháng (dùng cho khoảng thời gian dài như năm)
+     */
+    public ArrayList<ThongKeDoanhThu> getDoanhThuTheoThang(LocalDate tuNgay, LocalDate denNgay, String maNV) {
+        ArrayList<ThongKeDoanhThu> dsThongKe = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT " +
+            "YEAR(hd.NgayTao) as Nam, " +
+            "MONTH(hd.NgayTao) as Thang, " +
+            "COUNT(hd.MaHD) as SoDonHang, " +
+            "SUM(hd.TongTien) as DoanhThu, " +
+            "AVG(hd.TongTien) as DonHangTB, " +
+            "COUNT(DISTINCT hd.MaKH) as KhachHangMoi, " +
+            "(SELECT TOP 1 nv2.HoTen FROM NhanVien nv2 WHERE nv2.MaNV = MIN(hd.MaNV)) as NhanVien " +
+            "FROM HoaDon hd " +
+            "WHERE hd.DeleteAt = 0 AND hd.NgayTao BETWEEN ? AND ? "
+        );
+
+        if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
+            sql.append("AND hd.MaNV = ? ");
+        }
+
+        sql.append("GROUP BY YEAR(hd.NgayTao), MONTH(hd.NgayTao) ORDER BY Nam ASC, Thang ASC");
+
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+
+            PreparedStatement ps = con.prepareStatement(sql.toString());
+            ps.setDate(1, Date.valueOf(tuNgay));
+            ps.setDate(2, Date.valueOf(denNgay));
+
+            if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
+                ps.setString(3, maNV);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int nam = rs.getInt("Nam");
+                int thang = rs.getInt("Thang");
+                // Tạo LocalDate đại diện cho tháng (ngày 1 của tháng)
+                LocalDate ngayThang = LocalDate.of(nam, thang, 1);
+
+                ThongKeDoanhThu tk = new ThongKeDoanhThu(
+                    ngayThang,
+                    rs.getInt("SoDonHang"),
+                    rs.getDouble("DoanhThu"),
+                    rs.getDouble("DonHangTB"),
+                    rs.getInt("KhachHangMoi"),
+                    rs.getString("NhanVien")
+                );
+                dsThongKe.add(tk);
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi getDoanhThuTheoThang: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return dsThongKe;
+    }
+
+    /**
+     * Lấy tổng doanh thu theo khoảng thời gian
+     */
+    public double getTongDoanhThu(LocalDate tuNgay, LocalDate denNgay, String maNV) {
+        double tongDoanhThu = 0;
+        StringBuilder sql = new StringBuilder(
+            "SELECT ISNULL(SUM(TongTien), 0) as TongDoanhThu " +
+            "FROM HoaDon WHERE DeleteAt = 0 AND NgayTao BETWEEN ? AND ? "
+        );
+
+        if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
+            sql.append("AND MaNV = ?");
+        }
+
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+
+            PreparedStatement ps = con.prepareStatement(sql.toString());
+            ps.setDate(1, Date.valueOf(tuNgay));
+            ps.setDate(2, Date.valueOf(denNgay));
+
+            if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
+                ps.setString(3, maNV);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                tongDoanhThu = rs.getDouble("TongDoanhThu");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return tongDoanhThu;
     }
 
     /**
-     * Lấy tổng số đơn hàng theo khoảng thời gian và nhân viên
-     * @param tuNgay Ngày bắt đầu đếm đơn hàng
-     * @param denNgay Ngày kết thúc đếm đơn hàng
-     * @param maNV Mã nhân viên (null nếu đếm cho tất cả nhân viên)
-     * @return Tổng số đơn hàng trong khoảng thời gian
+     * Lấy tổng số đơn hàng
      */
     public int getTongDonHang(LocalDate tuNgay, LocalDate denNgay, String maNV) {
         int tongDonHang = 0;
-        // Đếm số lượng hóa đơn (không tính hóa đơn đã bị xóa)
-        String sql = "SELECT COUNT(*) as TongDonHang FROM HoaDon WHERE NgayTao BETWEEN ? AND ? AND DeleteAt = 0";
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(MaHD) as TongDonHang " +
+            "FROM HoaDon WHERE DeleteAt = 0 AND NgayTao BETWEEN ? AND ? "
+        );
 
-        // Thêm điều kiện lọc theo nhân viên nếu có
         if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-            sql += " AND MaNV = ?";
+            sql.append("AND MaNV = ?");
         }
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
 
+            PreparedStatement ps = con.prepareStatement(sql.toString());
             ps.setDate(1, Date.valueOf(tuNgay));
             ps.setDate(2, Date.valueOf(denNgay));
 
@@ -91,96 +202,38 @@ public class ThongKe_DAO {
                 ps.setString(3, maNV);
             }
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    tongDonHang = rs.getInt("TongDonHang");
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                tongDonHang = rs.getInt("TongDonHang");
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy tổng đơn hàng: " + e.getMessage());
             e.printStackTrace();
         }
-
         return tongDonHang;
     }
 
     /**
-     * Lấy số khách hàng mới trong khoảng thời gian
-     * Khách hàng mới = khách hàng có lần mua đầu tiên trong khoảng thời gian này
-     * @param tuNgay Ngày bắt đầu
-     * @param denNgay Ngày kết thúc
-     * @return Số lượng khách hàng mới
+     * Lấy số khách hàng mới
      */
-    public int getSoKhachHangMoi(LocalDate tuNgay, LocalDate denNgay) {
+    public int getSoKhachHangMoi(LocalDate tuNgay, LocalDate denNgay, String maNV) {
         int soKhachHangMoi = 0;
-        // Query phức tạp: tìm khách hàng có lần mua đầu tiên trong khoảng thời gian
-        String sql = """
-            SELECT COUNT(DISTINCT h.MaKH) as SoKhachHangMoi 
-            FROM HoaDon h
-            WHERE h.NgayTao BETWEEN ? AND ? 
-            AND h.DeleteAt = 0
-            AND h.MaKH IN (
-                SELECT MaKH FROM HoaDon 
-                WHERE NgayTao >= ? 
-                GROUP BY MaKH 
-                HAVING MIN(NgayTao) BETWEEN ? AND ?
-            )
-        """;
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(DISTINCT MaKH) as SoKhachHangMoi " +
+            "FROM HoaDon WHERE DeleteAt = 0 AND NgayTao BETWEEN ? AND ? "
+        );
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            // Set 5 tham số cho query (do có subquery phức tạp)
-            ps.setDate(1, Date.valueOf(tuNgay));
-            ps.setDate(2, Date.valueOf(denNgay));
-            ps.setDate(3, Date.valueOf(tuNgay));
-            ps.setDate(4, Date.valueOf(tuNgay));
-            ps.setDate(5, Date.valueOf(denNgay));
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    soKhachHangMoi = rs.getInt("SoKhachHangMoi");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lấy số khách hàng mới: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return soKhachHangMoi;
-    }
-
-    /**
-     * Lấy chi tiết doanh thu theo từng ngày trong khoảng thời gian
-     * Trả về danh sách các ngày với thông tin: số đơn hàng, doanh thu, đơn hàng TB, khách hàng mới
-     * @param tuNgay Ngày bắt đầu
-     * @param denNgay Ngày kết thúc
-     * @param maNV Mã nhân viên (null nếu lấy cho tất cả)
-     * @return Danh sách thống kê theo ngày
-     */
-    public ArrayList<ThongKeDoanhThu> getDoanhThuTheoNgay(LocalDate tuNgay, LocalDate denNgay, String maNV) {
-        ArrayList<ThongKeDoanhThu> danhSach = new ArrayList<>();
-        // Group by NgayTao để tính thống kê theo từng ngày
-        String sql = """
-            SELECT 
-                NgayTao,
-                COUNT(*) as SoDonHang,
-                SUM(TongTien) as DoanhThu,
-                AVG(TongTien) as DonHangTB
-            FROM HoaDon 
-            WHERE NgayTao BETWEEN ? AND ? AND DeleteAt = 0
-        """;
-
-        // Thêm điều kiện lọc theo nhân viên nếu có
         if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-            sql += " AND MaNV = ?";
+            sql.append("AND MaNV = ?");
         }
 
-        sql += " GROUP BY NgayTao ORDER BY NgayTao DESC"; // Sắp xếp ngày mới nhất trước
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+            PreparedStatement ps = con.prepareStatement(sql.toString());
             ps.setDate(1, Date.valueOf(tuNgay));
             ps.setDate(2, Date.valueOf(denNgay));
 
@@ -188,313 +241,77 @@ public class ThongKe_DAO {
                 ps.setString(3, maNV);
             }
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    LocalDate ngay = rs.getDate("NgayTao").toLocalDate();
-                    int soDonHang = rs.getInt("SoDonHang");
-                    double doanhThu = rs.getDouble("DoanhThu");
-                    double donHangTB = rs.getDouble("DonHangTB");
-
-                    // Gọi method khác để lấy số khách hàng mới trong ngày này
-                    int khachHangMoi = getSoKhachHangMoi(ngay, ngay);
-
-                    // Gọi method khác để lấy nhân viên bán nhiều nhất trong ngày này
-                    String nhanVienBan = getNhanVienBanNhieuNhat(ngay, ngay);
-
-                    // Tạo object ThongKeDoanhThu và thêm vào danh sách
-                    ThongKeDoanhThu thongKe = new ThongKeDoanhThu(ngay, soDonHang, doanhThu, donHangTB, khachHangMoi, nhanVienBan);
-                    danhSach.add(thongKe);
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                soKhachHangMoi = rs.getInt("SoKhachHangMoi");
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy doanh thu theo ngày: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return danhSach;
+        return soKhachHangMoi;
     }
 
     /**
-     * Tìm nhân viên bán được nhiều đơn hàng nhất trong khoảng thời gian
-     * @param tuNgay Ngày bắt đầu
-     * @param denNgay Ngày kết thúc
-     * @return Tên nhân viên + số đơn hàng (ví dụ: "Nguyễn Văn A (5 đơn)")
-     */
-    public String getNhanVienBanNhieuNhat(LocalDate tuNgay, LocalDate denNgay) {
-        String nhanVienBan = "";
-        // Join bảng HoaDon với NhanVien, group by nhân viên, sắp xếp theo số đơn hàng giảm dần
-        String sql = """
-            SELECT TOP 1 nv.HoTen, COUNT(*) as SoDonHang
-            FROM HoaDon h
-            JOIN NhanVien nv ON h.MaNV = nv.MaNV
-            WHERE h.NgayTao BETWEEN ? AND ? AND h.DeleteAt = 0 AND nv.DeleteAt = 0
-            GROUP BY h.MaNV, nv.HoTen
-            ORDER BY COUNT(*) DESC
-        """;
-
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setDate(1, Date.valueOf(tuNgay));
-            ps.setDate(2, Date.valueOf(denNgay));
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // Format: "Tên nhân viên (X đơn)"
-                    nhanVienBan = rs.getString("HoTen") + " (" + rs.getInt("SoDonHang") + " đơn)";
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lấy nhân viên bán nhiều nhất: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return nhanVienBan.isEmpty() ? "Không có dữ liệu" : nhanVienBan;
-    }
-
-    /**
-     * Lấy danh sách top sản phẩm bán chạy nhất
-     * @param tuNgay Ngày bắt đầu
-     * @param denNgay Ngày kết thúc
-     * @param top Số lượng sản phẩm top cần lấy (ví dụ: top 10)
-     * @return Map với key=tên thuốc, value=số lượng bán
+     * Lấy top sản phẩm bán chạy
      */
     public Map<String, Integer> getTopSanPhamBanChay(LocalDate tuNgay, LocalDate denNgay, int top) {
-        Map<String, Integer> topSanPham = new HashMap<>();
-        // Query phức tạp: join 4 bảng để lấy tên thuốc và tổng số lượng bán
-        // ChiTietHoaDon -> HoaDon -> ChiTietThuoc -> Thuoc
-        String sql = String.format("""
-            SELECT TOP %d t.TenThuoc, SUM(ct.SoLuong) as TongSoLuong
-            FROM ChiTietHoaDon ct
-            JOIN HoaDon h ON ct.MaHD = h.MaHD
-            JOIN ChiTietThuoc ctt ON ct.MaCTT = ctt.MaCTT
-            JOIN Thuoc t ON ctt.MaThuoc = t.MaThuoc
-            WHERE h.NgayTao BETWEEN ? AND ? AND h.DeleteAt = 0 AND ct.TinhTrang = 'Bán'
-            GROUP BY t.TenThuoc
-            ORDER BY SUM(ct.SoLuong) DESC
-        """, top); // Sử dụng String.format để chèn số top vào SQL
+        Map<String, Integer> topSanPham = new LinkedHashMap<>();
+        String sql =
+            "SELECT TOP " + top + " t.TenThuoc, SUM(cthd.SoLuong) as TongSoLuong " +
+            "FROM ChiTietHoaDon cthd " +
+            "JOIN HoaDon hd ON cthd.MaHD = hd.MaHD " +
+            "JOIN ChiTietThuoc ctt ON cthd.MaCTT = ctt.MaCTT " +
+            "JOIN Thuoc t ON ctt.MaThuoc = t.MaThuoc " +
+            "WHERE hd.DeleteAt = 0 AND hd.NgayTao BETWEEN ? AND ? " +
+            "GROUP BY t.TenThuoc " +
+            "ORDER BY TongSoLuong DESC";
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
 
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setDate(1, Date.valueOf(tuNgay));
             ps.setDate(2, Date.valueOf(denNgay));
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    // Thêm vào Map: tên thuốc -> số lượng bán
-                    topSanPham.put(rs.getString("TenThuoc"), rs.getInt("TongSoLuong"));
-                }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                topSanPham.put(rs.getString("TenThuoc"), rs.getInt("TongSoLuong"));
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy top sản phẩm bán chạy: " + e.getMessage());
+            System.err.println("Lỗi getTopSanPhamBanChay: " + e.getMessage());
             e.printStackTrace();
         }
-
         return topSanPham;
     }
+
     /**
-     * Lấy doanh thu theo từng tháng trong năm (dùng cho biểu đồ theo tháng)
-     * @param nam Năm cần lấy thống kê (ví dụ: 2025)
-     * @return Map với key=tên tháng, value=doanh thu tháng đó
+     * Lấy danh sách nhân viên
      */
-    public Map<String, Double> getDoanhThuTheoThang(int nam) {
-        Map<String, Double> doanhThuTheoThang = new HashMap<>();
-        String sql = """
-            SELECT 
-                MONTH(NgayTao) as Thang,
-                SUM(TongTien) as DoanhThu
-            FROM HoaDon 
-            WHERE YEAR(NgayTao) = ? AND DeleteAt = 0
-            GROUP BY MONTH(NgayTao)
-            ORDER BY MONTH(NgayTao)
-        """;
+    public ArrayList<NhanVien> getDanhSachNhanVien() {
+        ArrayList<NhanVien> dsNhanVien = new ArrayList<>();
+        String sql = "SELECT MaNV, HoTen FROM NhanVien WHERE DeleteAt = 0";
 
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
 
-            ps.setInt(1, nam);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                String[] tenThang = {"", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
-                while (rs.next()) {
-                    int thang = rs.getInt("Thang");
-                    double doanhThu = rs.getDouble("DoanhThu");
-                    doanhThuTheoThang.put(tenThang[thang], doanhThu);
-                }
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                NhanVien nv = new NhanVien(rs.getString("MaNV"));
+                nv.setHoTen(rs.getString("HoTen"));
+                dsNhanVien.add(nv);
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy doanh thu theo tháng: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return doanhThuTheoThang;
-    }
-
-    /**
-     * Lấy danh sách chi tiết doanh thu với thông tin đầy đủ cho bảng hiển thị
-     * Bao gồm thông tin chi tiết hơn so với getDoanhThuTheoNgay
-     * @param tuNgay Ngày bắt đầu
-     * @param denNgay Ngày kết thúc
-     * @param maNV Mã nhân viên (null nếu lấy tất cả)
-     * @return Danh sách chi tiết thống kê doanh thu
-     */
-    public ArrayList<ThongKeDoanhThu> getDanhSachChiTietDoanhThu(LocalDate tuNgay, LocalDate denNgay, String maNV) {
-        ArrayList<ThongKeDoanhThu> danhSach = new ArrayList<>();
-
-        // Tạo SQL động dựa trên việc có lọc nhân viên hay không
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("""
-            SELECT 
-                h.NgayTao,
-                COUNT(h.MaHD) as SoDonHang,
-                SUM(h.TongTien) as DoanhThu,
-                AVG(h.TongTien) as DonHangTB
-            FROM HoaDon h
-            LEFT JOIN NhanVien nv ON h.MaNV = nv.MaNV
-            WHERE h.NgayTao BETWEEN ? AND ? 
-            AND h.DeleteAt = 0 
-            AND (nv.DeleteAt = 0 OR nv.DeleteAt IS NULL)
-        """);
-
-        // Thêm điều kiện lọc theo nhân viên nếu có
-        if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-            sqlBuilder.append(" AND h.MaNV = ?");
-        }
-
-        sqlBuilder.append("""
-            GROUP BY h.NgayTao
-            ORDER BY h.NgayTao DESC
-        """);
-
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sqlBuilder.toString())) {
-
-            // Set parameters
-            ps.setDate(1, Date.valueOf(tuNgay));
-            ps.setDate(2, Date.valueOf(denNgay));
-
-            if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-                ps.setString(3, maNV);
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    LocalDate ngay = rs.getDate("NgayTao").toLocalDate();
-                    int soDonHang = rs.getInt("SoDonHang");
-                    double doanhThu = rs.getDouble("DoanhThu");
-                    double donHangTB = rs.getDouble("DonHangTB");
-
-                    // Lấy số khách hàng mới trong ngày này
-                    int khachHangMoi = getSoKhachHangMoiTrongNgay(ngay);
-
-                    // Lấy thông tin nhân viên cho ngày này
-                    String nhanVienHienThi = getNhanVienTheoNgay(ngay, maNV);
-
-                    // Tạo object ThongKeDoanhThu
-                    ThongKeDoanhThu thongKe = new ThongKeDoanhThu(
-                        ngay, soDonHang, doanhThu, donHangTB, khachHangMoi, nhanVienHienThi
-                    );
-
-                    danhSach.add(thongKe);
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lấy danh sách chi tiết doanh thu: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return danhSach;
-    }
-
-    /**
-     * Lấy thông tin nhân viên làm việc trong một ngày cụ thể
-     * @param ngay Ngày cần kiểm tra
-     * @param maNV Mã nhân viên lọc (null nếu lấy tất cả)
-     * @return String thông tin nhân viên
-     */
-    private String getNhanVienTheoNgay(LocalDate ngay, String maNV) {
-        StringBuilder result = new StringBuilder();
-        String sql = """
-            SELECT nv.HoTen, COUNT(h.MaHD) as SoDonHang
-            FROM HoaDon h
-            LEFT JOIN NhanVien nv ON h.MaNV = nv.MaNV
-            WHERE h.NgayTao = ? 
-            AND h.DeleteAt = 0 
-            AND (nv.DeleteAt = 0 OR nv.DeleteAt IS NULL)
-        """;
-
-        // Thêm điều kiện lọc theo nhân viên nếu có
-        if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-            sql += " AND h.MaNV = ?";
-        }
-
-        sql += " GROUP BY nv.HoTen ORDER BY COUNT(h.MaHD) DESC";
-
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setDate(1, Date.valueOf(ngay));
-            if (maNV != null && !maNV.isEmpty() && !maNV.equals("Tất cả")) {
-                ps.setString(2, maNV);
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String hoTen = rs.getString("HoTen");
-                    int soDonHang = rs.getInt("SoDonHang");
-
-                    if (result.length() > 0) {
-                        result.append(", ");
-                    }
-
-                    if (hoTen != null && !hoTen.trim().isEmpty()) {
-                        result.append(hoTen).append(" (").append(soDonHang).append(" đơn)");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lấy thông tin nhân viên theo ngày: " + e.getMessage());
-        }
-
-        return result.length() > 0 ? result.toString() : "Không có dữ liệu";
-    }
-
-    /**
-     * Lấy số khách hàng mới trong một ngày cụ thể
-     * @param ngay Ngày cần kiểm tra
-     * @return Số khách hàng mới trong ngày
-     */
-    private int getSoKhachHangMoiTrongNgay(LocalDate ngay) {
-        int soKhachHangMoi = 0;
-        String sql = """
-            SELECT COUNT(DISTINCT h.MaKH) as SoKhachHangMoi 
-            FROM HoaDon h
-            WHERE h.NgayTao = ? 
-            AND h.DeleteAt = 0
-            AND h.MaKH IN (
-                SELECT MaKH FROM HoaDon 
-                WHERE DeleteAt = 0
-                GROUP BY MaKH 
-                HAVING MIN(NgayTao) = ?
-            )
-        """;
-
-        try (Connection con = ConnectDB.getInstance().connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setDate(1, Date.valueOf(ngay));
-            ps.setDate(2, Date.valueOf(ngay));
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    soKhachHangMoi = rs.getInt("SoKhachHangMoi");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lấy số khách hàng mới trong ngày: " + e.getMessage());
-        }
-
-        return soKhachHangMoi;
+        return dsNhanVien;
     }
 }
