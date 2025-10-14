@@ -10,6 +10,8 @@ import com.antam.app.connect.ConnectDB;
 import com.antam.app.entity.DonViTinh;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -20,6 +22,28 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class DonViTinh_DAO {
+
+    /**
+     * Duy - Lấy tất cả đơn vị tính từ database
+     * @return danh sách đơn vị tính
+     */
+    public ArrayList<DonViTinh> getTatCaDonViTinh() {
+        ArrayList<DonViTinh> list = new ArrayList<>();
+        try (Connection con = ConnectDB.getInstance().connect();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM DonViTinh")) {
+            while (rs.next()) {
+                int maDVT = rs.getInt("MaDVT");
+                String tenDVT = rs.getString("TenDVT");
+                DonViTinh dvt = new DonViTinh(maDVT, tenDVT);
+                list.add(dvt);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
     /**
      * Lấy tất cả đơn vị tính từ database
      * @return danh sách đơn vị tính
@@ -32,10 +56,7 @@ public class DonViTinh_DAO {
             Statement statement = con.createStatement();
             var rs = statement.executeQuery(sql);
             while (rs.next()) {
-                int maDVT = rs.getInt("MaDVT");
-                String tenDVT = rs.getString("TenDVT");
-                DonViTinh dvt = new DonViTinh(maDVT, tenDVT);
-                listDVT.add(dvt);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
