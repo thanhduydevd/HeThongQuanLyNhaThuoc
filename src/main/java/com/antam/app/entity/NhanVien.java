@@ -161,7 +161,7 @@ public class NhanVien {
 
     @Override
     public String toString() {
-        return MaNV;
+        return hoTen;
     }
 
     @Override
