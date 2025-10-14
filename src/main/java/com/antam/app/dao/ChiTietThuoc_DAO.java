@@ -102,30 +102,42 @@ public class ChiTietThuoc_DAO {
      */
     public ChiTietThuoc getChiTietThuoc(int ma) {
         ChiTietThuoc chiTietThuoc = new ChiTietThuoc();
-        Connection con = ConnectDB.getConnection();
         String sql = "SELECT * FROM ChiTietThuoc WHERE MaCTT = ?";
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, ma);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int maCTT = rs.getInt("MaCTT");
-                String maPN = rs.getString("MaPN");
-                String maThuoc = rs.getString("MaThuoc");
-                int soLuong = rs.getInt("TonKho");
-                java.sql.Date hanSuDung = rs.getDate("HanSuDung");
-                java.sql.Date ngaySanXuat = rs.getDate("NgaySanXuat");
+        Thuoc_DAO thuocDAO = new Thuoc_DAO();
 
-                 chiTietThuoc = new ChiTietThuoc(
-                        maCTT,
-                        new PhieuNhap(maPN),
-                        new Thuoc(maThuoc),
-                        soLuong,
-                        hanSuDung.toLocalDate(),
-                        ngaySanXuat.toLocalDate()
-                );
+        // Tạo connection riêng cho method này
+        try (Connection con = ConnectDB.getInstance().connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, ma);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int maCTT = rs.getInt("MaCTT");
+                    String maPN = rs.getString("MaPN");
+                    String maThuoc = rs.getString("MaThuoc");
+                    int soLuong = rs.getInt("TonKho");
+                    java.sql.Date hanSuDung = rs.getDate("HanSuDung");
+                    java.sql.Date ngaySanXuat = rs.getDate("NgaySanXuat");
+
+                    // Lấy đầy đủ thông tin thuốc từ Thuoc_DAO
+                    Thuoc thuoc = thuocDAO.getThuocTheoMa(maThuoc);
+                    if (thuoc == null) {
+                        // Fallback nếu không tìm thấy thuốc
+                        thuoc = new Thuoc(maThuoc);
+                    }
+
+                    chiTietThuoc = new ChiTietThuoc(
+                            maCTT,
+                            new PhieuNhap(maPN),
+                            thuoc,
+                            soLuong,
+                            hanSuDung.toLocalDate(),
+                            ngaySanXuat.toLocalDate()
+                    );
+                }
             }
         } catch (Exception e) {
+            System.err.println("Lỗi khi lấy chi tiết thuốc: " + e.getMessage());
             e.printStackTrace();
         }
         return chiTietThuoc;
@@ -182,5 +194,27 @@ public class ChiTietThuoc_DAO {
             e.printStackTrace();
         }
         return listChiTietThuoc;
+    }
+
+    /**
+     * Lấy tổng số lượng tồn kho (TonKho) của một mã thuốc
+     * @param maThuoc mã thuốc
+     * @return tổng số lượng tồn kho
+     */
+    public int getTongTonKhoTheoMaThuoc(String maThuoc) {
+        int tong = 0;
+        Connection con = ConnectDB.getConnection();
+        String sql = "SELECT SUM(TonKho) AS TongTonKho FROM ChiTietThuoc WHERE MaThuoc = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maThuoc);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                tong = rs.getInt("TongTonKho");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tong;
     }
 }

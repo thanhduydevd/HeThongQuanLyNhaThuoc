@@ -70,6 +70,7 @@
                         <TableColumn fx:id="donGiaCol" prefWidth="75.0" text="Đơn giá" />
                         <TableColumn fx:id="thanhTienCol" prefWidth="75.0" text="Thành tiền" />
                         <TableColumn fx:id="trangThaiCol" prefWidth="75.0" text="Trạng thái" />
+                        <TableColumn fx:id="thueCol" prefWidth="75.0" text="Thuế GTGT" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -84,21 +85,12 @@
                         <RowConstraints />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" /> <!-- New row for return total -->
                      </rowConstraints>
                      <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:" GridPane.rowIndex="2">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Text>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tạm tính:">
                            <font>
                               <Font size="13.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="txtTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="500.000đ" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
                            </font>
                         </Text>
                         <Text fx:id="txtSubTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="200.000đ" GridPane.columnIndex="1">
@@ -106,7 +98,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuế VAT (10%):" GridPane.rowIndex="1">
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuế GTGT (theo từng loại thuốc):" GridPane.rowIndex="1">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -116,7 +108,29 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtPromotion" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="KM001" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <!-- New row for Tiền hàng đổi trả -->
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng trả:" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtReturnTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="0đ" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <!-- Tổng tiền moved to row 3 -->
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="500.000đ" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtPromotion" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="KM001" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="13.0" />
                            </font>
