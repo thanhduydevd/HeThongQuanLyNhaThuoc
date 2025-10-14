@@ -6,6 +6,8 @@ package com.antam.app.dao;/*
  */
 
 import com.antam.app.connect.ConnectDB;
+import com.antam.app.entity.KhachHang;
+import com.antam.app.entity.KhuyenMai;
 import com.antam.app.entity.PhieuDatThuoc;
 
 import java.sql.*;
@@ -42,11 +44,17 @@ public class PhieuDat_DAO {
                 String maNV = kq.getString(5);
                 String maKM = kq.getString(6);
                 double total = kq.getDouble(7);
-//                PhieuDatThuoc e = new PhieuDatThuoc(ma,ngay,isThanhToan,
-//                        NhanVien_DAO.dsNhanViens.stream()
-//                                .filter(t-> t.getMaNV().equalsIgnoreCase(maNV))
-//                                .findFirst(),khach,km,total);
-                ds.add(null);
+                PhieuDatThuoc e = new PhieuDatThuoc(ma,ngay,isThanhToan,
+                        NhanVien_DAO.dsNhanViens.stream()
+                                .filter(t-> t.getMaNV().equalsIgnoreCase(maNV))
+                                .findFirst().orElse(null),
+                        KhachHang_DAO.loadBanFromDB().stream()
+                                .filter(t->t.getMaKH().equalsIgnoreCase(maKhach))
+                                .findFirst().orElse(null),
+                        KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc().stream()
+                                .filter(t->t.getMaKM().equalsIgnoreCase(maKM))
+                                .findFirst().orElse(null),total);
+                ds.add(e);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -117,5 +125,28 @@ public class PhieuDat_DAO {
         return true;
     }
 
-
+    /**
+     * Lấy mã hash lớn nhẩt trong database
+     * @return String - mã phiếu đặt thuốc mới nhất.
+     *          null nếu không có gì trong dbs.
+     */
+    public static String getMaxHash(){
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Connection con = ConnectDB.getConnection();
+            String sql = "select top 1 MaPDT from PhieuDatThuoc order by MaPDT desc";
+            PreparedStatement state = con.prepareStatement(sql);
+            ResultSet kq = state.executeQuery();
+            while (kq.next()){
+                return kq.getString(1).substring(4,6);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
 }

@@ -305,4 +305,28 @@ public class NhanVien_DAO {
         return ds;
     }
 
+    /**
+     * Lấy mã hash mã nhân viên mới nhất trong database
+     * @return String(là dãy số 5 ký tự)
+     */
+    public static String getMaxHashNhanVien(){
+        String str = "";
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+        try {
+            String sql = "select top 1 MaNV from NhanVien order by MaNV desc";
+            PreparedStatement state = con.prepareStatement(sql);
+            ResultSet kq = state.executeQuery();
+            while(kq.next()){
+                str = kq.getString(1).substring(2,7);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return str;
+    }
 }

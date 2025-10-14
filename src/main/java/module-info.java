@@ -5,6 +5,7 @@ module com.antam.app {
     requires java.sql;
     requires javafx.controls;
     requires fontawesomefx;
+    requires jbcrypt;
 
     // cho FXML
     opens com.antam.app.controller to javafx.fxml;

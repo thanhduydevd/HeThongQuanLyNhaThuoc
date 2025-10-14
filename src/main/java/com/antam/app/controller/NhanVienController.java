@@ -40,29 +40,44 @@ public class NhanVienController {
 
     public void initialize() {
         this.btnAddEmployee.setOnAction((e) -> {
-            (new GiaoDienCuaSo("themnhanvien")).showAndWait();
+            (new GiaoDienCuaSo("themnhanvien")).showAndWait().ifPresent(result -> {
+                if ("Lưu".equals(result)) {
+                    listNV = NhanVien_DAO.getDsNhanVienformDBS();
+                } else {
+
+                }
+            });
+            listNV = NhanVien_DAO.getDsNhanVienformDBS();
+            loadNhanVien();
         });
 
         btnFindNV.setOnAction( e -> {
             if(!txtFindNV.getText().isBlank()){
+//                tbNhanVien.setItems(TVNhanVien);
                 String x = txtFindNV.getText();
                 for (NhanVien a : tbNhanVien.getItems()){
-                    if (a.getMaNV().toLowerCase().contains(x.toLowerCase())){
+                    if (a.getMaNV().toLowerCase().contains(x.toLowerCase()) ||
+                    a.getHoTen().toLowerCase().contains(x.toLowerCase())){
                         tbNhanVien.getSelectionModel().select(a);
                         tbNhanVien.scrollTo(a);
                     }
                 }
             }
         });
+        //setup kiểu chọn của tableView
+        tbNhanVien.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         //setup dữ liệu cho table view
         setupTableNhanVien();
         // Load dữ liệu nhân viên
         loadNhanVien();
-        //Thêm sự kiện;
+        //Thêm sự kiện
         setupListener();
     }
 
+    /**
+     * Cài đặt cho các cột ở bảng nhân viên.
+     */
     private void setupTableNhanVien() {
         colMaNV.setCellValueFactory(t-> new SimpleStringProperty(t.getValue().getMaNV()));
         colHoTen.setCellValueFactory(t-> new SimpleStringProperty(t.getValue().getHoTen()));
@@ -73,22 +88,39 @@ public class NhanVienController {
         colLuong.setCellValueFactory(t -> new SimpleObjectProperty<>(t.getValue().getLuongCoBan()));
     }
 
+    /**
+     * Tải dữ liệu nhân viên lên bảng
+     */
     public void loadNhanVien(){
         TVNhanVien = FXCollections.observableArrayList(listNV);
         tbNhanVien.setItems(TVNhanVien);
     }
 
-    public void setupListener(){
-
-        txtFindNV.textProperty().addListener((ob , oldT, newT) -> {
+    /**
+     * thực hiện các sự kiện trên giao diện
+     */
+    public void setupListener() {
+        txtFindNV.textProperty().addListener((ob, oldT, newT) -> {
             tbNhanVien.getSelectionModel().clearSelection();
-            for (NhanVien a : tbNhanVien.getItems()){
-                if (a.getMaNV().toLowerCase().contains(newT.toLowerCase())){
-                    tbNhanVien.getSelectionModel().select(a);
-                    tbNhanVien.scrollTo(a);
+
+            // Nếu ô tìm kiếm trống -> hiển thị toàn bộ danh sách
+            if (newT == null || newT.isBlank()) {
+                tbNhanVien.setItems(TVNhanVien);
+                return;
+            }
+
+            // Tạo danh sách lọc mới mỗi lần nhập
+            ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
+
+            String keyword = newT.toLowerCase();
+            for (NhanVien nv : TVNhanVien) {
+                if (nv.getMaNV().toLowerCase().contains(keyword) ||
+                        nv.getHoTen().toLowerCase().contains(keyword)) {
+                    filteredList.add(nv);
                 }
             }
-        });
 
+            tbNhanVien.setItems(filteredList);
+        });
     }
 }

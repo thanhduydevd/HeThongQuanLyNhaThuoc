@@ -64,6 +64,18 @@ public class NhanVien {
         this.deleteAt = deleteAt;
         this.isQuanLy = isQuanLy;
     }
+    public NhanVien(String maNV, String hoTen, String soDienThoai, String email, String diaChi, double luongCoBan, String taiKhoan, String matKhau, boolean isQuanLy) {
+        MaNV = maNV;
+        setHoTen(hoTen);
+        setSoDienThoai(soDienThoai);
+        setEmail(email);
+        setDiaChi(diaChi);
+        setLuongCoBan(luongCoBan);
+        setTaiKhoan(taiKhoan);
+        setMatKhau(matKhau);
+        this.deleteAt = false;
+        this.isQuanLy = isQuanLy;
+    }
     public String getMaNV() {
         return MaNV;
     }

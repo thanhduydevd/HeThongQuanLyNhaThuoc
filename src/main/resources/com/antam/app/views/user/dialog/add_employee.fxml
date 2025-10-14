@@ -54,23 +54,23 @@
                     </rowConstraints>
                      <children>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã nhân viên:" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtMaNV" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtHoTen" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Họ tên:" GridPane.columnIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" GridPane.rowIndex="2" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtSDT" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtEmail" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Địa chỉ:" GridPane.rowIndex="4" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Chức vụ:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Spinner editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
+                        <Spinner fx:id="luong" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="7" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Lương cơ bản:" GridPane.rowIndex="6" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tài khoản" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu" GridPane.rowIndex="8" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
-                        <ComboBox maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <PasswordField prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="9" />
+                        <TextField fx:id="txtDiaChi" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="cbChucVu" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="txtTaiKhoan" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <PasswordField fx:id="txtPass" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="9" />
                      </children>
                   </GridPane>
                </children>

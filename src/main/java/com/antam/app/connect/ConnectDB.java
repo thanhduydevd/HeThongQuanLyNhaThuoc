@@ -24,9 +24,12 @@ public class ConnectDB {
         return instance;
     }
     public Connection connect() throws SQLException {
+//        String url = "jdbc:sqlserver://34.171.249.19:1433;databasename=QuanLyNhaThuoc";
+//        String user = "sqlserver";
+//        String password = "0867424460";
         String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
-        String user = "Duong";
-        String password = "Qlinh2702";
+        String user = "sa";
+        String password = "sa123";
         con = DriverManager.getConnection(url, user, password);
         return con;
     }
@@ -39,14 +42,6 @@ public class ConnectDB {
             }
     }
     public static Connection getConnection() {
-        try {
-            if (con == null || con.isClosed()) {
-                // Tự động mở lại kết nối nếu chưa có hoặc đã đóng
-                ConnectDB.getInstance().connect();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return con;
     }
 }

@@ -33,13 +33,14 @@ public class PhieuDatThuoc {
         this.khuyenMai = new KhuyenMai();
     }
 
-    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien nhanVien, KhachHang maKH, KhuyenMai maKM) {
+    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien nhanVien, KhachHang maKH, KhuyenMai maKM, double tongTien) {
         this.maPhieu = maPhieu;
         setNgayTao(ngayTao);
         this.isThanhToan = isThanhToan;
         this.nhanVien = nhanVien;
         this.khachHang = maKH;
         this.khuyenMai = maKM;
+        this.tongTien = tongTien;
     }
 
     public String getMaPhieu() {

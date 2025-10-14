@@ -9,7 +9,7 @@ import java.util.List;
 import com.antam.app.connect.ConnectDB;
 
 public class KhuyenMai_DAO {
-    public List<KhuyenMai> getAllKhuyenMaiConHieuLuc() {
+    public static List<KhuyenMai> getAllKhuyenMaiConHieuLuc() {
         List<KhuyenMai> list = new ArrayList<>();
         String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
                 "FROM KhuyenMai km JOIN LoaiKhuyenMai lkm ON km.LoaiKhuyenMai = lkm.MaLKM " +
