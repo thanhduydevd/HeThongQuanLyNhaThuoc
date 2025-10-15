@@ -6,6 +6,7 @@
 
 package com.antam.app.entity;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /*
@@ -15,59 +16,113 @@ import java.util.Objects;
  * version: 1.0
  */
 public class KhachHang {
+    // Các field có trong database
     private final String MaKH;
     private String tenKH;
     private String soDienThoai;
     private boolean deleteAt;
+
+    // Các field tính toán cho thống kê (không lưu trong DB)
+    private double tongChiTieu;
+    private int soDonHang;
+    private LocalDate ngayMuaGanNhat;
 
     public KhachHang() {
         MaKH = "";
         tenKH = "";
         soDienThoai = "";
         deleteAt = false;
+        tongChiTieu = 0;
+        soDonHang = 0;
+        ngayMuaGanNhat = null;
     }
+
     public KhachHang(String maKH) {
         MaKH = maKH;
         tenKH = "";
         soDienThoai = "";
         deleteAt = false;
+        tongChiTieu = 0;
+        soDonHang = 0;
+        ngayMuaGanNhat = null;
     }
+
     public KhachHang(String maKH, String tenKH, String soDienThoai, boolean deleteAt) {
         MaKH = maKH;
         setTenKH(tenKH);
         setSoDienThoai(soDienThoai);
         this.deleteAt = deleteAt;
+        this.tongChiTieu = 0;
+        this.soDonHang = 0;
+        this.ngayMuaGanNhat = null;
     }
+
     public String getMaKH() {
         return MaKH;
     }
+
     public String getTenKH() {
         return tenKH;
     }
+
     public void setTenKH(String tenKH) {
         if (tenKH == null || tenKH.isEmpty()) {
             throw new IllegalArgumentException("Tên khách hàng không được để trống");
         }
         this.tenKH = tenKH;
     }
+
     public String getSoDienThoai() {
         return soDienThoai;
     }
+
     public void setSoDienThoai(String soDienThoai) {
         if (soDienThoai == null || soDienThoai.isEmpty()) {
             throw new IllegalArgumentException("Số điện thoại không được để trống");
         } else if (!soDienThoai.matches("^0[35679]\\d{8}$")) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ");
         }
-
         this.soDienThoai = soDienThoai;
     }
+
     public boolean isDeleteAt() {
         return deleteAt;
     }
+
     public void setDeleteAt(boolean deleteAt) {
         this.deleteAt = deleteAt;
     }
+
+    // Getter và setter cho các field thống kê
+    public double getTongChiTieu() {
+        return tongChiTieu;
+    }
+
+    public void setTongChiTieu(double tongChiTieu) {
+        this.tongChiTieu = tongChiTieu;
+    }
+
+    public int getSoDonHang() {
+        return soDonHang;
+    }
+
+    public void setSoDonHang(int soDonHang) {
+        this.soDonHang = soDonHang;
+    }
+
+    public LocalDate getNgayMuaGanNhat() {
+        return ngayMuaGanNhat;
+    }
+
+    public void setNgayMuaGanNhat(LocalDate ngayMuaGanNhat) {
+        this.ngayMuaGanNhat = ngayMuaGanNhat;
+    }
+
+    // Phương thức tiện ích để lấy loại khách hàng
+    public String getLoaiKhachHang() {
+        return tongChiTieu >= 1000000 ? "VIP" : "Thường";
+    }
+
     @Override
     public String toString() {
         return "KhachHang{" +
@@ -75,6 +130,9 @@ public class KhachHang {
                 ", tenKH='" + tenKH + '\'' +
                 ", soDienThoai='" + soDienThoai + '\'' +
                 ", deleteAt=" + deleteAt +
+                ", tongChiTieu=" + tongChiTieu +
+                ", soDonHang=" + soDonHang +
+                ", ngayMuaGanNhat=" + ngayMuaGanNhat +
                 '}';
     }
 

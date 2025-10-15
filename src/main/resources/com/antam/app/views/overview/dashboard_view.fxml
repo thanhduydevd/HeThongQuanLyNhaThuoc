@@ -4,8 +4,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.effect.DropShadow?>
@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.TrangChuController">
    <content>
       <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
          <children>
@@ -40,7 +40,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+                                    <Text fx:id="txtTongSoThuoc" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -76,7 +76,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                                    <Text fx:id="txtSoNhanVien" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -112,7 +112,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
+                                    <Text fx:id="txtSoHoaDonHomNay" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -148,7 +148,7 @@
                               </Button>
                               <VBox maxHeight="-Infinity" prefHeight="60.0">
                                  <children>
-                                    <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="23">
+                                    <Text fx:id="txtSoKhuyenMai" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                        <font>
                                           <Font name="System Bold" size="32.0" />
                                        </font>
@@ -194,14 +194,14 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Text>
-                        <ScatterChart>
+                        <LineChart fx:id="chartDoanhThu" prefHeight="300.0">
                            <xAxis>
                               <CategoryAxis side="BOTTOM" />
                            </xAxis>
                            <yAxis>
                               <NumberAxis side="LEFT" />
                            </yAxis>
-                        </ScatterChart>
+                        </LineChart>
                      </children>
                   </VBox>
                   <VBox maxHeight="-Infinity" prefWidth="500.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
@@ -221,7 +221,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Text>
-                        <BarChart>
+                        <BarChart fx:id="chartTopSanPham" prefHeight="300.0">
                            <xAxis>
                               <CategoryAxis side="BOTTOM" />
                            </xAxis>
@@ -235,7 +235,7 @@
             </FlowPane>
             <FlowPane alignment="CENTER" hgap="20.0" rowValignment="TOP" vgap="20.0">
                <children>
-                  <VBox maxHeight="-Infinity" prefWidth="500.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+                  <VBox fx:id="vboxThuocSapHetHan" maxHeight="-Infinity" prefWidth="500.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
                      <effect>
                         <DropShadow height="23.93" offsetX="3.0" offsetY="2.0" radius="12.93" width="29.79">
                            <color>
@@ -247,62 +247,15 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc sắp hết hạn">
+                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc sắp hết hạn" styleClass="header">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Text>
-                        <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
-                           <children>
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Amoxicillin 250mg">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="200 còn lại" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
-                           <children>
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="20 còn lại" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
-                           <children>
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Amoxicillin 250mg">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Hết hạn: 30/6/2025" />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" style="-fx-background-color: #fee2e2; -fx-border-color: #ef4444; -fx-text-fill: #991b1b; -fx-background-radius: 20px; -fx-border-radius: 20px;" text="200 còn lại" />
-                           </children>
-                        </HBox>
+                        <!-- Dữ liệu sẽ được thêm động từ controller -->
                      </children>
                   </VBox>
-                  <VBox maxHeight="-Infinity" prefWidth="500.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
+                  <VBox fx:id="vboxThuocTonKhoThap" maxHeight="-Infinity" prefWidth="500.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10px;">
                      <effect>
                         <DropShadow height="23.93" offsetX="3.0" offsetY="2.0" radius="12.93" width="29.79">
                            <color>
@@ -314,43 +267,12 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc còn tồn kho thấp">
+                        <Text fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc còn tồn kho thấp" styleClass="header">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Text>
-                        <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
-                           <children>
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã: VD-004-25" />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" style="-fx-background-color: #fef3c7; -fx-text-fill: #92400e; -fx-background-radius: 20px;" text="200 còn lại" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" style="-fx-border-color: #e5e7eb; -fx-border-width: 0px 0px 1px 0px;">
-                           <children>
-                              <VBox spacing="5.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cough Syrup">
-                                       <font>
-                                          <Font name="System Bold" size="15.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#868282" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã: VD-004-25" />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" style="-fx-background-color: #fef3c7; -fx-text-fill: #92400e; -fx-background-radius: 20px;" text="20 còn lại" />
-                           </children>
-                        </HBox>
+                        <!-- Dữ liệu sẽ được thêm động từ controller -->
                      </children>
                   </VBox>
                </children>

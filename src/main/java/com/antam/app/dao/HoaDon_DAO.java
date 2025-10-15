@@ -240,4 +240,140 @@ public class HoaDon_DAO {
         }
         return dsHoaDon;
     }
+
+    /**
+     * Tìm kiếm hóa đơn theo mã nhân viên
+     * @param maNV mã nhân viên
+     * @return danh sách hóa đơn của nhân viên đó
+     */
+    public ArrayList<HoaDon> searchHoaDonByMaNV(String maNV) {
+        ArrayList<HoaDon> dsHoaDon = new ArrayList<>();
+        String sql = "SELECT * FROM HoaDon WHERE MaNV = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            try (PreparedStatement state = con.prepareStatement(sql)) {
+                state.setString(1, maNV);
+                try (ResultSet rs = state.executeQuery()) {
+                    while (rs.next()) {
+                        String maHD = rs.getString("MaHD");
+                        LocalDate ngayTaoDate = rs.getDate("NgayTao").toLocalDate();
+                        String maKH = rs.getString("MaKH");
+                        String maKM = rs.getString("MaKM");
+                        double tongTien = rs.getDouble("TongTien");
+                        boolean deleteAt = rs.getBoolean("DeleteAt");
+
+                        NhanVien nhanVien = new NhanVien(maNV);
+                        KhachHang khachHang = new KhachHang(maKH);
+                        KhuyenMai khuyenMai = null;
+                        if (maKM != null) {
+                            khuyenMai = new KhuyenMai();
+                            java.lang.reflect.Field f = khuyenMai.getClass().getDeclaredField("MaKM");
+                            f.setAccessible(true);
+                            f.set(khuyenMai, maKM);
+                        }
+                        HoaDon hoaDon = new HoaDon(maHD, ngayTaoDate, nhanVien, khachHang, khuyenMai, tongTien, deleteAt);
+                        hoaDon.setTongTien(tongTien);
+                        dsHoaDon.add(hoaDon);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return dsHoaDon;
+    }
+
+    /**
+     * Thêm hóa đơn vào database
+     * @param hoaDon hóa đơn cần thêm
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
+    public boolean insertHoaDon(HoaDon hoaDon) {
+        String sql = "INSERT INTO HoaDon (MaHD, NgayTao, MaNV, MaKH, MaKM, TongTien, DeleteAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, hoaDon.getMaHD());
+                ps.setDate(2, java.sql.Date.valueOf(hoaDon.getNgayTao()));
+                ps.setString(3, hoaDon.getMaNV() != null ? hoaDon.getMaNV().getMaNV() : null);
+                ps.setString(4, hoaDon.getMaKH() != null ? hoaDon.getMaKH().getMaKH() : null);
+                if (hoaDon.getMaKM() != null) {
+                    ps.setString(5, hoaDon.getMaKM().getMaKM());
+                } else {
+                    ps.setNull(5, java.sql.Types.VARCHAR);
+                }
+                ps.setDouble(6, hoaDon.getTongTien());
+                ps.setBoolean(7, hoaDon.isDeleteAt());
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Lấy danh sách hóa đơn theo mã khách hàng
+     * @param maKH mã khách hàng
+     * @return danh sách hóa đơn của khách hàng đó
+     */
+    public static ArrayList<HoaDon> getHoaDonByMaKH(String maKH) {
+        ArrayList<HoaDon> dsHoaDon = new ArrayList<>();
+        String sql = "SELECT * FROM HoaDon WHERE MaKH = ? AND DeleteAt = 0 ORDER BY NgayTao DESC";
+        NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
+
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, maKH);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String maHD = rs.getString("MaHD");
+                        LocalDate ngayTaoDate = rs.getDate("NgayTao").toLocalDate();
+                        String maNV = rs.getString("MaNV");
+                        String maKM = rs.getString("MaKM");
+                        double tongTien = rs.getDouble("TongTien");
+                        boolean deleteAt = rs.getBoolean("DeleteAt");
+
+                        // Lấy đầy đủ thông tin nhân viên từ NhanVien_DAO
+                        NhanVien nhanVien = nhanVienDAO.findNhanVienVoiMa(maNV);
+                        if (nhanVien == null) {
+                            // Fallback nếu không tìm thấy nhân viên
+                            nhanVien = new NhanVien(maNV);
+                        }
+
+                        KhachHang khachHang = new KhachHang(maKH);
+                        KhuyenMai khuyenMai = null;
+                        if (maKM != null) {
+                            khuyenMai = new KhuyenMai();
+                            java.lang.reflect.Field f = khuyenMai.getClass().getDeclaredField("MaKM");
+                            f.setAccessible(true);
+                            f.set(khuyenMai, maKM);
+                        }
+                        HoaDon hoaDon = new HoaDon(maHD, ngayTaoDate, nhanVien, khachHang, khuyenMai, tongTien, deleteAt);
+                        hoaDon.setTongTien(tongTien);
+                        dsHoaDon.add(hoaDon);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy hóa đơn theo mã khách hàng: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return dsHoaDon;
+    }
 }
+

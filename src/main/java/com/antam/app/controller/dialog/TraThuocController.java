@@ -46,6 +46,7 @@ public class TraThuocController {
     private KhachHang_DAO khachHang_dao = new KhachHang_DAO();
     private ChiTietHoaDon_DAO chiTietHoaDon_dao = new ChiTietHoaDon_DAO();
     private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
+    private KhuyenMai_DAO khuyenMai_dao = new KhuyenMai_DAO();
     private HoaDon hoaDon;
     private ArrayList<ChiTietHoaDon> selectedItems = new ArrayList<>();
 
@@ -124,7 +125,6 @@ public class TraThuocController {
                         case "Khách hàng đổi ý":
                         case "Nhập nhầm lô / dư":
                         case "Sai thông tin đơn / bảo hiểm":
-                        case "Chính sách đổi / khuyến mãi":
                             Thuoc t = thuoc_dao.getThuocTheoMa(
                                     chiTietThuoc_dao
                                             .getChiTietThuoc(ct.getMaCTT().getMaCTT())
@@ -148,12 +148,20 @@ public class TraThuocController {
                     hoaDon_dao.xoaMemHoaDon(hoaDon.getMaHD());
                     hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), 0);
                 } else {
-                    double tongTienMoi = 0;
-                    ArrayList<ChiTietHoaDon> cths = chiTietHoaDon_dao.getAllChiTietHoaDonTheoMaHDConBan(hoaDon.getMaHD());
-                    for (ChiTietHoaDon ct : cths) {
-                        tongTienMoi += ct.getThanhTien();
+                    double tongTienCu = hoaDon.getTongTien();
+                    double tongTienTra = 0;
+                    double tongTienCoKM = 0;
+                    for (ChiTietHoaDon ct : selectedItems) {
+                        if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                            tongTienTra += ct.getThanhTien();
+                        } else {
+                            tongTienCoKM += ct.getThanhTien();
+                        }
                     }
-                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienMoi);
+                    if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
+                        tongTienTra = tongTienTra + TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                    }
+                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra);
                 }
             }
         });
@@ -164,11 +172,21 @@ public class TraThuocController {
     // Tính tổng tiền trả
     public void tinhTongTienTra(){
         double tongTien = 0;
+        double tongTienKhiTra = 0;
         for (ChiTietHoaDon ct : selectedItems){
-            tongTien += ct.getThanhTien();
+            if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                tongTienKhiTra += ct.getThanhTien();
+            } else {
+                tongTien += ct.getThanhTien();
+            }
         }
         DecimalFormat df = new DecimalFormat("#,### đ");
-        txtTongTienTra.setText(df.format(tongTien));
+        if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null){
+            tongTien = TinhTienKhuyenMai(tongTien, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+            txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra) + " (Có áp dụng KM)");
+        }else {
+            txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra));
+        }
     }
     // Thêm giá trị vào combobox lý do trả
     public void addValueCombobox(){
@@ -179,8 +197,7 @@ public class TraThuocController {
                 "Thuốc lỗi / hư hỏng",
                 "Nhập nhầm lô / dư",
                 "Thuốc bị thu hồi",
-                "Sai thông tin đơn / bảo hiểm",
-                "Chính sách đổi / khuyến mãi"
+                "Sai thông tin đơn / bảo hiểm"
         );
         cbLyDoTra.setItems(lyDoList);
     }
@@ -194,7 +211,7 @@ public class TraThuocController {
         );
 
         CheckBox checkBox = new CheckBox();
-        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             checkBox.setDisable(true);
         }
         checkBox.setOnAction(event -> {
@@ -222,8 +239,10 @@ public class TraThuocController {
         String valueBtn = "Bình thường";
         if (chiTietHoaDon.getTinhTrang().equals("Trả")) {
             valueBtn = "Đã trả";
-        } else if (chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        } else if (chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             valueBtn = "Đã đổi";
+        } else if (chiTietHoaDon.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+            valueBtn = "Thuốc đổi";
         }
         Button btn = new Button(valueBtn);
         btn.setStyle(
@@ -235,6 +254,18 @@ public class TraThuocController {
 
         hBox.getChildren().addAll(checkBox, txtMaThuoc, txtSoLuong, txtDonGia, btn);
         return hBox;
+    }
+
+    public double TinhTienKhuyenMai(double tongTien, double giaSo){
+        double giam = 0;
+        if (giaSo < 100) {
+            giam = tongTien * giaSo / 100.0;
+        } else if (giaSo >= 1000) {
+            giam = giaSo;
+        }
+        if (giam > tongTien) giam = tongTien;
+        tongTien -= giam;
+        return tongTien;
     }
 
 }

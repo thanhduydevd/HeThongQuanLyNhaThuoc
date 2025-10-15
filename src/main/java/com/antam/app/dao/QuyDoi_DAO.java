@@ -35,6 +35,7 @@ public class QuyDoi_DAO {
         Map<String, List<QuyDoi>> tatCaQuyDoi = new HashMap<>();
         String sql = "SELECT * FROM QuyDoiDonVi";
         try {
+            ConnectDB.getInstance().connect(); // Đảm bảo luôn mở kết nối trước khi truy vấn
             Connection con = ConnectDB.getConnection();
             Statement state = con.createStatement();
             ResultSet rs = state.executeQuery(sql);

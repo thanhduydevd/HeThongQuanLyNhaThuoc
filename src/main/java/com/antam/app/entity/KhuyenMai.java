@@ -70,7 +70,9 @@ public class KhuyenMai {
         return NgayBatDau;
     }
     public void setNgayBatDau(LocalDate ngayBatDau) {
-        if (ngayBatDau.isAfter(NgayKetThuc)) {
+        if (ngayBatDau == null)
+            throw new IllegalArgumentException("Ngày bắt đầu không được để trống");
+        if (NgayKetThuc != null && ngayBatDau.isAfter(NgayKetThuc)) {
             throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày kết thúc");
         }
         NgayBatDau = ngayBatDau;

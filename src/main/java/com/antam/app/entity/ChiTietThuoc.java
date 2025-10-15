@@ -93,4 +93,16 @@ public class ChiTietThuoc {
         this.ngaySanXuat = ngaySanXuat;
     }
 
+    @Override
+    public String toString() {
+        return "ChiTietThuoc{" +
+                "maCTT=" + maCTT +
+                ", maPN=" + (maPN != null ? maPN.getMaPhieuNhap() : "null") +
+                ", maThuoc=" + (maThuoc != null ? maThuoc.getTenThuoc() : "null") +
+                ", soLuong=" + soLuong +
+                ", hanSuDung=" + hanSuDung +
+                ", ngaySanXuat=" + ngaySanXuat +
+                '}';
+    }
+
 }

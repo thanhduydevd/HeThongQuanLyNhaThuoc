@@ -51,6 +51,9 @@ public class ChiTietHoaDon {
     public ChiTietThuoc getMaCTT() {
         return maCTT;
     }
+    public void setMaCTT(ChiTietThuoc maCTT) {
+        this.maCTT = maCTT;
+    }
 
 
     public int getSoLuong() {
@@ -87,10 +90,11 @@ public class ChiTietHoaDon {
     public String toString() {
         return "ChiTietHoaDon{" +
                 "MaHD=" + MaHD +
-                "MaCTT" + maCTT +
+                ", MaCTT=" + maCTT +
                 ", soLuong=" + soLuong +
                 ", maDVT=" + maDVT +
                 ", tinhTrang='" + tinhTrang + '\'' +
+                ", thanhTien=" + thanhTien +
                 '}';
     }
 
