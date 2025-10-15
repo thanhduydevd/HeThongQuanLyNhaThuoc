@@ -183,7 +183,11 @@ public class HoaDonController {
         colNgayTao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
         colKhachHang.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKH().getTenKH()));
         colNhanVien.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaNV().getHoTen()));
-        colKhuyenMai.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKM().getTenKM()));
+        colKhuyenMai.setCellValueFactory(cellData -> {
+            HoaDon hoaDon = cellData.getValue();
+            String tenKM = (hoaDon.getMaKM() != null) ? hoaDon.getMaKM().getTenKM() : "Không có khuyến mãi";
+            return new SimpleStringProperty(tenKM);
+        });
         colTongTien.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTongTien()).asObject());
         colTongTien.setCellFactory(column -> new javafx.scene.control.TableCell<HoaDon, Double>() {
             @Override
