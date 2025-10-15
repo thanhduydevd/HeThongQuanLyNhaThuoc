@@ -123,7 +123,7 @@ public class DoiThuocController {
             }
             else {
                 for (ChiTietHoaDon ct : selectedItems) {
-                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Đổi");
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả Khi Đổi");
                     switch (lyDo) {
                         // Các lý do KHÔNG cộng lại vào kho
                         case "Hết hạn sử dụng":
@@ -186,7 +186,7 @@ public class DoiThuocController {
                                                 ctt,
                                                 soLuong,
                                                 comboDonVi.getValue(),
-                                                "Bán",
+                                                "Thuốc Mới Khi Đổi",
                                                 Math.round(t.getGiaBan() * soLuong * (1 + t.getThue()) * 100.0) / 100.0
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
@@ -200,7 +200,7 @@ public class DoiThuocController {
                                                 ctt,
                                                 ctt.getSoLuong(),
                                                 comboDonVi.getValue(),
-                                                "Bán",
+                                                "Thuốc Mới Khi Đổi",
                                                 Math.round(t.getGiaBan() * ctt.getSoLuong() * (1 + t.getThue()) * 100.0) / 100.0
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
@@ -211,11 +211,16 @@ public class DoiThuocController {
                             }
                             double tongTienCu = hoaDon.getTongTien();
                             double tongTienTra = 0;
+                            double tongTienCoKM = 0;
                             for (ChiTietHoaDon ct : selectedItems) {
-                                tongTienTra += ct.getThanhTien();
+                                if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                                    tongTienTra += ct.getThanhTien();
+                                } else {
+                                    tongTienCoKM += ct.getThanhTien();
+                                }
                             }
                             if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-                                tongTienTra = TinhTienKhuyenMai(tongTienTra, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                                tongTienTra = tongTienTra + TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
                             }
                             hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra + tongTienMua);
                         } else {
@@ -263,7 +268,7 @@ public class DoiThuocController {
         );
 
         CheckBox checkBox = new CheckBox();
-        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             checkBox.setDisable(true);
         }
         checkBox.setOnAction(event -> {
@@ -291,8 +296,10 @@ public class DoiThuocController {
         String valueBtn = "Bình thường";
         if (chiTietHoaDon.getTinhTrang().equals("Trả")) {
             valueBtn = "Đã trả";
-        } else if (chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        } else if (chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             valueBtn = "Đã đổi";
+        } else if (chiTietHoaDon.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+            valueBtn = "Thuốc đổi";
         }
         Button btn = new Button(valueBtn);
         btn.setStyle(
@@ -319,6 +326,7 @@ public class DoiThuocController {
         comboBoxThuoc.getStylesheets().add(
                 getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
         );
+        comboBoxThuoc.setPromptText("Chọn thuốc");
         try {
             Connection con = ConnectDB.getInstance().connect();
         } catch (SQLException e) {
@@ -350,6 +358,7 @@ public class DoiThuocController {
         comboBoxDVT.setOnAction(event -> {
             tinhTongTien();
         });
+        comboBoxDVT.setPromptText("Chọn đơn vị tính");
         Spinner<Integer> spinnerSoLuong = new Spinner<>();
         spinnerSoLuong.getStylesheets().add(
                 getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
@@ -359,6 +368,7 @@ public class DoiThuocController {
         spinnerSoLuong.valueProperty().addListener((obs, oldValue, newValue) -> {
             tinhTongTien();
         });
+        spinnerSoLuong.setPromptText("Nhập số lượng");
         Button btn = new Button("X");
         btn.setStyle(
                 "-fx-padding: 0 5 0 5;" +
@@ -366,7 +376,7 @@ public class DoiThuocController {
                 "-fx-background-radius: 50%;" +
                 "-fx-text-fill: white;" +
                 "-fx-font-size: 12px;" +
-                "-fx-font-weight: bold;"
+                "-fx-font-weight: BOLD;"
         );
 
         btn.setOnAction(event -> {
@@ -377,9 +387,14 @@ public class DoiThuocController {
     }
 
     public void tinhTongTien() {
-        double tongTienTra = 0;
+        double tongTienTraCoKM = 0;
+        double tongTienKhiTra = 0;
         for (ChiTietHoaDon ct : selectedItems) {
-            tongTienTra += ct.getThanhTien();
+            if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                tongTienKhiTra += ct.getThanhTien();
+            } else {
+                tongTienTraCoKM += ct.getThanhTien();
+            }
         }
 
         double tongTienMua = 0;
@@ -398,14 +413,14 @@ public class DoiThuocController {
 
         DecimalFormat df = new DecimalFormat("#,### đ");
         if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-            tongTienTra = TinhTienKhuyenMai(tongTienTra, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
-            txtTongTienTra.setText(df.format(tongTienTra) + " (Có áp dụng KM)");
+            tongTienTraCoKM = TinhTienKhuyenMai(tongTienTraCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+            txtTongTienTra.setText(df.format(tongTienTraCoKM + tongTienKhiTra) + " (Có áp dụng KM)");
         }else{
-            txtTongTienTra.setText(df.format(tongTienTra));
+            txtTongTienTra.setText(df.format(tongTienTraCoKM));
         }
         txtTongTienMua.setText(df.format(tongTienMua));
 
-        double tienDoi = tongTienMua - tongTienTra;
+        double tienDoi = tongTienMua - (tongTienTraCoKM + tongTienKhiTra);
         if (tienDoi >= 0) {
             txtTongTienDoi.setText("Tổng kết: " + df.format(tienDoi));
             txtThongBaoDoi.setText("Khách hàng cần trả thêm");
