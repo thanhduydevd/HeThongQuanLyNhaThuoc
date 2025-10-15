@@ -39,6 +39,11 @@ public class Thuoc_DAO {
             JOIN KeThuoc k ON t.MaKe = k.MaKe
             WHERE t.deleteAt = 0
         """;
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         try (Connection con = ConnectDB.getConnection();
              Statement state = con.createStatement();
