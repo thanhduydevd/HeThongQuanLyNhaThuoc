@@ -180,10 +180,10 @@ public class HoaDonController {
         // Thiết lập cách lấy dữ liệu cho từng cột TableView
 
         colMaHD.setCellValueFactory(new PropertyValueFactory<>("MaHD"));
-        colNgayTao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-        colKhachHang.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKH().getMaKH()));
-        colNhanVien.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaNV().getMaNV()));
-        colKhuyenMai.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKM() != null ? cellData.getValue().getMaKM().getMaKM() : ""));
+        colNgayTao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+        colKhachHang.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKH().getTenKH()));
+        colNhanVien.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaNV().getHoTen()));
+        colKhuyenMai.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaKM().getTenKM()));
         colTongTien.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTongTien()).asObject());
         colTongTien.setCellFactory(column -> new javafx.scene.control.TableCell<HoaDon, Double>() {
             @Override
@@ -211,19 +211,29 @@ public class HoaDonController {
         dsNhanVien.add(0, tatCaNV);
         cbEmployee.setItems(dsNhanVien);
         cbEmployee.setPromptText("Chọn nhân viên");
-        // Hiển thị chỉ mã nhân viên trong ComboBox, "Tất cả" nếu là lựa chọn đặc biệt
+        // Hiển thị tên nhân viên trong ComboBox thay vì mã
         cbEmployee.setCellFactory(lv -> new javafx.scene.control.ListCell<NhanVien>() {
             @Override
             protected void updateItem(NhanVien item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getMaNV());
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    // Hiển thị "Tất cả" cho lựa chọn đặc biệt, hoặc tên nhân viên
+                    setText("Tất cả".equals(item.getMaNV()) ? "Tất cả" : item.getHoTen());
+                }
             }
         });
         cbEmployee.setButtonCell(new javafx.scene.control.ListCell<NhanVien>() {
             @Override
             protected void updateItem(NhanVien item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getMaNV());
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    // Hiển thị "Tất cả" cho lựa chọn đặc biệt, hoặc tên nhân viên
+                    setText("Tất cả".equals(item.getMaNV()) ? "Tất cả" : item.getHoTen());
+                }
             }
         });
         // --- Khởi tạo ComboBox trạng thái ---

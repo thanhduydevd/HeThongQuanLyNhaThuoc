@@ -151,8 +151,8 @@ public class XemChiTietHoaDonController {
         if (hoaDon == null) return;
         txtInvoiceId.setText("Hóa đơn: " + hoaDon.getMaHD());
         txtDate.setText("Ngày: " + hoaDon.getNgayTao().toString());
-        txtCustomer.setText("Khách hàng: " + hoaDon.getMaKH().getMaKH());
-        txtEmployee.setText("Nhân viên: " + hoaDon.getMaNV().getMaNV());
+        txtCustomer.setText("Khách hàng: " + hoaDon.getMaKH().getTenKH());
+        txtEmployee.setText("Nhân viên: " + hoaDon.getMaNV().getHoTen());
         // Lấy danh sách chi tiết hóa đơn từ DAO
         ChiTietHoaDon_DAO cthdDAO = new ChiTietHoaDon_DAO();
         ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
@@ -201,6 +201,6 @@ public class XemChiTietHoaDonController {
         txtVAT.setText(VND_FORMAT.format(vatTotal) + "đ");
         txtSubTotal.setText(VND_FORMAT.format(subTotal) + "đ");
         txtReturnTotal.setText(VND_FORMAT.format(returnTotal) + "đ");
-        txtPromotion.setText(hoaDon.getMaKM() != null ? hoaDon.getMaKM().getMaKM() : "Không có khuyến mãi");
+        txtPromotion.setText(hoaDon.getMaKM() != null ? hoaDon.getMaKM().getTenKM() : "Không có khuyến mãi");
     }
 }

@@ -49,7 +49,7 @@
                      <children>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã hóa đơn:" />
                         <TextField fx:id="txtMaHoaDon" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtTenKhachHang" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtTenKhachHang" maxHeight="-Infinity" prefHeight="40.0" promptText="Nhập tên khách hàng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc bán:" GridPane.rowIndex="2" />
                      </children>
@@ -92,7 +92,7 @@
                      </children>
                   </GridPane>
                   <!-- Thêm cảnh báo duy nhất cho mọi lỗi -->
-                  <Text fx:id="txtWarning" text="" fill="red" visible="false" style="-fx-font-size: 12px;" />
+                  <Text fx:id="txtWarning" fill="red" style="-fx-font-size: 12px;" text="" visible="false" />
                   <GridPane hgap="5.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8px;">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -101,6 +101,7 @@
                      <rowConstraints>
                         <RowConstraints />
                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints />
                         <RowConstraints />
                      </rowConstraints>
                      <children>

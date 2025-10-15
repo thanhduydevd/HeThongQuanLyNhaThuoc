@@ -77,7 +77,7 @@ public class ThemHoaDonController {
         this.dialogPane.getButtonTypes().add(applyButton);
         // Tự động sinh mã hoá đơn mới
         txtMaHoaDon.setText(generateNewMaHoaDon());
-
+        txtMaHoaDon.setEditable(false); // Khóa không cho sửa mã hoá đơn
         // Load thuốc vào cbMedicine
         Thuoc_DAO thuocDAO = new Thuoc_DAO();
         var thuocList = FXCollections.observableArrayList(thuocDAO.getAllThuoc());
