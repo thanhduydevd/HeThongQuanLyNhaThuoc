@@ -67,6 +67,11 @@ public class KhachHang_DAO {
     public KhachHang getKhachHangTheoMa(String maKH){
         KhachHang kh = new KhachHang(maKH);
         String sql = "SELECT * FROM KhachHang WHERE MaKH = ? AND DeleteAt = 0";
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         Connection con = ConnectDB.getConnection();
         try{
             PreparedStatement statement = con.prepareStatement(sql);

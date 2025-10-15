@@ -99,6 +99,11 @@ public class DonViTinh_DAO {
         DonViTinh dvt = null;
         String sql = "SELECT * FROM DonViTinh WHERE MaDVT = ?";
         try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
             Connection con = ConnectDB.getConnection();
             var state = con.prepareStatement(sql);
             state.setInt(1, ma);

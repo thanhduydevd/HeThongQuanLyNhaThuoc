@@ -91,6 +91,11 @@ public class Thuoc_DAO {
             JOIN KeThuoc k ON t.MaKe = k.MaKe
             WHERE t.MaThuoc = ? AND t.deleteAt = 0
         """;
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try (Connection con = ConnectDB.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, ma);
