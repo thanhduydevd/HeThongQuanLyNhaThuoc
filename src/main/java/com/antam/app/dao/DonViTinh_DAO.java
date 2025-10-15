@@ -56,7 +56,10 @@ public class DonViTinh_DAO {
             Statement statement = con.createStatement();
             var rs = statement.executeQuery(sql);
             while (rs.next()) {
-
+                int maDVT = rs.getInt("MaDVT");
+                String tenDVT = rs.getString("TenDVT");
+                DonViTinh dvt = new DonViTinh(maDVT, tenDVT);
+                listDVT.add(dvt);
             }
         } catch (Exception e) {
             e.printStackTrace();

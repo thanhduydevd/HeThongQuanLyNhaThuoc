@@ -13,11 +13,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,21 +121,55 @@ public class ThemThuocController {
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryGiaGoc =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
-                        1_000_000,
+                        5000000,
                         0,
-                        1000
+                        5000
                 );
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+        valueFactoryGiaGoc.setConverter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double value) {
+                if (value == null) return "";
+                return currencyFormat.format(value);
+            }
 
+            @Override
+            public Double fromString(String text) {
+                try {
+                    Number parsed = currencyFormat.parse(text);
+                    return parsed.doubleValue();
+                } catch (Exception e) {
+                    return 0.0;
+                }
+            }
+        });
         spAddGiaGoc.setValueFactory(valueFactoryGiaGoc);
         spAddGiaGoc.setEditable(true);
         // su kien up down spinner gia ban
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactoryGiaBan =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(
                         0,
-                        1_000_000,
+                        5000000,
                         0,
-                        1000
+                        5000
                 );
+        valueFactoryGiaBan.setConverter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double value) {
+                if (value == null) return "";
+                return currencyFormat.format(value);
+            }
+
+            @Override
+            public Double fromString(String text) {
+                try {
+                    Number parsed = currencyFormat.parse(text);
+                    return parsed.doubleValue();
+                } catch (Exception e) {
+                    return 0.0;
+                }
+            }
+        });
         spAddGiaBan.setValueFactory(valueFactoryGiaBan);
         spAddGiaBan.setEditable(true);
         // su kien up down spinner thue
