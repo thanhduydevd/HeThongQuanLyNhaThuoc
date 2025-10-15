@@ -150,11 +150,16 @@ public class TraThuocController {
                 } else {
                     double tongTienCu = hoaDon.getTongTien();
                     double tongTienTra = 0;
+                    double tongTienCoKM = 0;
                     for (ChiTietHoaDon ct : selectedItems) {
-                        tongTienTra += ct.getThanhTien();
+                        if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                            tongTienTra += ct.getThanhTien();
+                        } else {
+                            tongTienCoKM += ct.getThanhTien();
+                        }
                     }
                     if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-                        tongTienTra = TinhTienKhuyenMai(tongTienTra, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                        tongTienTra = tongTienTra + TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
                     }
                     hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra);
                 }
@@ -167,15 +172,20 @@ public class TraThuocController {
     // Tính tổng tiền trả
     public void tinhTongTienTra(){
         double tongTien = 0;
+        double tongTienKhiTra = 0;
         for (ChiTietHoaDon ct : selectedItems){
-            tongTien += ct.getThanhTien();
+            if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+                tongTienKhiTra += ct.getThanhTien();
+            } else {
+                tongTien += ct.getThanhTien();
+            }
         }
         DecimalFormat df = new DecimalFormat("#,### đ");
         if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null){
             tongTien = TinhTienKhuyenMai(tongTien, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
-            txtTongTienTra.setText(df.format(tongTien) + " (Có áp dụng KM)");
+            txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra) + " (Có áp dụng KM)");
         }else {
-            txtTongTienTra.setText(df.format(tongTien));
+            txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra));
         }
     }
     // Thêm giá trị vào combobox lý do trả
@@ -201,7 +211,7 @@ public class TraThuocController {
         );
 
         CheckBox checkBox = new CheckBox();
-        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        if (chiTietHoaDon.getTinhTrang().equals("Trả") || chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             checkBox.setDisable(true);
         }
         checkBox.setOnAction(event -> {
@@ -229,8 +239,10 @@ public class TraThuocController {
         String valueBtn = "Bình thường";
         if (chiTietHoaDon.getTinhTrang().equals("Trả")) {
             valueBtn = "Đã trả";
-        } else if (chiTietHoaDon.getTinhTrang().equals("Đổi")) {
+        } else if (chiTietHoaDon.getTinhTrang().equals("Trả Khi Đổi")) {
             valueBtn = "Đã đổi";
+        } else if (chiTietHoaDon.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
+            valueBtn = "Thuốc đổi";
         }
         Button btn = new Button(valueBtn);
         btn.setStyle(
