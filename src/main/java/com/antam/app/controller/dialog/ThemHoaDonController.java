@@ -308,7 +308,6 @@ public class ThemHoaDonController {
                             chiTietThuocDAO.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuongXuat);
                             soLuongConLai -= soLuongXuat;
                         }
-                        // Không cần kiểm tra tồn kho ở đây nữa vì đã kiểm tra trước khi tạo hóa đơn
                     }
                 }
             }
