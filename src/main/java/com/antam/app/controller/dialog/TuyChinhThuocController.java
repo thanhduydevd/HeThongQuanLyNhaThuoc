@@ -10,15 +10,12 @@ import javafx.scene.text.Text;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
-
-public class XoaSuaThuocController {
+public class TuyChinhThuocController {
     private Thuoc thuoc;
 
     @FXML
@@ -28,14 +25,12 @@ public class XoaSuaThuocController {
     private TextField txtDUMaThuoc, txtDUTenThuoc, txtDUHamLuong;
 
     @FXML
-    private Text txtDUGiaByDV, notification_DUThuoc, txtDUQuyDoi1, txtDUQuyDoi2, txtDUTitleQuyDoi1, txtDUTitleQuyDoi2;
+    private Text txtDUGiaByDV, notification_DUThuoc;
 
 
     @FXML
     private Spinner<Double> spDUGiaGoc, spDUGiaBan, spDUThue;
 
-    @FXML
-    private Spinner<Integer> spDUQuyDoi1, spDUQuyDoi2;
 
     @FXML
     private ComboBox<DonViTinh> cbDUDVCS;
@@ -50,7 +45,6 @@ public class XoaSuaThuocController {
     private DonViTinh_DAO dvt_dao = new DonViTinh_DAO();
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
     private Ke_DAO ke_dao = new Ke_DAO();
-    private QuyDoi_DAO quyDoi_dao = new QuyDoi_DAO();
 
     public void setThuoc(Thuoc thuoc) {
         this.thuoc = thuoc;
@@ -72,83 +66,6 @@ public class XoaSuaThuocController {
         cbDUKe.setValue(t.getMaKe());
         cbDUDVCS.setValue(t.getMaDVTCoSo());
         txtDUGiaByDV.setText(dvt_dao.getDVTTheoMa(t.getMaDVTCoSo().getMaDVT()).getTenDVT());
-
-
-
-        // Lấy danh sách quy đổi
-        ArrayList<QuyDoi> arr = quyDoi_dao.getQuyDoiTheoMa(t.getMaThuoc());
-        int max;
-        switch (dvt_dao.getDVTTheoMa(t.getMaDVTCoSo().getMaDVT()).getTenDVT()) {
-            case "Hộp":
-                max = 0;
-                break;
-            case "Vỉ":
-                max = 1000;
-                break;
-            case "Viên":
-                max = 1000;
-                break;
-            case "Chai":
-                max = 1;
-                break;
-            case "Lọ":
-                max = 100;
-                break;
-            case "Ống":
-                max = 100;
-                break;
-            case "Tuýp":
-                max = 1;
-                break;
-            default:
-                max = 1000;
-        }
-        // Reset quy đổi
-        spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0,0,0,0));
-        spDUQuyDoi1.setEditable(false);
-        spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0,0,0,0));
-        spDUQuyDoi2.setEditable(false);
-        txtDUTitleQuyDoi1.setText("");
-        txtDUQuyDoi1.setText("");
-        txtDUTitleQuyDoi2.setText("");
-        txtDUQuyDoi2.setText("");
-
-        if (arr == null || arr.isEmpty()) {
-            return;
-        }
-
-        // Nếu có 1 cấp quy đổi
-        if (arr.size() == 1) {
-            QuyDoi q = arr.get(0);
-            spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max, q.getTiLeQuyDoi(), 1));
-            spDUQuyDoi1.setEditable(true);
-
-            spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-            spDUQuyDoi2.setEditable(false);
-
-            txtDUTitleQuyDoi1.setText("1 " + dvt_dao.getDVTTheoMa(q.getMaDVTCha().getMaDVT()).getTenDVT() + " =");
-            txtDUQuyDoi1.setText(dvt_dao.getDVTTheoMa(q.getMaDVTCon().getMaDVT()).getTenDVT());
-            txtDUTitleQuyDoi2.setText("");
-            txtDUQuyDoi2.setText("");
-        }
-
-        // Nếu có 2 cấp quy đổi
-        if (arr.size() >= 2) {
-            QuyDoi q1 = arr.get(0); // cấp 1
-            QuyDoi q2 = arr.get(1); // cấp 2
-
-            spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max, q1.getTiLeQuyDoi(), 1));
-            spDUQuyDoi1.setEditable(true);
-
-            spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max, q2.getTiLeQuyDoi(), 1));
-            spDUQuyDoi2.setEditable(true);
-
-            txtDUTitleQuyDoi1.setText("1 " + dvt_dao.getDVTTheoMa(q1.getMaDVTCha().getMaDVT()).getTenDVT() + " =");
-            txtDUQuyDoi1.setText(dvt_dao.getDVTTheoMa(q1.getMaDVTCon().getMaDVT()).getTenDVT());
-
-            txtDUTitleQuyDoi2.setText("1 " + dvt_dao.getDVTTheoMa(q2.getMaDVTCha().getMaDVT()).getTenDVT() + " =");
-            txtDUQuyDoi2.setText(dvt_dao.getDVTTheoMa(q2.getMaDVTCon().getMaDVT()).getTenDVT());
-        }
     }
 
 
@@ -183,35 +100,9 @@ public class XoaSuaThuocController {
                 Double giaBan = spDUGiaBan.getValue();
                 Double thue = spDUThue.getValue();
                 Ke ke = cbDUKe.getValue();
-                String title1 = extractUnit(txtDUTitleQuyDoi1.getText());
-                String title2 = extractUnit(txtDUTitleQuyDoi2.getText());
-                String unit1 = txtDUQuyDoi1.getText();
-                String unit2 = txtDUQuyDoi2.getText();
-                int donVi1 = spDUQuyDoi1.getValue();
-                int donVi2 = spDUQuyDoi2.getValue();
                 Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
                         dangDieuChe, donViCoSo, ke);
                 boolean success = thuoc_dao.capNhatThuoc(thuoc);
-
-                if (success) {
-                    if (donVi1 != 0 && title1 != null && unit1 != null) {
-                        QuyDoi qd1 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title1), dvt_dao.getDVTTheoTen(unit1), donVi1);
-                        if (quyDoi_dao.capNhatQuyDoi(qd1) == false) {
-                            notification_DUThuoc.setText("Sửa thuốc thất bại do quy doi!");
-                            event.consume();
-                        }
-                    }
-                    if (donVi2 != 0 && title2 != null && unit2 != null) {
-                        QuyDoi qd2 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title2), dvt_dao.getDVTTheoTen(unit2), donVi2);
-                        if (quyDoi_dao.capNhatQuyDoi(qd2) == false) {
-                            notification_DUThuoc.setText("Sửa thuốc thất bại!");
-                            event.consume();
-                        }
-                    }
-                } else {
-                    notification_DUThuoc.setText("Sửa thuốc thất bại!");
-                    event.consume();
-                }
 
             }
 
@@ -269,8 +160,9 @@ public class XoaSuaThuocController {
         addComBoBoxDVCS();
         //them combo box dang dieu che
         addComBoBoxDDC();
-        eventComboBoxDVCS();
-        cbDUDVCS.setOnAction(event -> eventComboBoxDVCS());
+        cbDUDVCS.setOnAction(e -> {
+            txtDUGiaByDV.setText(cbDUDVCS.getValue().getTenDVT());
+        });
     }
     // hien thi hop thoai xac nhan xoa
     public boolean showConfirmDeleteDialog(String tenThuoc) {
@@ -402,84 +294,5 @@ public class XoaSuaThuocController {
             return null;
         }
     }
-
-    // ham event thay doi cac text theo combobox don vi co so
-    public void eventComboBoxDVCS() {
-        String donViCoSo = cbDUDVCS.getValue().getTenDVT();
-        txtDUGiaByDV.setText(donViCoSo);
-        switch (donViCoSo) {
-            case "Viên":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spDUQuyDoi1.setEditable(true);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spDUQuyDoi2.setEditable(true);
-                txtDUQuyDoi1.setText("Vỉ");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("Viên");
-                txtDUTitleQuyDoi2.setText("1 Vỉ =");
-                break;
-            case "Vỉ":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spDUQuyDoi1.setEditable(true);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("Vĩ");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("");
-                txtDUTitleQuyDoi2.setText("");
-                break;
-            case "Hộp":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("");
-                txtDUTitleQuyDoi1.setText("");
-                txtDUQuyDoi2.setText("");
-                txtDUTitleQuyDoi2.setText("");
-                break;
-            case "Chai":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1, 1, 0));
-                spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("Chai");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("");
-                txtDUTitleQuyDoi2.setText("");
-                break;
-            case "Lọ":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
-                spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("Lọ");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("Viên");
-                txtDUTitleQuyDoi2.setText("1 Lọ =");
-                break;
-            case "Ống":
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
-                spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("Ống");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("");
-                txtDUTitleQuyDoi2.setText("");
-                break;
-            default:
-                spDUQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1, 1, 0));
-                spDUQuyDoi1.setEditable(false);
-                spDUQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spDUQuyDoi2.setEditable(false);
-                txtDUQuyDoi1.setText("Tuýp");
-                txtDUTitleQuyDoi1.setText("1 Hộp =");
-                txtDUQuyDoi2.setText("");
-                txtDUTitleQuyDoi2.setText("");
-                break;
-        }
-    }
-
 
 }

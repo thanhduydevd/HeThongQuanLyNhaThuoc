@@ -2,7 +2,7 @@ package com.antam.app.controller;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.controller.dialog.ChiTietThuocController;
-import com.antam.app.controller.dialog.XoaSuaThuocController;
+import com.antam.app.controller.dialog.TuyChinhThuocController;
 import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.DangDieuChe_DAO;
 import com.antam.app.dao.Ke_DAO;
@@ -66,7 +66,7 @@ public class ThuocController {
             }else{
                 GiaoDienCuaSo dialog = new GiaoDienCuaSo("xoasuathuoc");
                 // Lấy controller và set Thuoc vào
-                XoaSuaThuocController controller = dialog.getController();
+                TuyChinhThuocController controller = dialog.getController();
                 controller.setThuoc(selectedThuoc);
                 controller.showData(selectedThuoc);
                 // Show dialog

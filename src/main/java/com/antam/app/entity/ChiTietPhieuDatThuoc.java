@@ -6,8 +6,6 @@
 
 package com.antam.app.entity;
 
-import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
-
 /*
  * @description
  * @author: Duong Nguyen
@@ -82,8 +80,7 @@ public class ChiTietPhieuDatThuoc {
     public double tinhThanhTien() {
         double giaBan = maThuoc.getGiaBan();
         float thue = maThuoc.getThue();
-        int soLuongCoSo = quyDoiVeCoSo(maThuoc.getMaThuoc(), soLuong, donViTinh.getMaDVT());
-        return soLuongCoSo * giaBan * (1 + thue);
+        return soLuong * giaBan * (1 + thue);
     }
 
     @Override

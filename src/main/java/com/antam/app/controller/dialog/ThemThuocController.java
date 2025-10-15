@@ -29,18 +29,15 @@ public class ThemThuocController {
     private DangDieuChe_DAO ddc_dao;
     private DonViTinh_DAO dvt_dao;
     private Thuoc_DAO thuoc_dao;
-    private static QuyDoi_DAO quyDoi_dao = new QuyDoi_DAO();
     private Ke_DAO ke_dao;
     @FXML
     private DialogPane dialogPane;
     @FXML
     private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddHamLuong;
     @FXML
-    private Text txtAddGiaByDV, notification_addThuoc, txtAddQuyDoi1, txtAddQuyDoi2, txtAddTitleQuyDoi1, txtAddTitleQuyDoi2;
+    private Text txtAddGiaByDV, notification_addThuoc;
     @FXML
     private Spinner<Double> spAddGiaGoc, spAddGiaBan, spAddThue;
-    @FXML
-    private Spinner<Integer> spAddQuyDoi1, spAddQuyDoi2;
     @FXML
     private ComboBox<DonViTinh> cbAddDVCS;
     @FXML
@@ -77,37 +74,11 @@ public class ThemThuocController {
                 Double giaBan = spAddGiaBan.getValue();
                 Double thue = spAddThue.getValue();
                 Ke ke = cbAddKe.getValue();
-                String title1 = extractUnit(txtAddTitleQuyDoi1.getText());
-                String title2 = extractUnit(txtAddTitleQuyDoi2.getText());
-                String unit1 = txtAddQuyDoi1.getText();
-                String unit2 = txtAddQuyDoi2.getText();
-                int donVi1 = spAddQuyDoi1.getValue();
-                int donVi2 = spAddQuyDoi2.getValue();
 
                 Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue.floatValue(), false,
                         dangDieuChe, donViCoSo, ke);
                 thuoc_dao = new Thuoc_DAO();
                 boolean success = thuoc_dao.themThuoc(thuoc);
-
-                if (success) {
-                    if (donVi1 != 0 && title1 != null && unit1 != null) {
-                        QuyDoi qd1 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title1), dvt_dao.getDVTTheoTen(unit1), donVi1);
-                        if (quyDoi_dao.themQuyDoi(qd1) == false) {
-                            notification_addThuoc.setText("Thêm quy đổi thất bại!");
-                            event.consume();
-                        }
-                    }
-                    if (donVi2 != 0 && title2 != null && unit2 != null) {
-                        QuyDoi qd2 = new QuyDoi(thuoc, dvt_dao.getDVTTheoTen(title2), dvt_dao.getDVTTheoTen(unit2), donVi2);
-                        if (quyDoi_dao.themQuyDoi(qd2) == false) {
-                            notification_addThuoc.setText("Thêm quy đổi thất bại!");
-                            event.consume();
-                        }
-                    }
-                } else {
-                    notification_addThuoc.setText("Thêm thuốc thất bại!");
-                    event.consume();
-                }
 
             }
 
@@ -188,8 +159,6 @@ public class ThemThuocController {
         addComBoBoxDVCS();
         //them combo box dang dieu che
         addComBoBoxDDC();
-        eventComboBoxDVCS();
-        cbAddDVCS.setOnAction(event -> eventComboBoxDVCS());
     }
 
     // ham validate kiem tra du lieu truyen vao dung hay ko
@@ -313,117 +282,6 @@ public class ThemThuocController {
         } else {
             return null;
         }
-    }
-
-    // ham event thay doi cac text theo combobox don vi co so
-    public void eventComboBoxDVCS(){
-        String donViCoSo =  cbAddDVCS.getValue().getTenDVT();
-        txtAddGiaByDV.setText(donViCoSo);
-        switch (donViCoSo) {
-            case "Viên":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spAddQuyDoi2.setEditable(true);
-                txtAddQuyDoi1.setText("Vỉ");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("Viên");
-                txtAddTitleQuyDoi2.setText("1 Vỉ =");
-                break;
-            case "Vỉ":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi2.setEditable(false);
-                txtAddQuyDoi1.setText("Vĩ");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("");
-                txtAddTitleQuyDoi2.setText("");
-                break;
-            case "Hộp":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi2.setEditable(true);
-                txtAddQuyDoi1.setText("");
-                txtAddTitleQuyDoi1.setText("");
-                txtAddQuyDoi2.setText("");
-                txtAddTitleQuyDoi2.setText("");
-                break;
-            case "Chai":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1, 1, 0));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi2.setEditable(false);
-                txtAddQuyDoi1.setText("Chai");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("");
-                txtAddTitleQuyDoi2.setText("");
-                break;
-            case "Lọ":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 10, 1));
-                spAddQuyDoi2.setEditable(true);
-                txtAddQuyDoi1.setText("Lọ");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("Viên");
-                txtAddTitleQuyDoi2.setText("1 Lọ =");
-                break;
-            case "Ống":
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi2.setEditable(false);
-                txtAddQuyDoi1.setText("Ống");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("");
-                txtAddTitleQuyDoi2.setText("");
-                break;
-            default:
-                spAddQuyDoi1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1, 1, 0));
-                spAddQuyDoi1.setEditable(true);
-                spAddQuyDoi2.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0, 0));
-                spAddQuyDoi2.setEditable(false);
-                txtAddQuyDoi1.setText("Tuýp");
-                txtAddTitleQuyDoi1.setText("1 Hộp =");
-                txtAddQuyDoi2.setText("");
-                txtAddTitleQuyDoi2.setText("");
-                break;
-        }
-
-
-
-    }
-    // Ham quy doi so luong thuoc ve don vi co so
-    public static int quyDoiVeCoSo(String maThuoc, int soLuong, int donViHienTai) {
-        try {
-            Connection con = ConnectDB.getInstance().connect();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        Map<String, List<QuyDoi>> map = quyDoi_dao.getAllQuyDoi();
-        List<QuyDoi> list = map.get(maThuoc);
-        int soLuongCoSo = soLuong;
-        if (list == null || list.size() == 0) {
-            return soLuongCoSo;
-        }
-
-        while (true) {
-            QuyDoi qd = null;
-            for (QuyDoi x : list) {
-                if (x.getMaDVTCha().getMaDVT() == donViHienTai) {
-                    qd = x;
-                    break;
-                }
-            }
-            if (qd == null) {
-                break;
-            }
-            soLuongCoSo *= qd.getTiLeQuyDoi();
-            donViHienTai = qd.getMaDVTCon().getMaDVT();
-        }
-        return soLuongCoSo;
     }
 
 }

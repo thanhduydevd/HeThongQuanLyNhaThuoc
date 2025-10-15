@@ -6,10 +6,6 @@
 
 package com.antam.app.entity;
 
-import com.antam.app.controller.dialog.ThemThuocController;
-
-import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
-
 /*
  * @description
  * @author: Duong Nguyen

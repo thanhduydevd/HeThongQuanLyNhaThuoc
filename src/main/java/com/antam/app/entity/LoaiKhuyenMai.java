@@ -38,10 +38,7 @@ public class LoaiKhuyenMai {
 
     @Override
     public String toString() {
-        return "LoaiKhuyenMai{" +
-                "MaLKM=" + MaLKM +
-                ", TenLKM='" + TenLKM + '\'' +
-                '}';
+        return TenLKM;
     }
 
     @Override

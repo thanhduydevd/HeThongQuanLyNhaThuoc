@@ -52,6 +52,7 @@ public class GiaoDienCuaSo extends Dialog {
             case "themphieunhap" -> var10000 = "/com/antam/app/views/product/dialog/add_goods_receipt.fxml";
             case "themhoadon" -> var10000 = "/com/antam/app/views/sales/dialog/add_invoice.fxml";
             case "themkhuyenmai" -> var10000 = "/com/antam/app/views/sales/dialog/add_promotion.fxml";
+            case "tuychinhkhuyenmai" -> var10000 = "/com/antam/app/views/sales/dialog/customize_promotion.fxml";
             case "themphieudat" -> var10000 = "/com/antam/app/views/sales/dialog/add_purchase_order.fxml";
             case "trathuoc" -> var10000 = "/com/antam/app/views/sales/dialog/exchange_medicine.fxml";
             case "doithuoc" -> var10000 = "/com/antam/app/views/sales/dialog/return_medicine.fxml";

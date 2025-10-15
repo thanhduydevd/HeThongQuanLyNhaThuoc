@@ -93,39 +93,39 @@ public class ThemHoaDonController {
             }
         });
 
-        cbMedicine.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                // Lấy danh sách đơn vị tính quy đổi cho thuốc
-                QuyDoi_DAO quyDoiDAO = new QuyDoi_DAO();
-                DonViTinh_DAO donViTinhDAO = new DonViTinh_DAO();
-                var allQuyDoi = quyDoiDAO.getAllQuyDoi();
-                var quyDoiList = allQuyDoi.getOrDefault(newVal.getMaThuoc(), List.of());
-                HashSet<Integer> dvtIdSet = new HashSet<>();
-                // Thêm đơn vị cơ sở
-                dvtIdSet.add(newVal.getMaDVTCoSo().getMaDVT());
-                // Thêm các đơn vị quy đổi
-                for (QuyDoi qd : quyDoiList) {
-                    dvtIdSet.add(qd.getMaDVTCha().getMaDVT());
-                    dvtIdSet.add(qd.getMaDVTCon().getMaDVT());
-                }
-                HashSet<DonViTinh> dvtSet = new HashSet<>();
-                for (Integer maDVT : dvtIdSet) {
-                    DonViTinh dvt = donViTinhDAO.getDVTTheoMa(maDVT);
-                    if (dvt != null) dvtSet.add(dvt);
-                }
-                cb_unit.setItems(FXCollections.observableArrayList(dvtSet));
-                cb_unit.getSelectionModel().selectFirst();
-                // Hiển thị giá bán
-                cb_price.setText(VND_FORMAT.format(newVal.getGiaBan()) + "đ");
-                updateSummary();
-            } else {
-                cb_unit.getItems().clear();
-                cb_price.clear();
-                txtTamTinh.setText("");
-                txtThue.setText("");
-                txtTongTien.setText("");
-            }
-        });
+//        cbMedicine.valueProperty().addListener((obs, oldVal, newVal) -> {
+//            if (newVal != null) {
+//                // Lấy danh sách đơn vị tính quy đổi cho thuốc
+//                QuyDoi_DAO quyDoiDAO = new QuyDoi_DAO();
+//                DonViTinh_DAO donViTinhDAO = new DonViTinh_DAO();
+//                var allQuyDoi = quyDoiDAO.getAllQuyDoi();
+//                var quyDoiList = allQuyDoi.getOrDefault(newVal.getMaThuoc(), List.of());
+//                HashSet<Integer> dvtIdSet = new HashSet<>();
+//                // Thêm đơn vị cơ sở
+//                dvtIdSet.add(newVal.getMaDVTCoSo().getMaDVT());
+//                // Thêm các đơn vị quy đổi
+//                for (QuyDoi qd : quyDoiList) {
+//                    dvtIdSet.add(qd.getMaDVTCha().getMaDVT());
+//                    dvtIdSet.add(qd.getMaDVTCon().getMaDVT());
+//                }
+//                HashSet<DonViTinh> dvtSet = new HashSet<>();
+//                for (Integer maDVT : dvtIdSet) {
+//                    DonViTinh dvt = donViTinhDAO.getDVTTheoMa(maDVT);
+//                    if (dvt != null) dvtSet.add(dvt);
+//                }
+//                cb_unit.setItems(FXCollections.observableArrayList(dvtSet));
+//                cb_unit.getSelectionModel().selectFirst();
+//                // Hiển thị giá bán
+//                cb_price.setText(VND_FORMAT.format(newVal.getGiaBan()) + "đ");
+//                updateSummary();
+//            } else {
+//                cb_unit.getItems().clear();
+//                cb_price.clear();
+//                txtTamTinh.setText("");
+//                txtThue.setText("");
+//                txtTongTien.setText("");
+//            }
+//        });
         txtQuantity.textProperty().addListener((obs, oldVal, newVal) -> updateSummary());
         cb_price.textProperty().addListener((obs, oldVal, newVal) -> updateSummary());
         cb_unit.valueProperty().addListener((obs, oldVal, newVal) -> updateSummary());
@@ -370,34 +370,34 @@ public class ThemHoaDonController {
                 return thuocList.stream().filter(t -> t.getTenThuoc().equals(s)).findFirst().orElse(null);
             }
         });
-        cbMedicine.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                QuyDoi_DAO quyDoiDAO = new QuyDoi_DAO();
-                DonViTinh_DAO donViTinhDAO = new DonViTinh_DAO();
-                var allQuyDoi = quyDoiDAO.getAllQuyDoi();
-                var quyDoiList = allQuyDoi.getOrDefault(newVal.getMaThuoc(), List.of());
-                HashSet<Integer> dvtIdSet = new HashSet<>();
-                // Thêm đơn vị cơ sở
-                dvtIdSet.add(newVal.getMaDVTCoSo().getMaDVT());
-                // Thêm các đơn vị quy đổi
-                for (QuyDoi qd : quyDoiList) {
-                    dvtIdSet.add(qd.getMaDVTCha().getMaDVT());
-                    dvtIdSet.add(qd.getMaDVTCon().getMaDVT());
-                }
-                HashSet<DonViTinh> dvtSet = new HashSet<>();
-                for (Integer maDVT : dvtIdSet) {
-                    DonViTinh dvt = donViTinhDAO.getDVTTheoMa(maDVT);
-                    if (dvt != null) dvtSet.add(dvt);
-                }
-                cb_unit.setItems(FXCollections.observableArrayList(dvtSet));
-                cb_unit.getSelectionModel().selectFirst();
-                cb_price.setText(VND_FORMAT.format(newVal.getGiaBan()) + "đ");
-            } else {
-                cb_unit.getItems().clear();
-                cb_price.clear();
-            }
-            updateSummary();
-        });
+//        cbMedicine.valueProperty().addListener((obs, oldVal, newVal) -> {
+//            if (newVal != null) {
+//                QuyDoi_DAO quyDoiDAO = new QuyDoi_DAO();
+//                DonViTinh_DAO donViTinhDAO = new DonViTinh_DAO();
+//                var allQuyDoi = quyDoiDAO.getAllQuyDoi();
+//                var quyDoiList = allQuyDoi.getOrDefault(newVal.getMaThuoc(), List.of());
+//                HashSet<Integer> dvtIdSet = new HashSet<>();
+//                // Thêm đơn vị cơ sở
+//                dvtIdSet.add(newVal.getMaDVTCoSo().getMaDVT());
+//                // Thêm các đơn vị quy đổi
+//                for (QuyDoi qd : quyDoiList) {
+//                    dvtIdSet.add(qd.getMaDVTCha().getMaDVT());
+//                    dvtIdSet.add(qd.getMaDVTCon().getMaDVT());
+//                }
+//                HashSet<DonViTinh> dvtSet = new HashSet<>();
+//                for (Integer maDVT : dvtIdSet) {
+//                    DonViTinh dvt = donViTinhDAO.getDVTTheoMa(maDVT);
+//                    if (dvt != null) dvtSet.add(dvt);
+//                }
+//                cb_unit.setItems(FXCollections.observableArrayList(dvtSet));
+//                cb_unit.getSelectionModel().selectFirst();
+//                cb_price.setText(VND_FORMAT.format(newVal.getGiaBan()) + "đ");
+//            } else {
+//                cb_unit.getItems().clear();
+//                cb_price.clear();
+//            }
+//            updateSummary();
+//        });
         txtQuantity.textProperty().addListener((obs, oldVal, newVal) -> updateSummary());
         cb_price.textProperty().addListener((obs, oldVal, newVal) -> updateSummary());
         cb_unit.valueProperty().addListener((obs, oldVal, newVal) -> updateSummary());

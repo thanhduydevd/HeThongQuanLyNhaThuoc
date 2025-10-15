@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import static com.antam.app.controller.dialog.ThemThuocController.quyDoiVeCoSo;
 
 public class TraThuocController {
     @FXML
@@ -133,7 +132,7 @@ public class TraThuocController {
                             );
                             chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(
                                     ct.getMaCTT().getMaCTT(),
-                                    quyDoiVeCoSo(t.getMaThuoc(), ct.getSoLuong(), ct.getMaDVT().getMaDVT())
+                                     ct.getSoLuong()
                             );
                             break;
 
@@ -159,9 +158,9 @@ public class TraThuocController {
                         }
                     }
                     if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-                        tongTienTra = tongTienTra + TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                        tongTienCoKM = TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
                     }
-                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra);
+                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra - tongTienCoKM);
                 }
             }
         });

@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.XoaSuaThuocController">
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.TuyChinhThuocController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -92,9 +92,6 @@
                                     <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị cơ sở (tự động):" />
@@ -103,18 +100,6 @@
                                         <Text fx:id="txtDUGiaByDV" fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                             <font>
                                                 <Font name="System Bold" size="15.0" />
-                                            </font></Text>
-                                        <Text fx:id="txtDUTitleQuyDoi1" strokeType="OUTSIDE" strokeWidth="0.0" text="1 Vỉ =" GridPane.rowIndex="2" />
-                                        <Text fx:id="txtDUTitleQuyDoi2" strokeType="OUTSIDE" strokeWidth="0.0" text="1 Hộp =" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                        <Spinner fx:id="spDUQuyDoi1" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                                        <Spinner fx:id="spDUQuyDoi2" editable="true" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                        <Text fx:id="txtDUQuyDoi1" fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.rowIndex="4">
-                                            <font>
-                                                <Font name="System Bold" size="15.0" />
-                                            </font></Text>
-                                        <Text fx:id="txtDUQuyDoi2" fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text="Vỉ" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                            <font>
-                                                <Font name="System Italic" size="12.0" />
                                             </font></Text>
                                     </children>
                                 </GridPane>
