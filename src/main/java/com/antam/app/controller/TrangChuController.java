@@ -37,15 +37,17 @@ import java.util.ResourceBundle;
  */
 public class TrangChuController implements Initializable {
 
+    // ==================== CÁC THÀNH PHẦN GIAO DIỆN ====================
     @FXML private Text txtTongSoThuoc;
     @FXML private Text txtSoNhanVien;
     @FXML private Text txtSoHoaDonHomNay;
     @FXML private Text txtSoKhuyenMai;
-    @FXML private LineChart<String, Number> chartDoanhThu;
-    @FXML private BarChart<String, Number> chartTopSanPham;
-    @FXML private VBox vboxThuocSapHetHan;
-    @FXML private VBox vboxThuocTonKhoThap;
+    @FXML private LineChart<String, Number> chartDoanhThu;        // Biểu đồ đường doanh thu
+    @FXML private BarChart<String, Number> chartTopSanPham;       // Biểu đồ cột sản phẩm
+    @FXML private VBox vboxThuocSapHetHan;                        // Danh sách thuốc sắp hết hạn
+    @FXML private VBox vboxThuocTonKhoThap;                       // Danh sách thuốc tồn kho thấp
 
+    // ==================== CÁC BIẾN CẤU HÌNH ====================
     private ThongKeTrangChinh_DAO thongKeDAO;
     private final DecimalFormat formatter = new DecimalFormat("#,###");
 
@@ -101,7 +103,8 @@ public class TrangChuController implements Initializable {
     }
 
     /**
-     * Load biểu đồ doanh thu 7 ngày
+     * ==================== BIỂU ĐỒ DOANH THU ====================
+     * Load biểu đồ doanh thu 7 ngày gần nhất
      */
     private void loadRevenueChart() {
         if (chartDoanhThu == null) return;
@@ -113,6 +116,7 @@ public class TrangChuController implements Initializable {
             series.setName("Doanh thu (VNĐ)");
 
             // Tạo dữ liệu cho 7 ngày gần nhất
+            // *** CHỈNH SỬA SỐ NGÀY: Thay đổi số 6 thành (số_ngày - 1) ***
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM");
             for (int i = 6; i >= 0; i--) {
                 LocalDate date = LocalDate.now().minusDays(i);
@@ -135,18 +139,26 @@ public class TrangChuController implements Initializable {
                     "Doanh thu: " + formatter.format(data.getYValue().doubleValue()) + " VNĐ"
                 );
 
-                // Cài đặt thời gian hiển thị tooltip
+                // *** CHỈNH MÀU TOOLTIP: Thay đổi màu nền và màu chữ ***
                 tooltip.setShowDelay(javafx.util.Duration.millis(100));
-                tooltip.setStyle("-fx-font-size: 12px; -fx-background-color: #1e3a8a; -fx-text-fill: white;");
+                tooltip.setStyle(
+                    "-fx-font-size: 12px; " +
+                    "-fx-background-color: #1e3a8a; " +    // Màu nền tooltip (xanh dương đậm)
+                    "-fx-text-fill: white;"                 // Màu chữ tooltip (trắng)
+                );
 
                 // Gắn tooltip vào node của data point
                 javafx.scene.Node node = data.getNode();
                 if (node != null) {
                     javafx.scene.control.Tooltip.install(node, tooltip);
 
-                    // Thêm hiệu ứng hover
+                    // *** CHỈNH HIỆU ỨNG HOVER: Thay đổi kích thước khi rê chuột ***
                     node.setOnMouseEntered(e -> {
-                        node.setStyle("-fx-cursor: hand; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
+                        node.setStyle(
+                            "-fx-cursor: hand; " +
+                            "-fx-scale-x: 1.5; " +          // Phóng to 1.5 lần theo chiều ngang
+                            "-fx-scale-y: 1.5;"             // Phóng to 1.5 lần theo chiều dọc
+                        );
                     });
                     node.setOnMouseExited(e -> {
                         node.setStyle("-fx-scale-x: 1.0; -fx-scale-y: 1.0;");
@@ -160,12 +172,14 @@ public class TrangChuController implements Initializable {
     }
 
     /**
+     * ==================== BIỂU ĐỒ TOP SẢN PHẨM ====================
      * Load biểu đồ top sản phẩm bán chạy
      */
     private void loadTopProductsChart() {
         if (chartTopSanPham == null) return;
 
         try {
+            // *** CHỈNH SỐ SẢN PHẨM: Thay đổi số 5 để hiển thị nhiều/ít sản phẩm hơn ***
             Map<String, Integer> topProducts = thongKeDAO.getTopSanPhamBanChay(5);
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -178,6 +192,7 @@ public class TrangChuController implements Initializable {
                 String tenThuocDayDu = entry.getKey();
                 String tenThuoc = tenThuocDayDu;
 
+                // *** CHỈNH ĐỘ DÀI TÊN: Thay đổi số 15 (độ dài tối đa) và 12 (độ dài cắt) ***
                 // Rút ngắn tên thuốc nếu quá dài
                 if (tenThuoc.length() > 15) {
                     tenThuoc = tenThuoc.substring(0, 12) + "...";
@@ -205,18 +220,25 @@ public class TrangChuController implements Initializable {
                     "Số lượng bán: " + formatter.format(soLuong)
                 );
 
-                // Cài đặt thời gian hiển thị tooltip
+                // *** CHỈNH MÀU TOOLTIP: Thay đổi màu nền và màu chữ ***
                 tooltip.setShowDelay(javafx.util.Duration.millis(100));
-                tooltip.setStyle("-fx-font-size: 12px; -fx-background-color: #16a34a; -fx-text-fill: white;");
+                tooltip.setStyle(
+                    "-fx-font-size: 12px; " +
+                    "-fx-background-color: #1e3a8a; " +    // Màu nền tooltip (xanh lá)
+                    "-fx-text-fill: white;"                 // Màu chữ tooltip (trắng)
+                );
 
                 // Gắn tooltip vào node của data point (thanh)
                 javafx.scene.Node node = data.getNode();
                 if (node != null) {
                     javafx.scene.control.Tooltip.install(node, tooltip);
 
-                    // Thêm hiệu ứng hover
+                    // *** CHỈNH HIỆU ỨNG HOVER: Thay đổi độ mờ khi rê chuột ***
                     node.setOnMouseEntered(e -> {
-                        node.setStyle("-fx-cursor: hand; -fx-opacity: 0.8;");
+                        node.setStyle(
+                            "-fx-cursor: hand; " +
+                            "-fx-opacity: 0.8;"             // Độ mờ khi hover (0.0 - 1.0)
+                        );
                     });
                     node.setOnMouseExited(e -> {
                         node.setStyle("-fx-opacity: 1.0;");
@@ -230,6 +252,7 @@ public class TrangChuController implements Initializable {
     }
 
     /**
+     * ==================== DANH SÁCH THUỐC SẮP HẾT HẠN ====================
      * Load danh sách thuốc sắp hết hạn
      */
     private void loadExpiredMedicines() {
@@ -245,11 +268,15 @@ public class TrangChuController implements Initializable {
             }
 
             if (thuocSapHetHan.isEmpty()) {
+                // *** CHỈNH MÀU CHỮ: Thay đổi màu khi không có dữ liệu ***
                 Label noDataLabel = new Label("Không có thuốc nào sắp hết hạn");
-                noDataLabel.setStyle("-fx-text-fill: #64748b; -fx-font-style: italic;");
+                noDataLabel.setStyle(
+                    "-fx-text-fill: #64748b; " +            // Màu chữ (xám)
+                    "-fx-font-style: italic;"               // Kiểu chữ nghiêng
+                );
                 vboxThuocSapHetHan.getChildren().add(noDataLabel);
             } else {
-                // Hiển thị tối đa 5 thuốc
+                // *** CHỈNH SỐ THUỐC: Thay đổi số 5 để hiển thị nhiều/ít thuốc hơn ***
                 int count = Math.min(thuocSapHetHan.size(), 5);
                 for (int i = 0; i < count; i++) {
                     Map<String, Object> thuoc = thuocSapHetHan.get(i);
@@ -263,6 +290,7 @@ public class TrangChuController implements Initializable {
     }
 
     /**
+     * ==================== DANH SÁCH THUỐC TỒN KHO THẤP ====================
      * Load danh sách thuốc tồn kho thấp
      */
     private void loadLowStockMedicines() {
@@ -278,11 +306,15 @@ public class TrangChuController implements Initializable {
             }
 
             if (thuocTonKhoThap.isEmpty()) {
+                // *** CHỈNH MÀU CHỮ: Thay đổi màu khi không có dữ liệu ***
                 Label noDataLabel = new Label("Tất cả thuốc đều có tồn kho đủ");
-                noDataLabel.setStyle("-fx-text-fill: #64748b; -fx-font-style: italic;");
+                noDataLabel.setStyle(
+                    "-fx-text-fill: #64748b; " +            // Màu chữ (xám)
+                    "-fx-font-style: italic;"               // Kiểu chữ nghiêng
+                );
                 vboxThuocTonKhoThap.getChildren().add(noDataLabel);
             } else {
-                // Hiển thị tối đa 5 thuốc
+                // *** CHỈNH SỐ THUỐC: Thay đổi số 5 để hiển thị nhiều/ít thuốc hơn ***
                 int count = Math.min(thuocTonKhoThap.size(), 5);
                 for (int i = 0; i < count; i++) {
                     Map<String, Object> thuoc = thuocTonKhoThap.get(i);
@@ -296,33 +328,43 @@ public class TrangChuController implements Initializable {
     }
 
     /**
+     * ==================== TẠO ITEM THUỐC SẮP HẾT HẠN ====================
      * Tạo item hiển thị thuốc sắp hết hạn
      */
     private void createExpiredMedicineItem(Map<String, Object> thuoc) {
         try {
             HBox container = new HBox();
-            container.setSpacing(10);
-            container.setPadding(new Insets(5, 0, 5, 0));
-            container.setStyle("-fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;");
+            // *** CHỈNH KHOẢNG CÁCH: Thay đổi số trong setSpacing() ***
+            container.setSpacing(10);                       // Khoảng cách giữa các phần tử (pixels)
+            container.setPadding(new Insets(5, 0, 5, 0));  // Padding: top, right, bottom, left
+
+            // *** CHỈNH MÀU VIỀN: Thay đổi màu và độ dày viền ***
+            container.setStyle(
+                "-fx-border-color: #e2e8f0; " +             // Màu viền (xám nhạt)
+                "-fx-border-width: 0 0 1 0;"                // Độ dày viền: top right bottom left
+            );
 
             VBox leftContent = new VBox();
             leftContent.setSpacing(2);
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ TÊN THUỐC ***
             Text tenThuoc = new Text((String) thuoc.get("tenThuoc"));
-            tenThuoc.setFont(Font.font("System", 14));
-            tenThuoc.setFill(Color.web("#1e3a8a"));
+            tenThuoc.setFont(Font.font("System", 14));      // Cỡ chữ: 14px
+            tenThuoc.setFill(Color.web("#1e3a8a"));        // Màu chữ: xanh dương đậm
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ NGÀY HẾT HẠN ***
             Date hanSuDung = (Date) thuoc.get("hanSuDung");
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Text ngayHetHan = new Text("Hết hạn: " + sdf.format(hanSuDung));
-            ngayHetHan.setFont(Font.font("System", 12));
-            ngayHetHan.setFill(Color.web("#dc2626"));
+            ngayHetHan.setFont(Font.font("System", 12));    // Cỡ chữ: 12px
+            ngayHetHan.setFill(Color.web("#dc2626"));      // Màu chữ: đỏ (cảnh báo)
 
             leftContent.getChildren().addAll(tenThuoc, ngayHetHan);
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ SỐ LƯỢNG ***
             Text soLuong = new Text(formatter.format((Integer) thuoc.get("soLuongTon")) + " đơn vị");
-            soLuong.setFont(Font.font("System", 12));
-            soLuong.setFill(Color.web("#64748b"));
+            soLuong.setFont(Font.font("System", 12));       // Cỡ chữ: 12px
+            soLuong.setFill(Color.web("#64748b"));         // Màu chữ: xám
 
             container.getChildren().addAll(leftContent, soLuong);
             vboxThuocSapHetHan.getChildren().add(container);
@@ -333,31 +375,41 @@ public class TrangChuController implements Initializable {
     }
 
     /**
+     * ==================== TẠO ITEM THUỐC TỒN KHO THẤP ====================
      * Tạo item hiển thị thuốc tồn kho thấp
      */
     private void createLowStockMedicineItem(Map<String, Object> thuoc) {
         try {
             HBox container = new HBox();
-            container.setSpacing(10);
-            container.setPadding(new Insets(5, 0, 5, 0));
-            container.setStyle("-fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;");
+            // *** CHỈNH KHOẢNG CÁCH: Thay đổi số trong setSpacing() ***
+            container.setSpacing(10);                       // Khoảng cách giữa các phần tử (pixels)
+            container.setPadding(new Insets(5, 0, 5, 0));  // Padding: top, right, bottom, left
+
+            // *** CHỈNH MÀU VIỀN: Thay đổi màu và độ dày viền ***
+            container.setStyle(
+                "-fx-border-color: #e2e8f0; " +             // Màu viền (xám nhạt)
+                "-fx-border-width: 0 0 1 0;"                // Độ dày viền: top right bottom left
+            );
 
             VBox leftContent = new VBox();
             leftContent.setSpacing(2);
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ TÊN THUỐC ***
             Text tenThuoc = new Text((String) thuoc.get("tenThuoc"));
-            tenThuoc.setFont(Font.font("System", 14));
-            tenThuoc.setFill(Color.web("#1e3a8a"));
+            tenThuoc.setFont(Font.font("System", 14));      // Cỡ chữ: 14px
+            tenThuoc.setFill(Color.web("#1e3a8a"));        // Màu chữ: xanh dương đậm
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ MÃ THUỐC ***
             Text maThuoc = new Text("Mã: " + (String) thuoc.get("maThuoc"));
-            maThuoc.setFont(Font.font("System", 12));
-            maThuoc.setFill(Color.web("#64748b"));
+            maThuoc.setFont(Font.font("System", 12));       // Cỡ chữ: 12px
+            maThuoc.setFill(Color.web("#64748b"));         // Màu chữ: xám
 
             leftContent.getChildren().addAll(tenThuoc, maThuoc);
 
+            // *** CHỈNH MÀU VÀ CỠ CHỮ SỐ LƯỢNG (MÀU ĐỎ CẢNH BÁO) ***
             Text soLuong = new Text(formatter.format((Integer) thuoc.get("soLuongTon")) + " đơn vị");
-            soLuong.setFont(Font.font("System", 12));
-            soLuong.setFill(Color.web("#dc2626"));
+            soLuong.setFont(Font.font("System", 12));       // Cỡ chữ: 12px
+            soLuong.setFill(Color.web("#dc2626"));         // Màu chữ: đỏ (cảnh báo tồn kho thấp)
 
             container.getChildren().addAll(leftContent, soLuong);
             vboxThuocTonKhoThap.getChildren().add(container);

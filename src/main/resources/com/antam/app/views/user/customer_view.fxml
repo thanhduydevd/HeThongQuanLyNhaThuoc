@@ -39,6 +39,14 @@
                         <FontAwesomeIcon fill="WHITE" glyphName="SEARCH" />
                      </graphic>
                   </Button>
+                  <Button fx:id="btnEditCustomer" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #059669; -fx-background-radius: 5px;" text="Sửa thông tin KH" textFill="WHITE">
+                     <graphic>
+                        <FontAwesomeIcon fill="WHITE" glyphName="EDIT" />
+                     </graphic>
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Button>
                </children>
             </HBox>
             <FlowPane alignment="CENTER" hgap="30.0" vgap="20.0">

@@ -5,6 +5,7 @@
 
 package com.antam.app.controller;
 
+import com.antam.app.controller.dialog.SuaKhachHangController;
 import com.antam.app.controller.dialog.XemKhachHangController;
 import com.antam.app.dao.KhachHang_DAO;
 import com.antam.app.entity.KhachHang;
@@ -45,6 +46,9 @@ public class KhachHangController implements Initializable {
     private Button btnSearchEmployee;
 
     @FXML
+    private Button btnEditCustomer;
+
+    @FXML
     private TableView<KhachHang> tableViewKhachHang;
 
     @FXML
@@ -79,6 +83,7 @@ public class KhachHangController implements Initializable {
         loadKhachHangData();
         setupSearchFunction();
         setupTableRowSelection();
+        setupEditButton();
     }
 
     private void setupTableColumns() {
@@ -193,6 +198,51 @@ public class KhachHangController implements Initializable {
             });
     }
 
+    private void setupEditButton() {
+        btnEditCustomer.setOnAction(event -> {
+            KhachHang selectedKH = tableViewKhachHang.getSelectionModel().getSelectedItem();
+            if (selectedKH == null) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng chọn khách hàng cần sửa!");
+                return;
+            }
+            showEditCustomerDialog(selectedKH);
+        });
+    }
+
+    private void showEditCustomerDialog(KhachHang khachHang) {
+        try {
+            // Load FXML dialog
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/antam/app/views/user/dialog/edit_customer.fxml"));
+            DialogPane dialogPane = loader.load();
+
+            // Lấy controller và set dữ liệu khách hàng
+            SuaKhachHangController controller = loader.getController();
+            controller.setKhachHang(khachHang);
+
+            // Tạo và hiển thị dialog
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(dialogPane);
+            dialog.setResizable(false);
+
+            // Hiển thị dialog và đợi kết quả
+            dialog.showAndWait();
+
+            // Nếu cập nhật thành công, reload dữ liệu
+            if (controller.isUpdated()) {
+                // Refresh toàn bộ bảng từ database
+                loadKhachHangData();
+                loadStatistics();
+
+                // Force refresh TableView
+                tableViewKhachHang.refresh();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở dialog sửa thông tin khách hàng: " + e.getMessage());
+        }
+    }
+
     private void showKhachHangDetail(KhachHang khachHang) {
         try {
             // Load FXML dialog
@@ -228,5 +278,13 @@ public class KhachHangController implements Initializable {
         // Hiện tại chỉ in ra console để test
         System.out.println("Đã chọn khách hàng: " + khachHang.getTenKH() +
                           " - Tổng chi tiêu: " + formatter.format(khachHang.getTongChiTieu()) + "đ");
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

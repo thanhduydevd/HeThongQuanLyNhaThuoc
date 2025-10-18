@@ -64,6 +64,28 @@ public class KhachHang_DAO {
         }
     }
 
+    /**
+     * Cập nhật thông tin khách hàng trong CSDL
+     * @param kh KhachHang
+     * @return true nếu thành công, false nếu thất bại
+     */
+    public boolean updateKhachHang(KhachHang kh) {
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            String sql = "UPDATE KhachHang SET TenKH = ?, SoDienThoai = ? WHERE MaKH = ? AND DeleteAt = 0";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, kh.getTenKH());
+            ps.setString(2, kh.getSoDienThoai());
+            ps.setString(3, kh.getMaKH());
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public KhachHang getKhachHangTheoMa(String maKH){
         KhachHang kh = new KhachHang(maKH);
         String sql = "SELECT * FROM KhachHang WHERE MaKH = ? AND DeleteAt = 0";

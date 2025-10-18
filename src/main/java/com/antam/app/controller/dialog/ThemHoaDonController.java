@@ -209,7 +209,7 @@ public class ThemHoaDonController {
                 e.consume();
                 return;
             }
-            // === NEW: Check stock for all medicines before creating invoice ===
+            // Kiểm tra tồn kho cho từng thuốc
             ChiTietThuoc_DAO chiTietThuocDAO = new ChiTietThuoc_DAO();
             boolean enoughStock = true;
             String outOfStockMedicine = null;
@@ -236,7 +236,7 @@ public class ThemHoaDonController {
                 e.consume();
                 return;
             }
-            // If all stock is enough, proceed to create invoice and details
+            // Tiến hành tạo hoá đơn
             txtWarning.setVisible(false);
             txtWarning.setText("");
             // 1. Lấy mã khách hàng (tự động thêm nếu chưa có)
@@ -316,6 +316,7 @@ public class ThemHoaDonController {
         });
     }
 
+    // Thêm một hàng thuốc mới vào VBox chứa các hàng thuốc
     private void addMedicineRow() {
         HBox hbox = new HBox(10);
         hbox.setStyle("-fx-background-color: #f8fafc;");
@@ -351,6 +352,7 @@ public class ThemHoaDonController {
         setupMedicineRow(hbox);
     }
 
+    // Thiết lập sự kiện và logic cho một hàng thuốc mới thêm vào
     private void setupMedicineRow(HBox hbox) {
         ComboBox<Thuoc> cbMedicine = (ComboBox<Thuoc>) hbox.getChildren().get(0);
         ComboBox<DonViTinh> cb_unit = (ComboBox<DonViTinh>) hbox.getChildren().get(1);
@@ -402,6 +404,7 @@ public class ThemHoaDonController {
         cb_unit.valueProperty().addListener((obs, oldVal, newVal) -> updateSummary());
     }
 
+    // Cập nhật lại phần tóm tắt hoá đơn (tạm tính, thuế, tổng tiền)
     private void updateSummary() {
         double tongTamTinh = 0;
         double tongThue = 0;
