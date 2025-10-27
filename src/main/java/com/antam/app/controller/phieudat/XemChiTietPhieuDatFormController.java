@@ -1,0 +1,22 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.antam.app.controller.phieudat;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+
+public class XemChiTietPhieuDatFormController {
+
+
+    public XemChiTietPhieuDatFormController() {
+    }
+
+    public void initialize() {
+
+    }
+}
