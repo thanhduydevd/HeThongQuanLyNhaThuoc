@@ -130,7 +130,6 @@ public class TrangChuController implements Initializable {
 
             chartDoanhThu.getData().clear();
             chartDoanhThu.getData().add(series);
-            chartDoanhThu.setTitle("Doanh thu 7 ngày gần nhất");
 
             // Thêm tooltip cho từng điểm dữ liệu
             for (XYChart.Data<String, Number> data : series.getData()) {
@@ -207,7 +206,6 @@ public class TrangChuController implements Initializable {
 
             chartTopSanPham.getData().clear();
             chartTopSanPham.getData().add(series);
-            chartTopSanPham.setTitle("Top 5 sản phẩm bán chạy (tháng này)");
 
             // Thêm tooltip cho từng thanh trong biểu đồ
             for (XYChart.Data<String, Number> data : series.getData()) {

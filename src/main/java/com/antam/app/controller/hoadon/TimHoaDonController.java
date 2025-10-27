@@ -57,6 +57,8 @@ public class TimHoaDonController {
     @FXML
     private Button btnSearchInvoice; // Nút tìm kiếm hóa đơn theo mã
     @FXML
+    private Button btnResetInvoice; // Nút đặt lại bộ lọc
+    @FXML
     private ComboBox<NhanVien> cbEmployee; // ComboBox chọn nhân viên
     @FXML
     private ComboBox<String> cbStatus; // ComboBox chọn trạng thái
@@ -237,6 +239,19 @@ public class TimHoaDonController {
             filtered = FXCollections.observableArrayList(baseList);
             table_invoice.setItems(filtered);
         };
+
+        // Sự kiện nút đặt lại bộ lọc
+        btnResetInvoice.setOnAction(e -> {
+            cbEmployee.setValue(null);
+            cbStatus.setValue("Tất cả");
+            cbPrice.setValue("Tất cả");
+            if (cbFirstDate != null) cbFirstDate.setValue(null);
+            if (cbEndDate != null) cbEndDate.setValue(null);
+            // Load lại toàn bộ hóa đơn
+            ObservableList<HoaDon> allHoaDon = FXCollections.observableArrayList(hoaDonDAO.getAllHoaDon());
+            table_invoice.setItems(allHoaDon);
+        });
+
         // Lắng nghe thay đổi trên cbEmployee, cbStatus, cbPrice, cbFirstDate, cbEndDate
         cbEmployee.valueProperty().addListener((obs, oldNV, newNV) -> filterInvoices.run());
         cbStatus.valueProperty().addListener((obs, oldSt, newSt) -> filterInvoices.run());

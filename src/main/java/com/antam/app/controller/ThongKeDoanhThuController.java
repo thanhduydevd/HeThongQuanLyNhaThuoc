@@ -515,6 +515,11 @@ public class ThongKeDoanhThuController implements Initializable {
         }
     }
 
+    /* *
+     * Xuất báo cáo thống kê doanh thu ra file CSV
+     * @param file File đích để lưu báo cáo
+     * @throws IOException Nếu có lỗi trong quá trình ghi file
+    * */
     private void exportToCSV(File file) throws IOException {
         // Kiểm tra xem có phải hiển thị theo tháng không
         String thoiGian = cmbThoiGian.getValue();

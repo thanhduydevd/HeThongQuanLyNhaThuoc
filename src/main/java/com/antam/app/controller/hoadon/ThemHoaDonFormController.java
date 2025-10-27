@@ -321,7 +321,7 @@ public class ThemHoaDonFormController {
         cbMedicine.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         ComboBox<DonViTinh> cb_unit = new ComboBox<>();
         cb_unit.setPrefWidth(150);
-        cb_unit.setPromptText("Chọn đơn vị");
+        cb_unit.setPromptText("Đơn vị");
         cb_unit.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         TextField txtQuantity = new TextField();
         txtQuantity.setPromptText("Số lượng");
@@ -333,11 +333,11 @@ public class ThemHoaDonFormController {
         cb_price.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         Button btnRemove = new Button("X");
         btnRemove.setStyle(
-            "-fx-padding: 0 5 0 5;" +
+            "-fx-padding: 5 8 5 8;" +
             "-fx-background-color: #ef4444;" +
             "-fx-background-radius: 50%;" +
             "-fx-text-fill: white;" +
-            "-fx-font-size: 12px;" +
+            "-fx-font-size: 14px;" +
             "-fx-font-weight: bold;"
         );
         btnRemove.setOnAction(e -> medicineRowsVBox.getChildren().remove(hbox));
