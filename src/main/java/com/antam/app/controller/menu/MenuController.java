@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.antam.app.controller;
+package com.antam.app.controller.menu;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -13,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-public class TrangChinhController {
+public class MenuController {
     @FXML
     private Button btnTrangChinh, btnHoaDon, btnPhieuDat, btnThuoc, btnKeThuoc, btnDangDieuChe, btnDonViTinh, btnKhuyenMai, btnPhieuNhap, btnKhachHang, btnNhanVien, btnCaiDat;
 
@@ -28,7 +28,7 @@ public class TrangChinhController {
 
 
 
-    public TrangChinhController() {
+    public MenuController() {
     }
 
     private void setActiveButton(Button activeButton) {
@@ -37,9 +37,15 @@ public class TrangChinhController {
                 btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat
         };
         for (Button btn : buttons) {
-            btn.getStyleClass().remove("btn-active");
+            // Add null check to prevent NullPointerException
+            if (btn != null) {
+                btn.getStyleClass().remove("btn-active");
+            }
         }
-        activeButton.getStyleClass().add("btn-active");
+        // Also check activeButton is not null before accessing its style class
+        if (activeButton != null) {
+            activeButton.getStyleClass().add("btn-active");
+        }
     }
     public void initialize() {
         this.loadPage("/com/antam/app/views/trangchinh/trangChinh.fxml");
@@ -186,10 +192,6 @@ public class TrangChinhController {
         this.btnXemKhachHang.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/khachhang/xemKhachHang.fxml");
             setActiveButton(btnXemKhachHang);
-        });
-        this.btnThemKhachHang.setOnAction((e) -> {
-            this.loadPage("/com/antam/app/views/khachhang/themKhachHang.fxml");
-            setActiveButton(btnThemKhachHang);
         });
         this.btnCapNhatKhachHang.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/khachhang/capNhatKhachHang.fxml");

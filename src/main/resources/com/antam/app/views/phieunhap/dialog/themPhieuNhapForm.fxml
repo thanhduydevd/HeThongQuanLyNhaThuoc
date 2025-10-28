@@ -80,7 +80,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <Text fx:id="txtTongTienDoi" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền: 0 ₫">
+                        <Text fx:id="txtTongTien" fill="#1e3a8a" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền: 0 ₫">
                            <font>
                               <Font name="System Bold" size="22.0" />
                            </font>

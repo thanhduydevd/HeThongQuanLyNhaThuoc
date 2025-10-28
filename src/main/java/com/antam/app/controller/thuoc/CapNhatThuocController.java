@@ -1,8 +1,6 @@
 package com.antam.app.controller.thuoc;
 
 import com.antam.app.connect.ConnectDB;
-import com.antam.app.controller.dialog.ChiTietThuocController;
-import com.antam.app.controller.dialog.TuyChinhThuocController;
 import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.DangDieuChe_DAO;
 import com.antam.app.dao.Ke_DAO;
