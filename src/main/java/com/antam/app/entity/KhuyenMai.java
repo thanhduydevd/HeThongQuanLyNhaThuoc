@@ -24,9 +24,9 @@ public class KhuyenMai {
     private int soLuongToiDa;
     private boolean deleteAt;
 
-    public KhuyenMai() {
+    public KhuyenMai(String s, String ten) {
         MaKM = "";
-        TenKM = "";
+        TenKM = ten;
         NgayBatDau = LocalDate.now();
         NgayKetThuc = LocalDate.now();
         loaiKhuyenMai = new LoaiKhuyenMai();
@@ -118,15 +118,7 @@ public class KhuyenMai {
     }
     @Override
     public String toString() {
-        return "KhuyenMai{" +
-                "MaKM='" + MaKM + '\'' +
-                ", TenKM='" + TenKM + '\'' +
-                ", NgayBatDau=" + NgayBatDau +
-                ", NgayKetThuc=" + NgayKetThuc +
-                ", loaiKhuyenMai=" + loaiKhuyenMai +
-                ", so=" + so +
-                ", soLuongToiDa=" + soLuongToiDa +
-                '}';
+        return TenKM;
     }
     @Override
     public boolean equals(Object o) {

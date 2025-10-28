@@ -92,7 +92,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <Button fx:id="btnSearchInvoice1" mnemonicParsing="false" prefHeight="40.0" prefWidth="93.0" styleClass="btn-xoarong" stylesheets="@../../styles/dashboard_style.css" text="Xoá rỗng" textFill="WHITE">
+                        <Button fx:id="btnXoaRong" mnemonicParsing="false" prefHeight="40.0" prefWidth="93.0" styleClass="btn-xoarong" stylesheets="@../../styles/dashboard_style.css" text="Xoá rỗng" textFill="WHITE">
                            <graphic>
                               <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" />
                            </graphic>

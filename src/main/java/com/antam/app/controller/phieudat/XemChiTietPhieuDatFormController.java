@@ -11,12 +11,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 
 public class XemChiTietPhieuDatFormController {
-
+    @FXML
+    DialogPane dialogPane;
 
     public XemChiTietPhieuDatFormController() {
     }
 
     public void initialize() {
-
+        ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
+        this.dialogPane.getButtonTypes().add(cancelButton);
     }
 }

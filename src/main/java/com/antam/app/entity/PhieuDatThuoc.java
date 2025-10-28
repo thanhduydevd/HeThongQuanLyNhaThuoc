@@ -30,7 +30,7 @@ public class PhieuDatThuoc {
         this.isThanhToan = false;
         this.nhanVien = new NhanVien();
         this.khachHang = new KhachHang();
-        this.khuyenMai = new KhuyenMai();
+        this.khuyenMai = new KhuyenMai("", "Không áp dụng");
     }
 
     public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien nhanVien, KhachHang maKH, KhuyenMai maKM, double tongTien) {

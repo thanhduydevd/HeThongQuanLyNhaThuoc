@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,9 +38,8 @@ public class CapNhatPhieuDatController {
     @FXML
     private TableView<PhieuDatThuoc> tvPhieuDat;
     @FXML
-    private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus;
-    @FXML
-    private TableColumn<PhieuDatThuoc,Double> colTotal;
+    private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus,colTotal;
+
 
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
@@ -167,12 +167,16 @@ public class CapNhatPhieuDatController {
 
     private void setupBang() {
         colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));
-        colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
         colKhach.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getTenKH()));
         colSDT.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getSoDienThoai()));
         colNhanVien.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNhanVien().getHoTen()));
-        colTotal.setCellValueFactory(t -> new SimpleDoubleProperty(t.getValue().getTongTien()).asObject());
         colStatus.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().isThanhToan() ? "Đã thanh toán":"Chưa thanh toán"));
+        colTotal.setCellValueFactory(t -> new SimpleStringProperty( dinhDangTien(t.getValue().getTongTien()) ));
+    }
+    private String dinhDangTien(double tien){
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        return df.format(tien);
     }
 
     private void loadDataVaoBang() {

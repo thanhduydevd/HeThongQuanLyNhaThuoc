@@ -6,6 +6,7 @@ package com.antam.app.dao;/*
  */
 
 import com.antam.app.connect.ConnectDB;
+import com.antam.app.entity.ChiTietPhieuDatThuoc;
 import com.antam.app.entity.KhachHang;
 import com.antam.app.entity.KhuyenMai;
 import com.antam.app.entity.PhieuDatThuoc;
@@ -148,5 +149,27 @@ public class PhieuDat_DAO {
             throw new RuntimeException(e);
         }
         return "";
+    }
+
+    public static void themChiTietPhieuDatVaoDBS(ChiTietPhieuDatThuoc ctPDT) {
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+
+        try {
+            String updateSQL = "insert into ChiTietPhieuDatThuoc values(?,?,?,?,?)";
+            PreparedStatement state = con.prepareStatement(updateSQL);
+            state.setString(1,ctPDT.getMaPhieu().getMaPhieu());
+            state.setString(2,ctPDT.getSoDangKy().getMaThuoc());
+            state.setInt(3,ctPDT.getSoLuong());
+            state.setInt(4,ctPDT.getDonViTinh().getMaDVT());
+            state.setDouble(5,ctPDT.getThanhTien());
+            int kq = state.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -5,30 +5,27 @@ package com.antam.app.gui;/*
  * @version: 1.0
  */
 
+import com.antam.app.dao.PhieuDat_DAO;
+import com.antam.app.entity.PhieuDatThuoc;
 import com.antam.app.helper.MaKhoaMatKhau;
 
-public class KiemNghiem {
-    public static void main(String[] args) {
-        String hash1 = MaKhoaMatKhau.hashPassword("@Admin001",10);
-        String hash2 = MaKhoaMatKhau.hashPassword("@Admin002",10);
-        String hash3 = MaKhoaMatKhau.hashPassword("@Admin003",10);
-        String hash4 = MaKhoaMatKhau.hashPassword("@Admin004",10);
-        String hash5 = MaKhoaMatKhau.hashPassword("@Admin005",10);
-        String hash6 = MaKhoaMatKhau.hashPassword("@Admin006",10);
-        String hash7 = MaKhoaMatKhau.hashPassword("@Admin007",10);
-        String hash8 = MaKhoaMatKhau.hashPassword("@Admin008",10);
-        String hash9 = MaKhoaMatKhau.hashPassword("@Admin009",10);
-        String hash10 = MaKhoaMatKhau.hashPassword("@Admin010",10);
-        System.out.println("mật khẩu: " + hash1);
-        System.out.println("mật khẩu: " + hash2);
-        System.out.println("mật khẩu: " + hash3);
-        System.out.println("mật khẩu: " + hash4);
-        System.out.println("mật khẩu: " + hash5);
-        System.out.println("mật khẩu: " + hash6);
-        System.out.println("mật khẩu: " + hash7);
-        System.out.println("mật khẩu: " + hash8);
-        System.out.println("mật khẩu: " + hash9);
-        System.out.println("mật khẩu: " + hash10);
+import java.util.ArrayList;
 
+public class KiemNghiem {
+
+    private static String getHashPD() {
+        String hash = PhieuDat_DAO.getMaxHash();
+        if (hash == null){
+            return "";
+        }else{
+            int soThuTu = Integer.parseInt(hash) + 1;
+            return String.format("PD%04d", soThuTu);
+        }
+    }
+    public static void main(String[] args) {
+//        ArrayList<PhieuDatThuoc> list = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
+//        for (PhieuDatThuoc p : list) {
+            System.out.println(getHashPD());
+//        }
     }
 }

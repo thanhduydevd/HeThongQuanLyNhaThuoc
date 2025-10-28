@@ -10,13 +10,13 @@ import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuDatThuoc;
 import com.antam.app.gui.GiaoDienCuaSo;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,13 +31,12 @@ public class TimPhieuDatController {
     @FXML
     private TextField txtFind;
     @FXML
-    private Button btnFind, btnXemChiTiet;
+    private Button btnFind, btnXemChiTiet,btnXoaRong;
     @FXML
     private TableView<PhieuDatThuoc> tvPhieuDat;
     @FXML
-    private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus;
-    @FXML
-    private TableColumn<PhieuDatThuoc,Double> colTotal;
+    private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus,colTotal;
+
 
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
@@ -67,6 +66,17 @@ public class TimPhieuDatController {
                 }
             }
         });
+
+        //sự kiện xóa rỗng
+        btnXoaRong.setOnAction(e ->{
+            cbGia.getSelectionModel().selectFirst();
+            cbNhanVien.getSelectionModel().selectFirst();
+            cbTrangThai.getSelectionModel().selectFirst();
+            dpstart.setValue(null);
+            dpend.setValue(null);
+            txtFind.clear();
+            loadDataVaoBang();
+        });
         //sự kiện lọc
         setupListenerFind();
         cbGia.setOnAction(e -> setupListenerComboBox());
@@ -77,7 +87,6 @@ public class TimPhieuDatController {
     }
 
     private void setupListenerComboBox() {
-        // Lấy lựa chọn hiện tại
         String gia = cbGia.getSelectionModel().getSelectedItem();
         String trangThai = cbTrangThai.getSelectionModel().getSelectedItem();
         NhanVien nv = cbNhanVien.getSelectionModel().getSelectedItem();
@@ -90,7 +99,6 @@ public class TimPhieuDatController {
                 (nv == null || nv.getHoTen().equals("Tất cả")) &&
                 (start == null && end == null)) {
             loadDataVaoBang();
-//            System.out.println("All đk");
             return;
         }
 
@@ -104,10 +112,10 @@ public class TimPhieuDatController {
             default: min = 0; max = Double.MAX_VALUE;
         }
 
-        // Xác định trạng thái cần lọc
+        // Trạng thái
         Boolean filStatus = null;
         if ("Đã thanh toán".equals(trangThai)) filStatus = true;
-        else if ("Chờ thanh toán".equals(trangThai)) filStatus = false;
+        else if ("Chưa thanh toán".equals(trangThai)) filStatus = false;
 
         // Bắt đầu lọc
         ObservableList<PhieuDatThuoc> filter = FXCollections.observableArrayList();
@@ -115,19 +123,21 @@ public class TimPhieuDatController {
         for (PhieuDatThuoc e : origin) {
             boolean match = true;
 
-            // Lọc theo giá
-            if (!(e.getTongTien() >= min && e.getTongTien() <= max)) match = false;
+            // Giá
+            if (!(e.getTongTien() >= min && e.getTongTien() <= max))
+                match = false;
 
-            // Lọc theo nhân viên
+            // Nhân viên
             if (nv != null && nv.getHoTen() != null &&
-                    !nv.getMaNV().equals("Tất cả") &&
-                    !e.getNhanVien().getMaNV().equals(nv.getMaNV())) match = false;
+                    !nv.getHoTen().equals("Tất cả") &&
+                    !e.getNhanVien().getMaNV().equals(nv.getMaNV()))
+                match = false;
 
-            // Lọc theo trạng thái
-            if (filStatus != null && e.isThanhToan() != filStatus) match = false;
+            // Trạng thái
+            if (filStatus != null && e.isThanhToan() != filStatus)
+                match = false;
 
-            if (match) filter.add(e);
-            // Lọc theo ngày (giả sử e.getNgayLap() là LocalDate)
+            // Ngày
             if (start != null && e.getNgayTao().isBefore(start))
                 match = false;
             if (end != null && e.getNgayTao().isAfter(end))
@@ -138,6 +148,7 @@ public class TimPhieuDatController {
 
         tvPhieuDat.setItems(filter);
     }
+
 
     private void setupListenerFind() {
         txtFind.textProperty().addListener( (obj, oldT ,newT) ->{
@@ -162,12 +173,16 @@ public class TimPhieuDatController {
 
     private void setupBang() {
         colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));
-        colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
         colKhach.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getTenKH()));
         colSDT.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getSoDienThoai()));
         colNhanVien.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNhanVien().getHoTen()));
-        colTotal.setCellValueFactory(t -> new SimpleDoubleProperty(t.getValue().getTongTien()).asObject());
         colStatus.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().isThanhToan() ? "Đã thanh toán":"Chưa thanh toán"));
+        colTotal.setCellValueFactory(t -> new SimpleStringProperty( dinhDangTien(t.getValue().getTongTien()) ));
+    }
+    private String dinhDangTien(double tien){
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        return df.format(tien);
     }
 
     private void loadDataVaoBang() {
@@ -184,7 +199,7 @@ public class TimPhieuDatController {
             cbNhanVien.getItems().add(e);
         }
         cbTrangThai.getItems().add("Tất cả");
-        cbTrangThai.getItems().add("Chờ thanh toán");
+        cbTrangThai.getItems().add("Chưa thanh toán");
         cbTrangThai.getItems().add("Đã thanh toán");
         cbGia.getItems().add("Tất cả");
         cbGia.getItems().add("Dưới 500.000đ");
