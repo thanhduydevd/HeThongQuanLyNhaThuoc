@@ -30,7 +30,7 @@
                      </font>
                   </Text>
                   <Pane HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnTuyChon" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #6b7280; -fx-background-radius: 5px;" text="Tùy Chọn" textFill="WHITE" />
+                  <Button fx:id="btnThanhToan" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Thanh toán" textFill="WHITE" />
                </children>
             </HBox>
             <FlowPane hgap="5.0" styleClass="box-pane" stylesheets="@../../styles/dashboard_style.css" vgap="5.0">

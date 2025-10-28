@@ -10,7 +10,6 @@ import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuDatThuoc;
 import com.antam.app.gui.GiaoDienCuaSo;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 
 public class CapNhatPhieuDatController {
     @FXML
-    private Button btnTuyChon;
+    private Button btnThanhToan;
     @FXML
     private ComboBox<NhanVien> cbNhanVien;
     @FXML
@@ -40,6 +39,7 @@ public class CapNhatPhieuDatController {
     @FXML
     private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus,colTotal;
 
+    public static PhieuDatThuoc selectedPDT;
 
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
@@ -50,14 +50,31 @@ public class CapNhatPhieuDatController {
     }
 
     public void initialize() {
-        this.btnTuyChon.setOnAction((e) -> {
-            (new GiaoDienCuaSo("capnhatphieudat")).showAndWait();
+        this.btnThanhToan.setOnAction((e) -> {
+            if (tvPhieuDat.getSelectionModel().getSelectedItem() == null){
+                showMess("Cảnh báo","Hãy chọn một phiếu đặt thuốc");
+            }
+            else {
+                selectedPDT = tvPhieuDat.getSelectionModel().getSelectedItem();
+                new GiaoDienCuaSo("capnhatphieudat").showAndWait();
+                loadDataVaoBang();
+            }
         });
 
         //cài đặt và load data vào giao diện
         loadDataComboBox();
         setupBang();
         loadDataVaoBang();
+
+        //set phiếu đặt được chọn cho xem chi tiết
+        tvPhieuDat.setOnMouseClicked(e->{
+            if (e.getClickCount() ==2 ){
+                selectedPDT = tvPhieuDat.getSelectionModel().getSelectedItem();
+                new GiaoDienCuaSo("capnhatphieudat").showAndWait();
+                loadDataVaoBang();
+            }
+        });
+
 
         //sự kiện nút tìm kiếm phiếu đặt
         btnFind.setOnAction(e->{
@@ -92,6 +109,15 @@ public class CapNhatPhieuDatController {
         dpstart.setOnAction(e-> setupListenerComboBox());
         dpend.setOnAction(e->setupListenerComboBox());
     }
+
+    private void showMess(String tieude, String noidung) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(tieude);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
+    }
+
 
     private void setupListenerComboBox() {
         String gia = cbGia.getSelectionModel().getSelectedItem();

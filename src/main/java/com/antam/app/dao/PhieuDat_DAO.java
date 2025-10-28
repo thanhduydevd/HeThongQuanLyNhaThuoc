@@ -217,4 +217,21 @@ public class PhieuDat_DAO {
         return dsChiTiet;
     }
 
+    public static void capNhatThanhToanPhieuDat(String maPDT) {
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+
+        try {
+            String sql = "update PhieuDatThuoc set IsThanhToan = 1 where MaPDT = ?";
+            PreparedStatement state = con.prepareStatement(sql);
+            state.setString(1,maPDT);
+            int kq = state.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
