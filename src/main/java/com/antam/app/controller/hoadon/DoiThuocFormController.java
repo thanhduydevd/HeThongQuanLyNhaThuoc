@@ -291,7 +291,7 @@ public class DoiThuocFormController {
 
         CheckBox checkBox = new CheckBox();
         checkBox.setOnAction(event -> {
-            if (chiTietHoaDon.getTinhTrang().equals("Mua")) {
+            if (chiTietHoaDon.getTinhTrang().equals("Bán")) {
                 soLuongThuocDoi += checkBox.isSelected() ? 1 : -1;
             }
             if (checkBox.isSelected()) {
@@ -444,7 +444,7 @@ public class DoiThuocFormController {
             tongTienTraCoKM = TinhTienKhuyenMai(tongTienTraCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
             txtTongTienTra.setText(df.format(tongTienTraCoKM + tongTienKhiTra) + " (KM chỉ áp dụng cho thuốc mua)");
         }else{
-            txtTongTienTra.setText(df.format(tongTienTraCoKM));
+            txtTongTienTra.setText(df.format(tongTienTraCoKM + tongTienKhiTra));
         }
         txtTongTienMua.setText(df.format(tongTienMua));
 

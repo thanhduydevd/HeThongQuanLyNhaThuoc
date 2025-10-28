@@ -45,9 +45,14 @@ public class Thuoc_DAO {
             throw new RuntimeException(e);
         }
 
-        try (Connection con = ConnectDB.getConnection();
-             Statement state = con.createStatement();
-             ResultSet rs = state.executeQuery(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            Statement state = con.createStatement();
+            ResultSet rs = state.executeQuery(sql);
 
             while (rs.next()) {
                 String maThuoc = rs.getString("MaThuoc");

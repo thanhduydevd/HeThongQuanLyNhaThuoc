@@ -40,6 +40,7 @@ public class TimThuocController {
     @FXML private TableView<Thuoc> tableThuoc;
     @FXML private TableColumn<Thuoc, String> colMaThuoc, colTenThuoc, colHamLuong, colDangDieuChe, colGiaBan, colKe;
     @FXML private TableColumn<Thuoc, String> colTonKho;
+    @FXML private Button btnSearchInvoice1, btnAddMedicine;
 
     private ObservableList<Thuoc> thuocList = FXCollections.observableArrayList();
     private ArrayList<Thuoc> arrayThuoc = new ArrayList<>();
@@ -85,24 +86,25 @@ public class TimThuocController {
         btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
         searchNameThuoc.setOnKeyReleased(e -> filterAndSearchThuoc());
         // su kien table view
-        tableThuoc.setRowFactory(tv -> {
-            TableRow<Thuoc> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    Thuoc selectedThuoc = row.getItem();
-                    // Mở dialog
-                    GiaoDienCuaSo dialog = new GiaoDienCuaSo("xemchitietthuoc");
-                    // Lấy controller và set Thuoc vào
-                    XemChiTietThuocFormController controller = dialog.getController();
-                    controller.setThuoc(selectedThuoc);
-                    controller.showData();
-                    // Show dialog
-                    dialog.showAndWait();
-                }
-            });
-            return row;
+        btnAddMedicine.setOnAction(tv -> {
+            Thuoc selectedThuoc = tableThuoc.getSelectionModel().getSelectedItem();
+            if (selectedThuoc == null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn thuốc");
+                alert.setContentText("Vui lòng chọn thuốc để xem chi tiết.");
+                alert.showAndWait();
+                return;
+            }
+            GiaoDienCuaSo dialog = new GiaoDienCuaSo("xemchitietthuoc");
+            // Lấy controller và set Thuoc vào
+            XemChiTietThuocFormController controller = dialog.getController();
+            controller.setThuoc(selectedThuoc);
+            controller.showData();
+            // Show dialog
+            dialog.showAndWait();
         });
-
+        btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
 
     }
 

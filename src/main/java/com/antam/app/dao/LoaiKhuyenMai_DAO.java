@@ -24,9 +24,17 @@ public class LoaiKhuyenMai_DAO {
     public ArrayList<LoaiKhuyenMai> getAllLoaiKhuyenMai() {
         ArrayList<LoaiKhuyenMai> list = new ArrayList<>();
         String sql = "SELECT * FROM LoaiKhuyenMai";
-        try (Connection con = ConnectDB.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            try {
+                if (con == null || con.isClosed()) {
+                    con = ConnectDB.getInstance().connect();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 int maLKM = rs.getInt("MaLKM");
                 String tenLKM = rs.getString("TenLKM");

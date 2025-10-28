@@ -41,6 +41,7 @@ public class ThemThuocController {
     @FXML private TableView<Thuoc> tableThuoc;
     @FXML private TableColumn<Thuoc, String> colMaThuoc, colTenThuoc, colHamLuong, colDangDieuChe, colGiaBan, colKe;
     @FXML private TableColumn<Thuoc, String> colTonKho;
+    @FXML private Button btnSearchInvoice1;
 
     private ObservableList<Thuoc> thuocList = FXCollections.observableArrayList();
     private ArrayList<Thuoc> arrayThuoc = new ArrayList<>();
@@ -111,7 +112,7 @@ public class ThemThuocController {
             return row;
         });
 
-
+        btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
     }
 
     // them value vao combobox ke
