@@ -22,6 +22,7 @@ module com.antam.app {
     opens com.antam.app.controller.khachhang to javafx.fxml;
     opens com.antam.app.controller.dialog to javafx.fxml;
     opens com.antam.app.gui to javafx.fxml;
+    opens com.antam.app.controller.nhanvien to javafx.fxml;
 
     // cho JavaFX TableView/PropertyValueFactory đọc getter của entity
     opens com.antam.app.entity to javafx.base;

@@ -6,10 +6,7 @@ package com.antam.app.dao;/*
  */
 
 import com.antam.app.connect.ConnectDB;
-import com.antam.app.entity.ChiTietPhieuDatThuoc;
-import com.antam.app.entity.KhachHang;
-import com.antam.app.entity.KhuyenMai;
-import com.antam.app.entity.PhieuDatThuoc;
+import com.antam.app.entity.*;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -17,6 +14,8 @@ import java.util.ArrayList;
 
 public class PhieuDat_DAO {
     public static ArrayList<PhieuDatThuoc> list = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
+
+    public static Thuoc_DAO thuoc_dao = new Thuoc_DAO();
 
     /**
      * Lấy toàn bộ danh sách phiếu đặt thuốc với thông tin bao gồm
@@ -63,44 +62,41 @@ public class PhieuDat_DAO {
         return ds;
     }
 
-    public static boolean themPhieuDatThuocVaoDBS(PhieuDatThuoc i){
+    public static boolean themPhieuDatThuocVaoDBS(PhieuDatThuoc i) {
         try {
             ConnectDB.getInstance().connect();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        Connection con = ConnectDB.getConnection();
-        // kiểm tra đã tồn tại hay chưa
-        try {
-            String sql = "select * from PhieuDatThuoc where MaPDT = ?";
-            PreparedStatement state = con.prepareStatement(sql);
-            state.setString(1,i.getMaPhieu());
-            ResultSet check = state.executeQuery();
-            if (check.next()){
-                return false;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+            Connection con = ConnectDB.getConnection();
 
-        try {
-            String updateSQL = "insert from PhieuDatThuoc values , [MaPDT] = ?," +
-                    " [NgayTao] = ?,[IsThanhToan] = ?,[MaKH] = ?, [MaNV] = ?, [MaKM] = ?," +
-                    "[TongTien] = ?";
+            // Kiểm tra đã tồn tại hay chưa
+            String sqlCheck = "SELECT * FROM PhieuDatThuoc WHERE MaPDT = ?";
+            PreparedStatement checkStmt = con.prepareStatement(sqlCheck);
+            checkStmt.setString(1, i.getMaPhieu());
+            ResultSet check = checkStmt.executeQuery();
+            if (check.next()) {
+                return false; // đã tồn tại
+            }
+
+            // Câu lệnh thêm mới
+            String updateSQL = "INSERT INTO PhieuDatThuoc " +
+                    "([MaPDT], [NgayTao], [IsThanhToan], [MaKH], [MaNV], [MaKM], [TongTien]) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement state = con.prepareStatement(updateSQL);
-            state.setString(1,i.getMaPhieu());
+            state.setString(1, i.getMaPhieu());
             state.setDate(2, Date.valueOf(i.getNgayTao()));
-            state.setBoolean(3,i.isThanhToan());
-            state.setString(4,i.getKhachHang().getMaKH());
-            state.setString(5,i.getNhanVien().getMaNV());
-            state.setString(6,i.getKhuyenMai().getMaKM());
-            state.setDouble(7,i.getTongTien());
+            state.setBoolean(3, i.isThanhToan());
+            state.setString(4, i.getKhachHang().getMaKH());
+            state.setString(5, i.getNhanVien().getMaNV());
+            state.setString(6, i.getKhuyenMai() != null ? i.getKhuyenMai().getMaKM() : null);
+            state.setDouble(7, i.getTongTien());
+
             int kq = state.executeUpdate();
-            return kq >0;
+            return kq > 0;
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 
     /**
@@ -160,16 +156,65 @@ public class PhieuDat_DAO {
         Connection con = ConnectDB.getConnection();
 
         try {
-            String updateSQL = "insert into ChiTietPhieuDatThuoc values(?,?,?,?,?)";
+            String updateSQL = "insert into ChiTietPhieuDatThuoc values(?,?,?,?,?,?)";
             PreparedStatement state = con.prepareStatement(updateSQL);
             state.setString(1,ctPDT.getMaPhieu().getMaPhieu());
             state.setString(2,ctPDT.getSoDangKy().getMaThuoc());
             state.setInt(3,ctPDT.getSoLuong());
             state.setInt(4,ctPDT.getDonViTinh().getMaDVT());
-            state.setDouble(5,ctPDT.getThanhTien());
+            state.setString(5,"Đặt");
+            state.setDouble(6,ctPDT.getThanhTien());
             int kq = state.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+    public static ArrayList<ChiTietPhieuDatThuoc> getChiTietTheoPhieu(String maPDT) {
+        ArrayList<ChiTietPhieuDatThuoc> dsChiTiet = new ArrayList<>();
+
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+
+            String sql = """
+            SELECT MaPDT, MaThuoc, SoLuong, MaDVT, TinhTrang, ThanhTien
+            FROM ChiTietPhieuDatThuoc
+            WHERE MaPDT = ?
+        """;
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maPDT);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String maThuoc = rs.getString("MaThuoc");
+                int soLuong = rs.getInt("SoLuong");
+                String maDVT = rs.getString("MaDVT");
+                String tinhTrang = rs.getString("TinhTrang");
+                double thanhTien = rs.getDouble("ThanhTien");
+                String phieuDatMa = rs.getString("MaPDT");
+
+                // Gọi thuốc để lấy đối tượng chi tiết
+                Thuoc thuoc = thuoc_dao.getThuocTheoMa(maThuoc);
+                DonViTinh donVi = thuoc.getMaDVTCoSo();
+                PhieuDatThuoc phieu = list.stream()
+                        .filter(p -> p.getMaPhieu().equalsIgnoreCase(phieuDatMa))
+                        .findFirst()
+                        .orElse(null);
+
+                ChiTietPhieuDatThuoc ct = new ChiTietPhieuDatThuoc();
+                ct.setMaPhieu(phieu);
+                ct.setSoDangKy(thuoc);
+                ct.setSoLuong(soLuong);
+                ct.setDonViTinh(donVi);
+                ct.setThanhToan(!tinhTrang.equalsIgnoreCase("Đặt"));
+                dsChiTiet.add(ct);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return dsChiTiet;
+    }
+
 }

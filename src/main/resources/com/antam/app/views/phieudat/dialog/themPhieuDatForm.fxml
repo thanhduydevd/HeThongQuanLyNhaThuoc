@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,9 +16,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.phieudat.ThemPhieuDatFormController">
+<DialogPane fx:id="dialogPane" prefHeight="545.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.phieudat.ThemPhieuDatFormController">
     <header>
-        <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
+        <FlowPane alignment="CENTER" prefHeight="35.0" prefWidth="800.0" style="-fx-background-color: #1e3a8a;">
             <children>
                 <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Tạo phiếu đặt mới">
                     <font>
@@ -31,78 +32,82 @@
         </FlowPane>
     </header>
    <content>
-      <AnchorPane>
+      <AnchorPane prefHeight="557.0" prefWidth="800.0">
          <children>
-            <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               <children>
-                  <GridPane hgap="5.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+            <ScrollPane fitToWidth="true" layoutX="32.8" prefHeight="470.0" prefWidth="790.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="9.0">
+               <content>
+                  <VBox spacing="10.0">
                      <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu đặt:" />
-                        <TextField fx:id="txtMa" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtTenKhach" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đặt:" GridPane.rowIndex="2" />
+                        <GridPane hgap="5.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu đặt:" />
+                              <TextField fx:id="txtMa" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtTenKhach" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đặt:" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+                        <VBox fx:id="vbThuoc" maxWidth="1.7976931348623157E308" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                        <Button fx:id="btnThem" mnemonicParsing="false" styleClass="btn-gray" stylesheets="@../../../styles/dashboard_style.css" text="Thêm thuốc" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Áp dụng khuyến mãi:" wrappingWidth="118.93670463562012" />
+                        <ComboBox fx:id="cbKhuyenMai" prefHeight="44.0" prefWidth="778.0" promptText="Chọn khuyến mãi" />
+                        <GridPane hgap="5.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Ghi chú:" />
+                              <TextArea fx:id="taGhiChu" prefHeight="300.0" prefWidth="200.0" promptText="Ghi chú thêm cho phiếu đặt" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="5.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8px;">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="txtTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="0 đ" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </GridPane>
                      </children>
-                  </GridPane>
-                  <VBox fx:id="vbThuoc" maxWidth="1.7976931348623157E308" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
                   </VBox>
-                  <Button fx:id="btnThem" mnemonicParsing="false" styleClass="btn-gray" stylesheets="@../../../styles/dashboard_style.css" text="Thêm thuốc" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Áp dụng khuyến mãi:" wrappingWidth="118.93670463562012" />
-                  <ComboBox fx:id="cbKhuyenMai" prefHeight="44.0" prefWidth="778.0" promptText="Chọn khuyến mãi" />
-                  <GridPane hgap="5.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Ghi chú:" />
-                        <TextArea fx:id="taGhiChu" prefHeight="300.0" prefWidth="200.0" promptText="Ghi chú thêm cho phiếu đặt" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                     </children>
-                  </GridPane>
-                  <GridPane hgap="5.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8px;">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="txtTotal" fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="0 đ" GridPane.columnIndex="1">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Text>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </GridPane>
-               </children>
-            </VBox>
+               </content>
+            </ScrollPane>
          </children>
       </AnchorPane>
    </content>

@@ -18,6 +18,7 @@ public class ChiTietPhieuDatThuoc {
     private int soLuong;
     private DonViTinh donViTinh;
     private double thanhTien;
+    private boolean isThanhToan;
 
     public ChiTietPhieuDatThuoc() {
         this.maPhieu = new PhieuDatThuoc();
@@ -91,5 +92,13 @@ public class ChiTietPhieuDatThuoc {
                 ", soLuong=" + soLuong +
                 ", donViTinh=" + donViTinh +
                 '}';
+    }
+
+    public boolean isThanhToan() {
+        return isThanhToan;
+    }
+
+    public void setThanhToan(boolean thanhToan) {
+        isThanhToan = thanhToan;
     }
 }

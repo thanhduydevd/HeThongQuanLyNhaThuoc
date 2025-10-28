@@ -82,9 +82,13 @@ public class ThemPhieuDatFormController {
         cbKhuyenMai.getItems().add(nothing);
         cbKhuyenMai.getItems().addAll(FXCollections.observableArrayList(dsKhuyenMai));
 
+        //gọi tính tổng tiền khi chạy giao diện
+        loadTongTien();
+
         Button btnApply = (Button)this.dialogPane.lookupButton(applyButton);
         Button btnCancel = (Button)this.dialogPane.lookupButton(cancelButton);
 
+        //sự kiện thêm phiếu đặt
         btnApply.addEventFilter(ActionEvent.ACTION, event -> {
             if (!checkDuLieu()){
                 event.consume();
@@ -96,17 +100,17 @@ public class ThemPhieuDatFormController {
                         VBox vboxThuoc = (VBox) hBox.getChildren().get(0);
                         VBox vboxDonVi = (VBox) hBox.getChildren().get(1);
                         VBox vboxSoLuong = (VBox) hBox.getChildren().get(2);
-                        VBox vboxGiaNhap = (VBox) hBox.getChildren().get(3);
+                        VBox vboxGia= (VBox) hBox.getChildren().get(3);
 
                         // Lấy control trong từng VBox
                         ComboBox<Thuoc> cbDanhSachThuoc = (ComboBox<Thuoc>) vboxThuoc.getChildren().get(1);
                         ComboBox<DonViTinh> cbDonViTinh = (ComboBox<DonViTinh>) vboxDonVi.getChildren().get(1);
                         Spinner<Integer> spSoLuong = (Spinner<Integer>) vboxSoLuong.getChildren().get(1);
-                        Spinner<Integer> spGiaNhap = (Spinner<Integer>) vboxGiaNhap.getChildren().get(1);
+                        TextField spGia = (TextField) vboxGia.getChildren().get(1);
 
                         // Kiểm tra dữ liệu
                         if (cbDanhSachThuoc.getSelectionModel().getSelectedItem() != null && cbDonViTinh.getSelectionModel().getSelectedItem() != null
-                                && spGiaNhap.getValue() != null && spSoLuong.getValue() != null){
+                                && spGia.getText() != null && spSoLuong.getValue() != null){
                             if (spSoLuong.getValue().equals(0)){
                                 showMess("Số lượng không hợp lệ", "Số lượng phải lớn hơn 0");
                                 event.consume();
@@ -117,19 +121,27 @@ public class ThemPhieuDatFormController {
                             event.consume();
                             return;
                         }
-
                         themPhieuDat();
                     }
                 }
             }
         });
-        btnThem.setOnAction(  e ->   loadHBoxThuoc());
+        btnThem.setOnAction(  e ->   {
+            loadHBoxThuoc();
+            loadTongTien();
+        });
+
+        cbKhuyenMai.setOnAction(e -> loadTongTien());
     }
 
     private void themPhieuDat() {
         String hashPD = getHashPD();
         NhanVien tenNguoiDat = PhienNguoiDung.getMaNV();
-        KhuyenMai km = null;
+        if (tenNguoiDat == null) {
+            showMess("Lỗi người dùng", "Không tìm thấy thông tin người đặt");
+            txtTenKhach.requestFocus();
+            return;
+        }
         KhachHang khachMoi = null;
         if (checkKhachHang()) {
             khachMoi = new KhachHang();
@@ -147,7 +159,7 @@ public class ThemPhieuDatFormController {
                 false,
                 tenNguoiDat,
                 khachMoi,
-                km,
+                cbKhuyenMai.getSelectionModel().getSelectedItem().getTenKM().equals("Không áp dụng") ? null : cbKhuyenMai.getSelectionModel().getSelectedItem(),
                 tongTien);
         PhieuDat_DAO.themPhieuDatThuocVaoDBS(i);
 
@@ -184,7 +196,6 @@ public class ThemPhieuDatFormController {
      */
     private boolean checkKhachHang(){
 
-
         for (KhachHang khachHang : dsKhach) {
             if (khachHang.getTenKH().equalsIgnoreCase(txtTenKhach.getText().trim())) {
                 return false;
@@ -192,6 +203,7 @@ public class ThemPhieuDatFormController {
         }
         return true;
     }
+
     private String getHashPD() {
         String hash = PhieuDat_DAO.getMaxHash();
         if (hash == null){
@@ -245,10 +257,11 @@ public class ThemPhieuDatFormController {
                 getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
         );
         spSoLuong.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50000, 1, 1));
+        spSoLuong.setEditable(true);
         spSoLuong.setPrefWidth(100);
         spSoLuong.setPromptText("Số lượng");
         spSoLuong.valueProperty().addListener(e ->{
-            txtTotal.setText("Tổng tiền: " + decimalFormat.format(tinhTongTien()));
+            loadTongTien();
         });
         VBox vbSoLuong = new VBox();
         vbSoLuong.getChildren().addAll(new Text("Số lượng:"), spSoLuong);
@@ -295,6 +308,8 @@ public class ThemPhieuDatFormController {
                 cbDonViTinh.getSelectionModel().clearSelection();
                 cbDonViTinh.setDisable(false);
             }
+            //Load lại giá
+            loadTongTien();
         });
 
         //Nút xoá
@@ -311,6 +326,7 @@ public class ThemPhieuDatFormController {
         btnXoa.setOnAction(e ->
                 {
                     vbThuoc.getChildren().remove(hBox);
+                    loadTongTien();
                 }
         );
 
@@ -324,7 +340,7 @@ public class ThemPhieuDatFormController {
     }
 
     public double tinhTongTien(){
-        double tongTien = 0;
+        double tongTien = 0.0;
         for (Node node : vbThuoc.getChildren()) {
             if (node instanceof HBox hBox) {
 
@@ -344,17 +360,21 @@ public class ThemPhieuDatFormController {
                 } catch (NumberFormatException ex) {
                     giaBan = 0;
                 }
-                KhuyenMai km = null;
-                if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null &&
-                        !cbKhuyenMai.getSelectionModel().getSelectedItem().getMaKM().isEmpty()) {
-                    km = cbKhuyenMai.getSelectionModel().getSelectedItem();
-                    if (km.getLoaiKhuyenMai().getMaLKM() == 1){
-                        giaBan = giaBan - (giaBan * km.getSo() / 100);
-                    }else if (km.getLoaiKhuyenMai().getMaLKM() == 2){
-                        giaBan = giaBan - km.getSo();
-                }
                 tongTien += soLuong * giaBan;
-            }}
+            }
+
+        }
+        // áp dụng khuyến mãi nếu có.
+
+        if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null
+                && !cbKhuyenMai.getSelectionModel().getSelectedItem().getMaKM().isEmpty()
+                && !cbKhuyenMai.getSelectionModel().getSelectedItem().getTenKM().equals("Không áp dụng")){
+            KhuyenMai km = cbKhuyenMai.getSelectionModel().getSelectedItem();
+            if (km.getLoaiKhuyenMai().getMaLKM() == 1){
+                tongTien = tongTien - (tongTien * km.getSo() / 100);
+            }else if (km.getLoaiKhuyenMai().getMaLKM() == 2){
+                tongTien = tongTien - km.getSo();
+            }
         }
         return tongTien;
     }
@@ -367,7 +387,10 @@ public class ThemPhieuDatFormController {
         alert.showAndWait();
     }
 
-
+    private void loadTongTien(){
+        double tongTien = tinhTongTien();
+        txtTotal.setText("Tổng tiền: " + decimalFormat.format(tongTien));
+    }
     private boolean checkDuLieu() {
         return true;
     }

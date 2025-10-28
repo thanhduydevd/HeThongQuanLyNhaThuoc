@@ -14,8 +14,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +40,7 @@ public class TimPhieuDatController {
     @FXML
     private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus,colTotal;
 
-
+    public static PhieuDatThuoc selectedPhieuDatThuoc = null;
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
     ObservableList<PhieuDatThuoc> origin;
@@ -47,11 +50,29 @@ public class TimPhieuDatController {
     }
 
     public void initialize() {
-        btnXemChiTiet.setOnAction(e -> new GiaoDienCuaSo("xemchitietphieudat").showAndWait());
+        btnXemChiTiet.setOnAction(e -> {
+            if (tvPhieuDat.getSelectionModel().getSelectedItem() == null){
+                showMess("Cảnh báo","Hãy chọn một phiếu đặt thuốc");
+            }
+            else {
+                selectedPhieuDatThuoc = tvPhieuDat.getSelectionModel().getSelectedItem();
+                new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+            }
+        });
         //cài đặt và load data vào giao diện
         loadDataComboBox();
         setupBang();
         loadDataVaoBang();
+
+        //set phiếu đặt được chọn cho xem chi tiết
+        selectedPhieuDatThuoc = tvPhieuDat.getItems().getFirst();
+        tvPhieuDat.setOnMouseClicked(e->{
+            if (e.getClickCount() ==2 ){
+                selectedPhieuDatThuoc = tvPhieuDat.getSelectionModel().getSelectedItem();
+                new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+            }
+
+        });
 
         //sự kiện nút tìm kiếm phiếu đặt
         btnFind.setOnAction(e->{
@@ -84,6 +105,14 @@ public class TimPhieuDatController {
         cbNhanVien.setOnAction(e -> setupListenerComboBox());
         dpstart.setOnAction(e-> setupListenerComboBox());
         dpend.setOnAction(e->setupListenerComboBox());
+    }
+
+    private void showMess(String tieude, String noidung) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(tieude);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
     }
 
     private void setupListenerComboBox() {

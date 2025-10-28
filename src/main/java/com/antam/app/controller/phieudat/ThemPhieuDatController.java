@@ -24,8 +24,6 @@ import java.util.ArrayList;
 
 public class ThemPhieuDatController {
     @FXML
-    private Button btnAddPurchaseOrder;
-    @FXML
     private ComboBox<NhanVien> cbNhanVien;
     @FXML
     private ComboBox<String> cbTrangThai,cbGia;
@@ -34,11 +32,11 @@ public class ThemPhieuDatController {
     @FXML
     private TextField txtFind;
     @FXML
-    private Button btnFind;
+    private Button btnFind, btnAddPurchaseOrder,btnXoaRong;
     @FXML
     private TableView<PhieuDatThuoc> tvPhieuDat;
     @FXML
-    private TableColumn<PhieuDatThuoc,String> colTotal,colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus;
+    private TableColumn<PhieuDatThuoc,String> colMaPhieu,colNgay,colKhach,colSDT,colNhanVien,colStatus,colTotal;
 
 
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
@@ -65,13 +63,25 @@ public class ThemPhieuDatController {
                 tvPhieuDat.setItems(origin);
                 for (PhieuDatThuoc a : tvPhieuDat.getItems()){
                     if (a.getMaPhieu().toLowerCase().contains(txtFind.getText().toLowerCase())
-                    ||a.getKhachHang().getTenKH().toLowerCase().contains(txtFind.getText().toLowerCase())){
+                            ||a.getKhachHang().getTenKH().toLowerCase().contains(txtFind.getText().toLowerCase())){
                         tvPhieuDat.getSelectionModel().select(a);
                         tvPhieuDat.scrollTo(a);
                     }
                 }
             }
         });
+
+        //sự kiện xóa rỗng
+        btnXoaRong.setOnAction(e ->{
+            cbGia.getSelectionModel().selectFirst();
+            cbNhanVien.getSelectionModel().selectFirst();
+            cbTrangThai.getSelectionModel().selectFirst();
+            dpstart.setValue(null);
+            dpend.setValue(null);
+            txtFind.clear();
+            loadDataVaoBang();
+        });
+
         //sự kiện lọc
         setupListenerFind();
         cbGia.setOnAction(e -> setupListenerComboBox());
@@ -82,7 +92,6 @@ public class ThemPhieuDatController {
     }
 
     private void setupListenerComboBox() {
-        // Lấy lựa chọn hiện tại
         String gia = cbGia.getSelectionModel().getSelectedItem();
         String trangThai = cbTrangThai.getSelectionModel().getSelectedItem();
         NhanVien nv = cbNhanVien.getSelectionModel().getSelectedItem();
@@ -95,7 +104,6 @@ public class ThemPhieuDatController {
                 (nv == null || nv.getHoTen().equals("Tất cả")) &&
                 (start == null && end == null)) {
             loadDataVaoBang();
-//            System.out.println("All đk");
             return;
         }
 
@@ -109,10 +117,10 @@ public class ThemPhieuDatController {
             default: min = 0; max = Double.MAX_VALUE;
         }
 
-        // Xác định trạng thái cần lọc
+        // Trạng thái
         Boolean filStatus = null;
         if ("Đã thanh toán".equals(trangThai)) filStatus = true;
-        else if ("Chờ thanh toán".equals(trangThai)) filStatus = false;
+        else if ("Chưa thanh toán".equals(trangThai)) filStatus = false;
 
         // Bắt đầu lọc
         ObservableList<PhieuDatThuoc> filter = FXCollections.observableArrayList();
@@ -120,19 +128,21 @@ public class ThemPhieuDatController {
         for (PhieuDatThuoc e : origin) {
             boolean match = true;
 
-            // Lọc theo giá
-            if (!(e.getTongTien() >= min && e.getTongTien() <= max)) match = false;
+            // Giá
+            if (!(e.getTongTien() >= min && e.getTongTien() <= max))
+                match = false;
 
-            // Lọc theo nhân viên
+            // Nhân viên
             if (nv != null && nv.getHoTen() != null &&
-                    !nv.getMaNV().equals("Tất cả") &&
-                    !e.getNhanVien().getMaNV().equals(nv.getMaNV())) match = false;
+                    !nv.getHoTen().equals("Tất cả") &&
+                    !e.getNhanVien().getMaNV().equals(nv.getMaNV()))
+                match = false;
 
-            // Lọc theo trạng thái
-            if (filStatus != null && e.isThanhToan() != filStatus) match = false;
+            // Trạng thái
+            if (filStatus != null && e.isThanhToan() != filStatus)
+                match = false;
 
-            if (match) filter.add(e);
-            // Lọc theo ngày (giả sử e.getNgayLap() là LocalDate)
+            // Ngày
             if (start != null && e.getNgayTao().isBefore(start))
                 match = false;
             if (end != null && e.getNgayTao().isAfter(end))
@@ -143,6 +153,7 @@ public class ThemPhieuDatController {
 
         tvPhieuDat.setItems(filter);
     }
+
 
     private void setupListenerFind() {
         txtFind.textProperty().addListener( (obj, oldT ,newT) ->{
@@ -155,7 +166,7 @@ public class ThemPhieuDatController {
             String key = newT.toLowerCase();
             for (PhieuDatThuoc e : listPDT){
                 if (e.getMaPhieu().toLowerCase().contains(key)
-                ||e.getKhachHang().getTenKH().toLowerCase().contains(key)){
+                        ||e.getKhachHang().getTenKH().toLowerCase().contains(key)){
                     filter1.add(e);
                 }else{
                     filter1.remove(e);
@@ -193,7 +204,7 @@ public class ThemPhieuDatController {
             cbNhanVien.getItems().add(e);
         }
         cbTrangThai.getItems().add("Tất cả");
-        cbTrangThai.getItems().add("Chờ thanh toán");
+        cbTrangThai.getItems().add("Chưa thanh toán");
         cbTrangThai.getItems().add("Đã thanh toán");
         cbGia.getItems().add("Tất cả");
         cbGia.getItems().add("Dưới 500.000đ");
@@ -204,6 +215,5 @@ public class ThemPhieuDatController {
         cbNhanVien.getSelectionModel().selectFirst();
         cbTrangThai.getSelectionModel().selectFirst();
     }
-
 
 }

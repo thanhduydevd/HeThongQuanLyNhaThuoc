@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DangNhapController {
-    private NhanVien_DAO nv_dao;
+    private NhanVien_DAO nv_dao = new NhanVien_DAO();
     @FXML
     private Button btnLogin;
     @FXML
@@ -78,6 +78,7 @@ public class DangNhapController {
             newStage.show();
             Stage oldStage = (Stage) this.btnLogin.getScene().getWindow();
             oldStage.close();
+            PhienNguoiDung.setMaNV(nv_dao.getNhanVienTaiKhoan("Admin001"));
         } catch (Exception var5) {
             Exception e = var5;
             e.printStackTrace();

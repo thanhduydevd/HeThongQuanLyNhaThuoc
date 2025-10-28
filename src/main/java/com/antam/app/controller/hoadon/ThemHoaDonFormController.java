@@ -272,7 +272,7 @@ public class ThemHoaDonFormController {
 
             // 2. Lấy nhân viên (nếu có ComboBox chọn nhân viên, ví dụ cbEmployee)
             NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
-            NhanVien nhanVien = nhanVienDAO.findNhanVienVoiMa("NV00001"); // Hardcode mã nhân viên
+            NhanVien nhanVien = PhienNguoiDung.getMaNV(); // Hardcode mã nhân viên
             if (nhanVien == null || nhanVien.getMaNV() == null) {
                 txtWarning.setText("Không tìm thấy nhân viên hợp lệ! Không thể tạo hóa đơn.");
                 txtWarning.setVisible(true);
