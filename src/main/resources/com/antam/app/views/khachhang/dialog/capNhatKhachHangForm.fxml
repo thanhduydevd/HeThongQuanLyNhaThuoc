@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="500.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.dialog.SuaKhachHangController">
+<DialogPane fx:id="dialogPane" prefWidth="500.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.khachhang.SuaKhachHangFormController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -79,12 +79,12 @@
                 <!-- Buttons -->
                 <FlowPane alignment="CENTER" hgap="10.0">
                     <children>
-                        <Button fx:id="btnLuu" mnemonicParsing="false" onAction="#handleLuu" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Lưu" textFill="WHITE">
+                        <Button fx:id="btnLuu" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #2563eb; -fx-background-radius: 5px;" text="Lưu" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="13.0" />
                             </font>
                         </Button>
-                        <Button fx:id="btnHuy" mnemonicParsing="false" onAction="#handleHuy" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #64748b; -fx-background-radius: 5px;" text="Hủy" textFill="WHITE">
+                        <Button fx:id="btnHuy" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #64748b; -fx-background-radius: 5px;" text="Hủy" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="13.0" />
                             </font>

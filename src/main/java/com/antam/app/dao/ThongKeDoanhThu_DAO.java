@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * DAO class cho thống kê doanh thu
  */
-public class ThongKe_DAO {
+public class ThongKeDoanhThu_DAO {
 
     /**
      * Lấy doanh thu theo khoảng thời gian

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.hoadon.ThemHoaDonFormController">
+<DialogPane fx:id="dialogPane" maxHeight="600.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.hoadon.ThemHoaDonFormController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -32,9 +33,12 @@
         </FlowPane>
     </header>
    <content>
-      <AnchorPane>
-         <children>
-            <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+         <content>
+            <VBox spacing="10.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
                <children>
                   <GridPane hgap="5.0">
                     <columnConstraints>
@@ -54,17 +58,63 @@
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc bán:" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
-                  <VBox fx:id="medicineRowsVBox" maxWidth="1.7976931348623157E308" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
+                  <!-- Header row for medicine section -->
+                  <HBox spacing="10.0" style="-fx-background-color: #f1f5f9; -fx-border-color: #e5e7eb; -fx-border-radius: 6px 6px 0 0; -fx-border-width: 2px 2px 0 2px;">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
                      <children>
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc:" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="120.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị:" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="120.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng:" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="120.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá:" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="120.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thao tác:">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+                  <VBox fx:id="medicineRowsVBox" maxWidth="1.7976931348623157E308" style="-fx-border-color: #e5e7eb; -fx-border-radius: 0 0 6px 6px; -fx-border-width: 0 2px 2px 2px;">
+                     <children>
+                        <!-- Existing medicine row -->
                         <HBox spacing="10.0" style="-fx-background-color: #f8fafc;">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                            <children>
                               <ComboBox fx:id="cbMedicine" prefWidth="150.0" promptText="Chọn thuốc" stylesheets="@../../../styles/dashboard_style.css" />
-                              <ComboBox fx:id="cb_unit" prefWidth="150.0" promptText="Chọn đơn vị" stylesheets="@../../../styles/dashboard_style.css" />
+                              <ComboBox fx:id="cb_unit" prefWidth="150.0" promptText="Đơn vị" stylesheets="@../../../styles/dashboard_style.css" />
                               <TextField fx:id="txtQuantity" promptText="Số lượng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
-                              <TextField fx:id="cb_price" promptText="Đơn giá" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
+                              <TextField fx:id="txt_price" promptText="Đơn giá" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
                               <Button mnemonicParsing="false" style="-fx-background-color: #ef4444; -fx-background-radius: 50%;">
                                  <graphic>
                                     <FontAwesomeIcon fill="WHITE" glyphName="REMOVE" />
@@ -150,8 +200,8 @@
                   </GridPane>
                </children>
             </VBox>
-         </children>
-      </AnchorPane>
+         </content>
+      </ScrollPane>
    </content>
 
 </DialogPane>

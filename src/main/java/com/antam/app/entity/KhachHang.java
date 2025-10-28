@@ -120,7 +120,12 @@ public class KhachHang {
 
     // Phương thức tiện ích để lấy loại khách hàng
     public String getLoaiKhachHang() {
-        return tongChiTieu >= 1000000 ? "VIP" : "Thường";
+        // VIP nếu tổng chi tiêu > 5.000.000 hoặc số đơn hàng > 20
+        if (tongChiTieu > 5_000_000 || soDonHang > 20) {
+            return "VIP";
+        } else {
+            return "Thường";
+        }
     }
 
     @Override

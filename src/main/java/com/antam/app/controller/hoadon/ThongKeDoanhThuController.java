@@ -1,6 +1,7 @@
 package com.antam.app.controller.hoadon;
 
-import com.antam.app.dao.ThongKe_DAO;
+import com.antam.app.dao.ThongKeDoanhThu_DAO;
+import com.antam.app.dao.ThongKeTrangChinh_DAO;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.ThongKeDoanhThu;
 import javafx.collections.FXCollections;
@@ -56,7 +57,8 @@ public class ThongKeDoanhThuController implements Initializable {
 
     @FXML private Button btnRefresh;
 
-    private ThongKe_DAO thongKeDAO;
+    private ThongKeDoanhThu_DAO thongKeDAO;
+    private ThongKeTrangChinh_DAO thongKeTrangChinhDAO;
     private LocalDate tuNgay;
     private LocalDate denNgay;
     private String selectedNhanVien = null;
@@ -65,7 +67,8 @@ public class ThongKeDoanhThuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        thongKeDAO = new ThongKe_DAO();
+        thongKeDAO = new ThongKeDoanhThu_DAO();
+        thongKeTrangChinhDAO = new ThongKeTrangChinh_DAO();
 
         // Khởi tạo ComboBox thời gian
         cmbThoiGian.setItems(FXCollections.observableArrayList(
@@ -204,7 +207,7 @@ public class ThongKeDoanhThuController implements Initializable {
 
         // Load biểu đồ
         loadChartDoanhThu();
-        loadChartTopSanPham();
+        loadTopProductsChart();
 
         // Load bảng chi tiết
         loadTableData();
@@ -226,6 +229,9 @@ public class ThongKeDoanhThuController implements Initializable {
         calculateChange();
     }
 
+    /*
+    * Tính phần trăm thay đổi so với kỳ trước và cập nhật nút tương ứng
+    * */
     private void calculateChange() {
         // Tính kỳ trước
         long days = java.time.temporal.ChronoUnit.DAYS.between(tuNgay, denNgay) + 1;
@@ -249,6 +255,9 @@ public class ThongKeDoanhThuController implements Initializable {
         updateChangeButton(btnKhachHangChange, khachHangHienTai, khachHangTruoc);
     }
 
+    /*
+    *  Cập nhật nút thay đổi với phần trăm và màu sắc tương ứng
+    * */
     private void updateChangeButton(Button btn, double current, double previous) {
         if (previous == 0) {
             btn.setText("N/A");
@@ -421,56 +430,82 @@ public class ThongKeDoanhThuController implements Initializable {
         chartDoanhThu.setLegendVisible(true);
     }
 
-    private void loadChartTopSanPham() {
-        chartTopSanPham.getData().clear();
-        Map<String, Integer> topSanPham = thongKeDAO.getTopSanPhamBanChay(tuNgay, denNgay, 10);
+    /**
+     * ==================== BIỂU ĐỒ TOP SẢN PHẨM ====================
+     * Load biểu đồ top sản phẩm bán chạy
+     */
+    private void loadTopProductsChart() {
+        if (chartTopSanPham == null) return;
 
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Số lượng bán");
+        try {
+            // *** CHỈNH SỐ SẢN PHẨM: Thay đổi số 5 để hiển thị nhiều/ít sản phẩm hơn ***
+            Map<String, Integer> topProducts = thongKeTrangChinhDAO.getTopSanPhamBanChay(5);
 
-        for (Map.Entry<String, Integer> entry : topSanPham.entrySet()) {
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Số lượng bán");
 
-        chartTopSanPham.getData().add(series);
+            // Map để lưu tên đầy đủ của thuốc
+            Map<String, String> fullNamesMap = new java.util.HashMap<>();
 
-        // Thêm tooltip cho từng thanh trong biểu đồ
-        for (XYChart.Data<String, Number> data : series.getData()) {
-            String tenThuoc = data.getXValue();
-            int soLuong = data.getYValue().intValue();
+            for (Map.Entry<String, Integer> entry : topProducts.entrySet()) {
+                String tenThuocDayDu = entry.getKey();
+                String tenThuoc = tenThuocDayDu;
 
-            Tooltip tooltip = new Tooltip(
-                "Thuốc: " + tenThuoc + "\n" +
-                "Số lượng bán: " + formatter.format(soLuong)
-            );
+                // *** CHỈNH ĐỘ DÀI TÊN: Thay đổi số 15 (độ dài tối đa) và 12 (độ dài cắt) ***
+                // Rút ngắn tên thuốc nếu quá dài
+                if (tenThuoc.length() > 15) {
+                    tenThuoc = tenThuoc.substring(0, 12) + "...";
+                }
 
-            // Cài đặt thời gian hiển thị tooltip
-            tooltip.setShowDelay(javafx.util.Duration.millis(100));
-            tooltip.setStyle(
-                "-fx-font-size: 12px; " +
-                "-fx-background-color: rgba(22, 163, 74, 0.95); " +
-                "-fx-text-fill: white; " +
-                "-fx-padding: 8px; " +
-                "-fx-background-radius: 6px;"
-            );
+                // Lưu tên đầy đủ
+                fullNamesMap.put(tenThuoc, tenThuocDayDu);
 
-            // Gắn tooltip vào node của data point (thanh)
-            javafx.scene.Node node = data.getNode();
-            if (node != null) {
-                Tooltip.install(node, tooltip);
-
-                // Thêm hiệu ứng hover
-                node.setOnMouseEntered(e -> {
-                    node.setStyle(
-                        "-fx-cursor: hand; " +
-                        "-fx-opacity: 0.8; " +
-                        "-fx-bar-fill: #16a34a;"
-                    );
-                });
-                node.setOnMouseExited(e -> {
-                    node.setStyle("-fx-opacity: 1.0;");
-                });
+                XYChart.Data<String, Number> data = new XYChart.Data<>(tenThuoc, entry.getValue());
+                series.getData().add(data);
             }
+
+            chartTopSanPham.getData().clear();
+            chartTopSanPham.getData().add(series);
+
+            // Thêm tooltip cho từng thanh trong biểu đồ
+            for (XYChart.Data<String, Number> data : series.getData()) {
+                String tenThuocHienThi = data.getXValue();
+                String tenThuocDayDu = fullNamesMap.getOrDefault(tenThuocHienThi, tenThuocHienThi);
+                int soLuong = data.getYValue().intValue();
+
+                javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(
+                        "Thuốc: " + tenThuocDayDu + "\n" +
+                                "Số lượng bán: " + formatter.format(soLuong)
+                );
+
+                // *** CHỈNH MÀU TOOLTIP: Thay đổi màu nền và màu chữ ***
+                tooltip.setShowDelay(javafx.util.Duration.millis(100));
+                tooltip.setStyle(
+                        "-fx-font-size: 12px; " +
+                                "-fx-background-color: #1e3a8a; " +    // Màu nền tooltip (xanh lá)
+                                "-fx-text-fill: white;"                 // Màu chữ tooltip (trắng)
+                );
+
+                // Gắn tooltip vào node của data point (thanh)
+                javafx.scene.Node node = data.getNode();
+                if (node != null) {
+                    javafx.scene.control.Tooltip.install(node, tooltip);
+
+                    // *** CHỈNH HIỆU ỨNG HOVER: Thay đổi độ mờ khi rê chuột ***
+                    node.setOnMouseEntered(e -> {
+                        node.setStyle(
+                                "-fx-cursor: hand; " +
+                                        "-fx-opacity: 0.8;"             // Độ mờ khi hover (0.0 - 1.0)
+                        );
+                    });
+                    node.setOnMouseExited(e -> {
+                        node.setStyle("-fx-opacity: 1.0;");
+                    });
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error loading top products chart: " + e.getMessage());
         }
     }
 
@@ -481,6 +516,7 @@ public class ThongKeDoanhThuController implements Initializable {
     }
 
     @FXML
+//    Xuất báo cáo thống kê doanh thu ra file CSV
     private void xuatBaoCao(ActionEvent event) {
         try {
             // Tạo FileChooser để chọn nơi lưu file
@@ -517,6 +553,7 @@ public class ThongKeDoanhThuController implements Initializable {
         }
     }
 
+//    Xuất dữ liệu thống kê doanh thu ra file CSV
     private void exportToCSV(File file) throws IOException {
         // Kiểm tra xem có phải hiển thị theo tháng không
         String thoiGian = cmbThoiGian.getValue();
@@ -586,7 +623,7 @@ public class ThongKeDoanhThuController implements Initializable {
             writer.append("TOP SAN PHAM BAN CHAY\n");
             writer.append("Ten thuoc,So luong ban\n");
 
-            Map<String, Integer> topSanPham = thongKeDAO.getTopSanPhamBanChay(tuNgay, denNgay, 10);
+            Map<String, Integer> topSanPham = thongKeDAO.getTopSanPhamBanChay(tuNgay, denNgay, 5);
             for (Map.Entry<String, Integer> entry : topSanPham.entrySet()) {
                 writer.append(entry.getKey()).append(",");
                 writer.append(String.valueOf(entry.getValue())).append("\n");
@@ -596,6 +633,7 @@ public class ThongKeDoanhThuController implements Initializable {
         }
     }
 
+//    Định dạng số tiền với đơn vị K, M, B
     private String formatCurrency(double amount) {
         if (amount >= 1_000_000_000) {
             return percentFormatter.format(amount / 1_000_000_000) + "B";

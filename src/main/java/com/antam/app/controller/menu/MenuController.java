@@ -37,9 +37,15 @@ public class MenuController {
                 btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat
         };
         for (Button btn : buttons) {
-            btn.getStyleClass().remove("btn-active");
+            // Add null check to prevent NullPointerException
+            if (btn != null) {
+                btn.getStyleClass().remove("btn-active");
+            }
         }
-        activeButton.getStyleClass().add("btn-active");
+        // Also check activeButton is not null before accessing its style class
+        if (activeButton != null) {
+            activeButton.getStyleClass().add("btn-active");
+        }
     }
     public void initialize() {
         this.loadPage("/com/antam/app/views/trangchinh/trangChinh.fxml");
@@ -186,10 +192,6 @@ public class MenuController {
         this.btnXemKhachHang.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/khachhang/xemKhachHang.fxml");
             setActiveButton(btnXemKhachHang);
-        });
-        this.btnThemKhachHang.setOnAction((e) -> {
-            this.loadPage("/com/antam/app/views/khachhang/themKhachHang.fxml");
-            setActiveButton(btnThemKhachHang);
         });
         this.btnCapNhatKhachHang.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/khachhang/capNhatKhachHang.fxml");

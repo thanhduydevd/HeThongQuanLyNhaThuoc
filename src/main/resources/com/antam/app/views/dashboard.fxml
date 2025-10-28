@@ -471,17 +471,6 @@
                                           <Insets left="50.0" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="btnThemKhachHang" graphicTextGap="5.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-sub-item" stylesheets="@../styles/dashboard_style.css" text="Thêm khách hàng">
-                                       <graphic>
-                                          <FontAwesomeIcon fill="#333333" glyphName="PLUS" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="15.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets left="50.0" />
-                                       </padding>
-                                    </Button>
                                     <Button fx:id="btnCapNhatKhachHang" graphicTextGap="5.0" layoutX="10.0" layoutY="64.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-sub-item" stylesheets="@../styles/dashboard_style.css" text="Cập nhật khách hàng">
                                        <graphic>
                                           <FontAwesomeIcon fill="#333333" glyphName="REFRESH" />
