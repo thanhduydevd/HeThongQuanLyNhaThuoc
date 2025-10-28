@@ -44,9 +44,14 @@ public class KhuyenMai_DAO {
         ArrayList<KhuyenMai> list = new ArrayList<>();
         String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
                 "FROM KhuyenMai km JOIN LoaiKhuyenMai lkm ON km.LoaiKhuyenMai = lkm.MaLKM ";
-        try (Connection con = ConnectDB.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 String maKM = rs.getString("MaKM");
                 String tenKM = rs.getString("TenKM");
@@ -142,8 +147,13 @@ public class KhuyenMai_DAO {
     public boolean themKhuyenMai(String maKM, String tenKM, LoaiKhuyenMai loaiKM, double so, LocalDate ngayBatDau, LocalDate ngayKetThuc, int soLuongToiDa) {
         String sql = "INSERT INTO KhuyenMai (MaKM, TenKM, LoaiKhuyenMai, So, NgayBatDau, NgayKetThuc, SoLuongToiDa, deleteAt) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
-        try (Connection con = ConnectDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, maKM);
             ps.setString(2, tenKM);
             ps.setInt(3, loaiKM.getMaLKM());
@@ -162,8 +172,13 @@ public class KhuyenMai_DAO {
     public boolean capNhatKhuyenMai(KhuyenMai km) {
         String sql = "UPDATE KhuyenMai SET TenKM = ?, LoaiKhuyenMai = ?, So = ?, NgayBatDau = ?, NgayKetThuc = ?, SoLuongToiDa = ? " +
                 "WHERE MaKM = ? AND deleteAt = 0";
-        try (Connection con = ConnectDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, km.getTenKM());
             ps.setInt(2, km.getLoaiKhuyenMai().getMaLKM());
             ps.setDouble(3, km.getSo());

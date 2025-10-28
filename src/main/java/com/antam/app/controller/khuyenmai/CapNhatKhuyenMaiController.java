@@ -5,6 +5,7 @@
 
 package com.antam.app.controller.khuyenmai;
 
+import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.KhuyenMai_DAO;
 import com.antam.app.entity.KhuyenMai;
 import com.antam.app.gui.GiaoDienCuaSo;
@@ -15,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -40,9 +42,31 @@ public class CapNhatKhuyenMaiController {
     }
 
     public void initialize() {
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         this.btnTuyChon.setOnAction((e) -> {
-            new GiaoDienCuaSo("capnhatkhuyenmai").showAndWait();
-            this.updateTableKhuyenMai();
+            // Lấy khuyến mãi được chọn
+            KhuyenMai selectKM = tableKhuyenMai.getSelectionModel().getSelectedItem();
+            if (selectKM == null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Chưa chọn khuyến mãi");
+                alert.setContentText("Vui lòng chọn ít nhất một khuyến mãi.");
+                alert.showAndWait();
+                return;
+            }
+            // Mở dialog
+            GiaoDienCuaSo dialog = new GiaoDienCuaSo("capnhatkhuyenmai");
+            // Lấy controller và set Thuoc vào
+            CapNhatKhuyenMaiFormController controller = dialog.getController();
+            controller.setKhuyenMai(selectKM);
+            controller.showdata(selectKM);
+            // Show dialog
+            dialog.showAndWait();
+            updateTableKhuyenMai();
         });
 
         // cau hinh table
@@ -83,24 +107,6 @@ public class CapNhatKhuyenMaiController {
         dpDenNgay.setOnAction(e -> fiterAndSearch());
         txtTiemKiemKhuyenMai.setOnKeyReleased(e -> fiterAndSearch());
 
-        tableKhuyenMai.setRowFactory(tv -> {
-            TableRow<KhuyenMai> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    KhuyenMai selectKM  = row.getItem();
-                    // Mở dialog
-                    GiaoDienCuaSo dialog = new GiaoDienCuaSo("capnhatkhuyenmai");
-                    // Lấy controller và set Thuoc vào
-                    CapNhatKhuyenMaiFormController controller = dialog.getController();
-                    controller.setKhuyenMai(selectKM);
-                    controller.showdata(selectKM);
-                    // Show dialog
-                    dialog.showAndWait();
-                    updateTableKhuyenMai();
-                }
-            });
-            return row;
-        });
     }
 
     public void addCombobox() {
@@ -116,27 +122,54 @@ public class CapNhatKhuyenMaiController {
         String trangThai = cbTrangThai.getValue();
         LocalDate tuNgay = dpTuNgay.getValue();
         LocalDate denNgay = dpDenNgay.getValue();
-        String tuKhoa = txtTiemKiemKhuyenMai.getText().toLowerCase();
+        String tuKhoa = txtTiemKiemKhuyenMai.getText().trim().toLowerCase();
+
+        if (tuNgay != null && denNgay != null && denNgay.isBefore(tuNgay)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Lỗi nhập ngày");
+            alert.setHeaderText(null);
+            alert.setContentText("Ngày kết thúc không được nhỏ hơn ngày bắt đầu!");
+            alert.showAndWait();
+
+            khuyenMaiList.clear();
+            tableKhuyenMai.setItems(khuyenMaiList);
+            return;
+        }
+
         ObservableList<KhuyenMai> filteredList = FXCollections.observableArrayList();
+
         for (KhuyenMai km : arrayKhuyenMai) {
-            boolean matchesLoai = loaiKhuyenMai.equals("Tất cả") ||
-                    (loaiKhuyenMai.equals("Giảm theo phần trăm") && km.getLoaiKhuyenMai().getTenLKM().equals("Giảm theo phần trăm")) ||
-                    (loaiKhuyenMai.equals("Giảm theo số tiền") && km.getLoaiKhuyenMai().getTenLKM().equals("Giảm theo số tiền"));
+            boolean matchesLoai =
+                    loaiKhuyenMai.equals("Tất cả") ||
+                            (loaiKhuyenMai.equals("Giảm theo phần trăm") && km.getLoaiKhuyenMai().getTenLKM().equals("Giảm theo phần trăm")) ||
+                            (loaiKhuyenMai.equals("Giảm theo số tiền") && km.getLoaiKhuyenMai().getTenLKM().equals("Giảm theo số tiền"));
 
-            boolean matchesTrangThai = trangThai.equals("Tất cả") ||
-                    (trangThai.equals("Chưa bắt đầu") && LocalDate.now().isBefore(km.getNgayBatDau())) ||
-                    (trangThai.equals("Đang diễn ra") && !LocalDate.now().isBefore(km.getNgayBatDau()) && !LocalDate.now().isAfter(km.getNgayKetThuc())) ||
-                    (trangThai.equals("Đã kết thúc") && LocalDate.now().isAfter(km.getNgayKetThuc()));
+            LocalDate today = LocalDate.now();
+            boolean matchesTrangThai =
+                    trangThai.equals("Tất cả") ||
+                            (trangThai.equals("Chưa bắt đầu") && today.isBefore(km.getNgayBatDau())) ||
+                            (trangThai.equals("Đang diễn ra") && !today.isBefore(km.getNgayBatDau()) && !today.isAfter(km.getNgayKetThuc())) ||
+                            (trangThai.equals("Đã kết thúc") && today.isAfter(km.getNgayKetThuc()));
 
-            boolean matchesTuNgay = tuNgay == null || !km.getNgayKetThuc().isBefore(tuNgay);
-            boolean matchesDenNgay = denNgay == null || !km.getNgayBatDau().isAfter(denNgay);
+            boolean matchesNgay = true;
+            if (tuNgay != null && denNgay != null) {
+                matchesNgay = !(km.getNgayKetThuc().isBefore(tuNgay) || km.getNgayBatDau().isAfter(denNgay));
+            } else if (tuNgay != null) {
+                matchesNgay = !km.getNgayKetThuc().isBefore(tuNgay);
+            } else if (denNgay != null) {
+                matchesNgay = !km.getNgayBatDau().isAfter(denNgay);
+            }
 
-            boolean matchesTuKhoa = tuKhoa.isEmpty() || km.getMaKM().toLowerCase().contains(tuKhoa) || km.getTenKM().toLowerCase().contains(tuKhoa);
+            boolean matchesTuKhoa =
+                    tuKhoa.isEmpty() ||
+                            km.getMaKM().toLowerCase().contains(tuKhoa) ||
+                            km.getTenKM().toLowerCase().contains(tuKhoa);
 
-            if (matchesLoai && matchesTrangThai && matchesTuNgay && matchesDenNgay && matchesTuKhoa) {
+            if (matchesLoai && matchesTrangThai && matchesNgay && matchesTuKhoa) {
                 filteredList.add(km);
             }
         }
+
         khuyenMaiList.clear();
         khuyenMaiList.addAll(filteredList);
         tableKhuyenMai.setItems(khuyenMaiList);
