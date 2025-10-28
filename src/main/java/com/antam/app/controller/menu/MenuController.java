@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.antam.app.controller;
+package com.antam.app.controller.menu;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -13,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-public class TrangChinhController {
+public class MenuController {
     @FXML
     private Button btnTrangChinh, btnHoaDon, btnPhieuDat, btnThuoc, btnKeThuoc, btnDangDieuChe, btnDonViTinh, btnKhuyenMai, btnPhieuNhap, btnKhachHang, btnNhanVien, btnCaiDat;
 
@@ -28,7 +28,7 @@ public class TrangChinhController {
 
 
 
-    public TrangChinhController() {
+    public MenuController() {
     }
 
     private void setActiveButton(Button activeButton) {

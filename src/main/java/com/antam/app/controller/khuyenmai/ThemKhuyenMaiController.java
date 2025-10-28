@@ -5,7 +5,6 @@
 
 package com.antam.app.controller.khuyenmai;
 
-import com.antam.app.controller.dialog.TuyChinhKhuyenMaiController;
 import com.antam.app.dao.KhuyenMai_DAO;
 import com.antam.app.entity.KhuyenMai;
 import com.antam.app.gui.GiaoDienCuaSo;

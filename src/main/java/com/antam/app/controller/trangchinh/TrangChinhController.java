@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2025 IUH. All rights reserved.
  */
-package com.antam.app.controller;
+package com.antam.app.controller.trangchinh;
 
 import com.antam.app.dao.ThongKeTrangChinh_DAO;
 import javafx.fxml.FXML;
@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
  * @date: 14/10/25
  * @version: 1.0
  */
-public class TrangChuController implements Initializable {
+public class TrangChinhController implements Initializable {
 
     // ==================== CÁC THÀNH PHẦN GIAO DIỆN ====================
     @FXML private Text txtTongSoThuoc;
