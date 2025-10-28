@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
  * @date: 14/10/25
  * @version: 1.0
  */
-public class TrangChuController implements Initializable {
+public class ThongKeTrangChinhController implements Initializable {
 
     // ==================== CÁC THÀNH PHẦN GIAO DIỆN ====================
     @FXML private Text txtTongSoThuoc;

@@ -114,7 +114,7 @@
                               <ComboBox fx:id="cbMedicine" prefWidth="150.0" promptText="Chọn thuốc" stylesheets="@../../../styles/dashboard_style.css" />
                               <ComboBox fx:id="cb_unit" prefWidth="150.0" promptText="Đơn vị" stylesheets="@../../../styles/dashboard_style.css" />
                               <TextField fx:id="txtQuantity" promptText="Số lượng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
-                              <TextField fx:id="cb_price" promptText="Đơn giá" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
+                              <TextField fx:id="txt_price" promptText="Đơn giá" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" />
                               <Button mnemonicParsing="false" style="-fx-background-color: #ef4444; -fx-background-radius: 50%;">
                                  <graphic>
                                     <FontAwesomeIcon fill="WHITE" glyphName="REMOVE" />
