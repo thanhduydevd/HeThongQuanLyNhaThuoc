@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.antam.app.controller;
+package com.antam.app.controller.dangnhap;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.NhanVien_DAO;
@@ -49,7 +49,7 @@ public class DangNhapController {
     protected void onLoginButtonClick() {
         if (checklogin()) {
             if (checktnhanvien()) {
-                PhienNguoiDung.setMaNV(txtname_login.getText());
+                PhienNguoiDung.setMaNV(nv_dao.getNhanVienTaiKhoan(txtname_login.getText()));
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
                     Parent root = (Parent) fxmlLoader.load();

@@ -7,9 +7,10 @@ package com.antam.app.controller.phieunhap;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.DonViTinh_DAO;
+import com.antam.app.dao.NhanVien_DAO;
+import com.antam.app.dao.PhieuNhap_DAO;
 import com.antam.app.dao.Thuoc_DAO;
-import com.antam.app.entity.DonViTinh;
-import com.antam.app.entity.Thuoc;
+import com.antam.app.entity.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
 
+
 public class ThemPhieuNhapFormController {
     @FXML
     private DialogPane dialogPane;
@@ -41,8 +43,12 @@ public class ThemPhieuNhapFormController {
     @FXML
     private VBox vbDanhSachThuocNhap;
 
+    @FXML
+    private Text txtTongTien;
+
     private Thuoc_DAO thuoc_DAO = new Thuoc_DAO();
     private DonViTinh_DAO donViTinh_DAO = new DonViTinh_DAO();
+
     private ArrayList<Thuoc> dsThuoc;
     private ArrayList<DonViTinh> dsDonViTinh;
 
@@ -59,7 +65,7 @@ public class ThemPhieuNhapFormController {
         }
 
         dsThuoc = thuoc_DAO.getAllThuoc();
-        dsDonViTinh = donViTinh_DAO.getTatCaDonViTinh();
+        dsDonViTinh = donViTinh_DAO.getAllDonViTinh();
 
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
@@ -68,9 +74,11 @@ public class ThemPhieuNhapFormController {
 
         Button btnAppy = (Button) this.dialogPane.lookupButton(applyButton);
         btnAppy.addEventFilter(ActionEvent.ACTION, event -> {
-            if (!checkTruongDuLieu()){
+            if (!checkTruongDuLieu() || !checkChiTietPhieuNhap()){
                 event.consume();
             }else{
+                PhieuNhap pn = new PhieuNhap(tfMaPhieuNhap.getText(), tfNhaCungCap.getText(), LocalDate.now(), tfDiaChi.getText(), tfLyDo.getText(), PhienNguoiDung.getMaNV(), tinhTongTien(), false);
+                System.out.println(pn);
                 for (Node node : vbDanhSachThuocNhap.getChildren()) {
                     if (node instanceof HBox hBox) {
 
@@ -88,32 +96,13 @@ public class ThemPhieuNhapFormController {
                         DatePicker dpNgaySanXuat = (DatePicker) vboxNgaySX.getChildren().get(1);
                         DatePicker dpHanSuDung = (DatePicker) vboxHanSD.getChildren().get(1);
                         Spinner<Integer> spSoLuong = (Spinner<Integer>) vboxSoLuong.getChildren().get(1);
-                        Spinner<Integer> spGiaNhap = (Spinner<Integer>) vboxGiaNhap.getChildren().get(1);
+                        Spinner<Double> spGiaNhap = (Spinner<Double>) vboxGiaNhap.getChildren().get(1);
 
-                        // Kiểm tra dữ liệu
-                        if (cbDanhSachThuocNhap.getSelectionModel().getSelectedItem() != null && cbDonViTinh.getSelectionModel().getSelectedItem() != null && dpNgaySanXuat.getValue() != null && dpHanSuDung.getValue() != null && spGiaNhap.getValue() != null && spSoLuong.getValue() != null){
-                            if(LocalDate.now().isBefore(dpNgaySanXuat.getValue())){
-                                showCanhBao("Ngày sản xuất không hợp lệ", "Ngày sản xuất không được sau ngày hiện tại");
-                                event.consume();
-                                return;
-                            }else if(dpNgaySanXuat.getValue().isAfter(dpHanSuDung.getValue()) || dpNgaySanXuat.getValue().equals(dpHanSuDung.getValue())){
-                                showCanhBao("Ngày sản xuất không hợp lệ", "Ngày sản xuất không được sau hạn sử dụng");
-                                event.consume();
-                                return;
-                            }
-
-                            if (spSoLuong.getValue().equals(0)){
-                                showCanhBao("Số lượng không hợp lệ", "Số lượng phải lớn hơn 0");
-                                event.consume();
-                                return;
-                            }
-
-
-                        }else{
-                            showCanhBao("Thông tin thuốc không đầy đủ", "Hãy điền đầy đủ vào tất cả các thông tin của thuốc");
-                            event.consume();
-                            return;
-                        }
+                        // Nếu tất cả các trường đều hợp lệ
+                        ChiTietPhieuNhap ctpt = new ChiTietPhieuNhap(new PhieuNhap(tfMaPhieuNhap.getText()), cbDanhSachThuocNhap.getValue(), cbDonViTinh.getValue(), spSoLuong.getValue(), spGiaNhap.getValue(), 0.0);
+                        ChiTietThuoc ctt = new ChiTietThuoc(-1, pn, cbDanhSachThuocNhap.getValue(), spSoLuong.getValue(), dpHanSuDung.getValue(), dpNgaySanXuat.getValue());
+                        System.out.println(ctpt);
+                        System.out.println(ctt);
                     }
                 }
             }
@@ -128,7 +117,7 @@ public class ThemPhieuNhapFormController {
         hBox.setSpacing(20);
         hBox.setStyle(
                 "-fx-background-color: #f8fafc;" +
-                "-fx-padding: 10;"
+                        "-fx-padding: 10;"
         );
 
         //Danh sách thuốc
@@ -151,12 +140,16 @@ public class ThemPhieuNhapFormController {
         );
         cbDonViTinh.setPrefWidth(150);
         cbDonViTinh.setPromptText("Chọn đơn vị tính");
-        System.out.println(dsDonViTinh.size());
-        for (DonViTinh dvt : dsDonViTinh){
-            cbDonViTinh.getItems().add(dvt);
-        }
+
         VBox vbDonViTinh = new VBox();
         vbDonViTinh.getChildren().addAll(new Text("Đơn vị tính:"), cbDonViTinh);
+
+        //Sự kiện chọn thuốc để load đơn vị tính tương ứng
+        cbDanhSachThuocNhap.setOnAction(e -> {
+            cbDonViTinh.getItems().clear();
+            cbDonViTinh.getItems().add(donViTinh_DAO.getDVTTheoMaDVT(cbDanhSachThuocNhap.getValue().getMaDVTCoSo().getMaDVT()));
+            cbDonViTinh.getSelectionModel().selectFirst();
+        });
 
         //Ngày sản xuất
         DatePicker dpNgaySanXuat = new DatePicker();
@@ -188,6 +181,9 @@ public class ThemPhieuNhapFormController {
         spSoLuong.setPrefWidth(100);
         spSoLuong.setEditable(Boolean.TRUE);
         spSoLuong.setPromptText("Số lượng");
+        spSoLuong.valueProperty().addListener(e ->{
+            txtTongTien.setText("Tổng tiền: " + NumberFormat.getInstance(new Locale("vi", "VN")).format(tinhTongTien()) + " VNĐ");
+        });
         VBox vbSoLuong = new VBox();
         vbSoLuong.getChildren().addAll(new Text("Số lượng:"), spSoLuong);
 
@@ -221,6 +217,9 @@ public class ThemPhieuNhapFormController {
         spGiaNhap.setEditable(true);
         spGiaNhap.setPrefWidth(120);
         spGiaNhap.setPromptText("Nhập giá nhập");
+        spGiaNhap.valueProperty().addListener(e ->{
+            txtTongTien.setText("Tổng tiền: " + NumberFormat.getInstance(new Locale("vi", "VN")).format(tinhTongTien()) + " VNĐ");
+        });
         VBox vbGiaNhap = new VBox();
         vbGiaNhap.getChildren().addAll(new Text("Giá nhập (VNĐ):"), spGiaNhap);
 
@@ -238,11 +237,13 @@ public class ThemPhieuNhapFormController {
         btnXoa.setOnAction(e ->
                 {
                     vbDanhSachThuocNhap.getChildren().remove(hBox);
+                    txtTongTien.setText("Tổng tiền: " + NumberFormat.getInstance(new Locale("vi", "VN")).format(tinhTongTien()) + " VNĐ");
                 }
         );
 
         hBox.getChildren().addAll(vbChonThuoc, vbDonViTinh, vbNgaySanXuat, vbHanSuDung, vbSoLuong, vbGiaNhap, btnXoa);
         vbDanhSachThuocNhap.getChildren().add(hBox);
+        txtTongTien.setText("Tổng tiền: " + NumberFormat.getInstance(new Locale("vi", "VN")).format(tinhTongTien()) + " VNĐ");
     }
 
     /**
@@ -297,5 +298,64 @@ public class ThemPhieuNhapFormController {
         alert.setContentText(vanBan);
         alert.setHeaderText(null);
         alert.showAndWait();
+    }
+
+    public boolean checkChiTietPhieuNhap() {
+        for (Node node : vbDanhSachThuocNhap.getChildren()) {
+            if (node instanceof HBox hBox) {
+
+                // Lấy từng VBox con trong HBox
+                VBox vboxThuoc = (VBox) hBox.getChildren().get(0);
+                VBox vboxDonVi = (VBox) hBox.getChildren().get(1);
+                VBox vboxNgaySX = (VBox) hBox.getChildren().get(2);
+                VBox vboxHanSD = (VBox) hBox.getChildren().get(3);
+                VBox vboxSoLuong = (VBox) hBox.getChildren().get(4);
+                VBox vboxGiaNhap = (VBox) hBox.getChildren().get(5);
+
+                // Lấy control trong từng VBox
+                ComboBox<Thuoc> cbDanhSachThuocNhap = (ComboBox<Thuoc>) vboxThuoc.getChildren().get(1);
+                ComboBox<DonViTinh> cbDonViTinh = (ComboBox<DonViTinh>) vboxDonVi.getChildren().get(1);
+                DatePicker dpNgaySanXuat = (DatePicker) vboxNgaySX.getChildren().get(1);
+                DatePicker dpHanSuDung = (DatePicker) vboxHanSD.getChildren().get(1);
+                Spinner<Integer> spSoLuong = (Spinner<Integer>) vboxSoLuong.getChildren().get(1);
+                Spinner<Double> spGiaNhap = (Spinner<Double>) vboxGiaNhap.getChildren().get(1);
+
+                // Kiểm tra dữ liệu
+                if (cbDanhSachThuocNhap.getSelectionModel().getSelectedItem() != null && cbDonViTinh.getSelectionModel().getSelectedItem() != null && dpNgaySanXuat.getValue() != null && dpHanSuDung.getValue() != null && spGiaNhap.getValue() != null && spSoLuong.getValue() != null) {
+                    if (LocalDate.now().isBefore(dpNgaySanXuat.getValue())) {
+                        showCanhBao("Ngày sản xuất không hợp lệ", "Ngày sản xuất không được sau ngày hiện tại");
+                        return false;
+                    } else if (dpNgaySanXuat.getValue().isAfter(dpHanSuDung.getValue()) || dpNgaySanXuat.getValue().equals(dpHanSuDung.getValue())) {
+                        showCanhBao("Ngày sản xuất không hợp lệ", "Ngày sản xuất không được sau hạn sử dụng");
+                        return false;
+                    }
+
+                    if (spSoLuong.getValue().equals(0)) {
+                        showCanhBao("Số lượng không hợp lệ", "Số lượng phải lớn hơn 0");
+                        return false;
+                    }
+                } else {
+                    showCanhBao("Thông tin thuốc không đầy đủ", "Hãy điền đầy đủ vào tất cả các thông tin của thuốc");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public double tinhTongTien(){
+        double tongTien = 0.0;
+        for (Node node : vbDanhSachThuocNhap.getChildren()) {
+            if (node instanceof HBox hBox) {
+                VBox vboxGiaNhap = (VBox) hBox.getChildren().get(5);
+                VBox vboxSoLuong = (VBox) hBox.getChildren().get(4);
+
+                Spinner<Integer> spSoLuong = (Spinner<Integer>) vboxSoLuong.getChildren().get(1);
+                Spinner<Double> spGiaNhap = (Spinner<Double>) vboxGiaNhap.getChildren().get(1);
+                double thanhTien = spSoLuong.getValue() * spGiaNhap.getValue();
+                tongTien += thanhTien;
+            }
+        }
+        return tongTien;
     }
 }
