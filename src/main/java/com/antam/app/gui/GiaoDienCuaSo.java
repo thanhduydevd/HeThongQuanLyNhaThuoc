@@ -65,9 +65,11 @@ public class GiaoDienCuaSo extends Dialog {
             case "capnhatkhuyenmai" -> var10000 = "/com/antam/app/views/khuyenmai/dialog/capNhatKhuyenMaiForm.fxml";
             //phieunhap
             case "themphieunhap" -> var10000 = "/com/antam/app/views/phieunhap/dialog/themPhieuNhapForm.fxml";
-            case "themnhanvien" -> var10000 = "/com/antam/app/views/user/dialog/add_employee.fxml";
             case "xemkhachhang" -> var10000 = "/com/antam/app/views/user/dialog/view_customer.fxml";
             default -> throw new IllegalArgumentException("Chức năng không tồn tại: " + mainFunction);
+            //nhan vien
+            case "themnhanvien" -> var10000 = "/com/antam/app/views/nhanvien/dialog/themNhanVienForm.fxml";
+            case "capnhatnhanvien" -> var10000 = "/com/antam/app/views/nhanvien/dialog/capNhatNhanVienForm.fxml";
         }
 
         return var10000;

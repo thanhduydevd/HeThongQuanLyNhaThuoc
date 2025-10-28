@@ -165,7 +165,7 @@ public class NhanVien {
         this.matKhau = matKhau;
     }
     public boolean isQuanLy() {
-        return deleteAt;
+        return isQuanLy;
     }
     public void setQuanLy(boolean quanLy) {
         deleteAt = quanLy;

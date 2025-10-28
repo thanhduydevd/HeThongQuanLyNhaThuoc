@@ -2,6 +2,7 @@ package com.antam.app.controller.nhanvien;
 
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,12 +12,11 @@ import javafx.scene.control.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class TimNhanVienController {
-
+public class ThemNhanVienController {
     @FXML
     private TableView<NhanVien> tbNhanVien;
     @FXML
-    private Button btnFindNV,btnXoaTrang;
+    private Button btnFindNV,btnXoaTrang,btnAddEmployee;
     @FXML
     private TextField txtFindNV;
     @FXML
@@ -25,11 +25,23 @@ public class TimNhanVienController {
     private TableColumn<NhanVien, String> colLuong;
     @FXML
     private ComboBox<String> cbChucVu, cbLuongCB;
+    ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
 
     private ObservableList<NhanVien> TVNhanVien;
     private final ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
 
     public void initialize() {
+        this.btnAddEmployee.setOnAction((e) -> {
+            (new GiaoDienCuaSo("themnhanvien")).showAndWait().ifPresent(result -> {
+                if ("Lưu".equals(result)) {
+                    listNV = NhanVien_DAO.getDsNhanVienformDBS();
+                } else {
+
+                }
+            });
+            listNV = NhanVien_DAO.getDsNhanVienformDBS();
+            loadNhanVien();
+        });
         setupTableNhanVien();
         loadNhanVien();
         loadComboBox();

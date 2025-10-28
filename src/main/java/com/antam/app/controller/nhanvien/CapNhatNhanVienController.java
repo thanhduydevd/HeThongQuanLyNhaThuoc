@@ -2,6 +2,7 @@ package com.antam.app.controller.nhanvien;
 
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
+import com.antam.app.gui.GiaoDienCuaSo;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,12 +12,11 @@ import javafx.scene.control.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class TimNhanVienController {
-
+public class CapNhatNhanVienController {
     @FXML
     private TableView<NhanVien> tbNhanVien;
     @FXML
-    private Button btnFindNV,btnXoaTrang;
+    private Button btnFindNV,btnXoaTrang,btnXoaSua;
     @FXML
     private TextField txtFindNV;
     @FXML
@@ -25,11 +25,28 @@ public class TimNhanVienController {
     private TableColumn<NhanVien, String> colLuong;
     @FXML
     private ComboBox<String> cbChucVu, cbLuongCB;
+    ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
 
     private ObservableList<NhanVien> TVNhanVien;
     private final ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
-
+    public  static NhanVien nhanVienSelected;
     public void initialize() {
+        this.btnXoaSua.setOnAction((e) -> {
+            nhanVienSelected = tbNhanVien.getSelectionModel().getSelectedItem();
+            if (nhanVienSelected == null) {
+                showMess("Vui lòng chọn nhân viên cần sửa!");
+                return;
+            }
+            (new GiaoDienCuaSo("capnhatnhanvien")).showAndWait();
+            loadNhanVien();
+        });
+        tbNhanVien.setOnMouseClicked(e -> {
+            if (e.getClickCount()==2){
+                nhanVienSelected = tbNhanVien.getSelectionModel().getSelectedItem();
+                new GiaoDienCuaSo("capnhatnhanvien").showAndWait();
+                loadNhanVien();
+            }
+        });
         setupTableNhanVien();
         loadNhanVien();
         loadComboBox();
@@ -38,17 +55,26 @@ public class TimNhanVienController {
         btnFindNV.setOnAction(e -> timNhanVien());
         setupListener();
 
-        tbNhanVien.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tbNhanVien.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         btnXoaTrang.setOnAction(e -> {
             txtFindNV.clear();
             cbChucVu.getSelectionModel().selectFirst();
             cbLuongCB.getSelectionModel().selectFirst();
             tbNhanVien.setItems(TVNhanVien);
         });
+
+    }
+
+    private void showMess(String noidung) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Thông báo");
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
     }
 
     private void loadNhanVien() {
-        ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
+        listNV = NhanVien_DAO.getDsNhanVienformDBS();
         TVNhanVien = FXCollections.observableArrayList(listNV);
         tbNhanVien.setItems(TVNhanVien);
     }

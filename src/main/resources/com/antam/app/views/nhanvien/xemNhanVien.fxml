@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.nhanvien.TimNhanVienController">
    <content>
       <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
          <children>
@@ -40,7 +40,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <ComboBox fx:id="cbLoaiKhuyenMai" prefHeight="40.0" prefWidth="200.0" promptText="Chọn chức vụ" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                        <ComboBox fx:id="cbChucVu" prefHeight="40.0" prefWidth="200.0" promptText="Chọn chức vụ" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
@@ -50,9 +50,10 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <ComboBox fx:id="cbTrangThai" prefHeight="40.0" prefWidth="200.0" promptText="Chọn lương cơ bản" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
+                        <ComboBox fx:id="cbLuongCB" prefHeight="40.0" prefWidth="200.0" promptText="Chọn lương cơ bản" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
+                  <Button fx:id="btnXoaTrang" mnemonicParsing="false" prefHeight="34.0" prefWidth="70.0" style="-fx-background-color: #2563eb; -fx-border-radius: 5px;" text="Xóa trắng" textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
