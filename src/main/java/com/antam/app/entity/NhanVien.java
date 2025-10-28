@@ -39,8 +39,8 @@ public class NhanVien {
         deleteAt = false;
     }
 
-    public NhanVien(String MaNV) {
-        this.MaNV = MaNV;
+    public NhanVien(String MaNhanVien) {
+        this.MaNV = MaNhanVien;
         hoTen = "";
         soDienThoai = "";
         email = "";

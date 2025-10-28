@@ -13,15 +13,15 @@ package com.antam.app.entity;
  * version: 1.0
  */
 public class PhienNguoiDung {
-    private static String maNV;
+    private static NhanVien maNV;
 
     // Phương thức để lưu tên đăng nhập
-    public static void setMaNV(String maNV) {
-        maNV = maNV;
+    public static void setMaNV(NhanVien maNhanVien) {
+        maNV = maNhanVien;
     }
 
     // Phương thức để lấy tên đăng nhập
-    public static String getMaNV() {
+    public static NhanVien getMaNV() {
         return maNV;
     }
 }

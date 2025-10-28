@@ -7,6 +7,7 @@ package com.antam.app.controller;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.NhanVien_DAO;
+import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhienNguoiDung;
 import com.antam.app.gui.GiaoDienChinh;
 import com.antam.app.helper.MaKhoaMatKhau;
@@ -47,41 +48,41 @@ public class DangNhapController {
 
     @FXML
     protected void onLoginButtonClick() {
-//        if (checklogin()) {
-//            if (checktnhanvien()) {
-//                PhienNguoiDung.setMaNV(txtname_login.getText());
-//                try {
-//                    FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
-//                    Parent root = (Parent) fxmlLoader.load();
-//                    Stage newStage = new Stage();
-//                    newStage.setTitle("");
-//                    newStage.setScene(new Scene(root));
-//                    newStage.setMaximized(true);
-//                    newStage.initStyle(StageStyle.DECORATED);
-//                    newStage.show();
-//                    Stage oldStage = (Stage) this.btnLogin.getScene().getWindow();
-//                    oldStage.close();
-//                } catch (Exception var5) {
-//                    Exception e = var5;
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
-            Stage newStage = new Stage();
-            newStage.setTitle("");
-            newStage.setScene(new Scene(root));
-            newStage.setMaximized(true);
-            newStage.initStyle(StageStyle.DECORATED);
-            newStage.show();
-            Stage oldStage = (Stage) this.btnLogin.getScene().getWindow();
-            oldStage.close();
-        } catch (Exception var5) {
-            Exception e = var5;
-            e.printStackTrace();
+        if (checklogin()) {
+            if (checktnhanvien()) {
+                PhienNguoiDung.setMaNV(nv_dao.getNhanVienTaiKhoan(txtname_login.getText()));
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
+                    Parent root = (Parent) fxmlLoader.load();
+                    Stage newStage = new Stage();
+                    newStage.setTitle("");
+                    newStage.setScene(new Scene(root));
+                    newStage.setMaximized(true);
+                    newStage.initStyle(StageStyle.DECORATED);
+                    newStage.show();
+                    Stage oldStage = (Stage) this.btnLogin.getScene().getWindow();
+                    oldStage.close();
+                } catch (Exception var5) {
+                    Exception e = var5;
+                    e.printStackTrace();
+                }
+            }
         }
+//        try {
+//            FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
+//            Parent root = (Parent) fxmlLoader.load();
+//            Stage newStage = new Stage();
+//            newStage.setTitle("");
+//            newStage.setScene(new Scene(root));
+//            newStage.setMaximized(true);
+//            newStage.initStyle(StageStyle.DECORATED);
+//            newStage.show();
+//            Stage oldStage = (Stage) this.btnLogin.getScene().getWindow();
+//            oldStage.close();
+//        } catch (Exception var5) {
+//            Exception e = var5;
+//            e.printStackTrace();
+//        }
     }
     private boolean checklogin(){
         // Kiểm tra tên đăng nhập

@@ -22,6 +22,30 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class DonViTinh_DAO {
+    /**
+     * Duy - Lấy đơn vị tính theo mã
+     * @param ma mã đơn vị tính
+     * @return đơn vị tính
+     */
+    public DonViTinh getDVTTheoMaDVT(int ma) {
+        DonViTinh dvt = null;
+        String sql = "SELECT * FROM DonViTinh WHERE MaDVT = ?";
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            var state = con.prepareStatement(sql);
+            state.setInt(1, ma);
+            var rs = state.executeQuery();
+            if (rs.next()) {
+                int maDVT = rs.getInt("MaDVT");
+                String tenDVT = rs.getString("TenDVT");
+                dvt = new DonViTinh(maDVT, tenDVT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dvt;
+    }
 
     /**
      * Duy - Lấy tất cả đơn vị tính từ database

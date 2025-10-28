@@ -13,7 +13,7 @@ package com.antam.app.entity;
  * version: 1.0
  */
 public class ChiTietPhieuNhap {
-    private HoaDon MaPN;
+    private PhieuNhap MaPN;
     private Thuoc maThuoc;
     private DonViTinh maDVT;
     private int soLuong;
@@ -21,7 +21,7 @@ public class ChiTietPhieuNhap {
     private double thanhTien;
 
     public ChiTietPhieuNhap() {
-        this.MaPN = new HoaDon();
+        this.MaPN = new PhieuNhap();
         this.maThuoc = new Thuoc();
         this.maDVT = new DonViTinh();
         this.soLuong = 0;
@@ -29,7 +29,7 @@ public class ChiTietPhieuNhap {
         this.thanhTien = 0;
     }
 
-    public ChiTietPhieuNhap(HoaDon maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap) {
+    public ChiTietPhieuNhap(PhieuNhap maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap) {
         this.MaPN = maPN;
         this.maThuoc = maThuoc;
         this.maDVT = maDVT;
@@ -38,7 +38,7 @@ public class ChiTietPhieuNhap {
         setThanhTien();
     }
 
-    public ChiTietPhieuNhap(HoaDon maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap, double thanhTien) {
+    public ChiTietPhieuNhap(PhieuNhap maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap, double thanhTien) {
         this.MaPN = maPN;
         this.maThuoc = maThuoc;
         this.maDVT = maDVT;
@@ -47,11 +47,11 @@ public class ChiTietPhieuNhap {
         this.thanhTien = thanhTien;
     }
 
-    public HoaDon getMaPN() {
+    public PhieuNhap getMaPN() {
         return MaPN;
     }
 
-    public void setMaPN(HoaDon maPN) {
+    public void setMaPN(PhieuNhap maPN) {
         MaPN = maPN;
     }
 
@@ -108,7 +108,7 @@ public class ChiTietPhieuNhap {
     public String toString() {
         return "ChiTietPhieuNhap{" +
                 "MaPN=" + MaPN +
-                ", soDangKy=" + maThuoc +
+                ", MaThuoc=" + maThuoc +
                 ", maDVT=" + maDVT +
                 ", soLuong=" + soLuong +
                 ", giaNhap=" + giaNhap +
