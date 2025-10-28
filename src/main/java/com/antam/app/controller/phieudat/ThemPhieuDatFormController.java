@@ -33,8 +33,6 @@ public class ThemPhieuDatFormController {
     @FXML
     private VBox vbThuoc;
     @FXML
-    private TextArea taGhiChu;
-    @FXML
     private Button btnThem;
     @FXML
     private Text txtTotal;

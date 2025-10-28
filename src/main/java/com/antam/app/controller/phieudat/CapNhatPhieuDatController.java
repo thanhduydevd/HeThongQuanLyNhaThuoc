@@ -219,6 +219,7 @@ public class CapNhatPhieuDatController {
     }
 
     private void loadDataVaoBang() {
+        listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
         origin = FXCollections.observableArrayList(listPDT);
         filter = FXCollections.observableArrayList(origin);
         tvPhieuDat.setItems(filter);

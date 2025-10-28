@@ -50,6 +50,7 @@ public class ThemPhieuDatController {
     public void initialize() {
         this.btnAddPurchaseOrder.setOnAction((e) -> {
             (new GiaoDienCuaSo("themphieudat")).showAndWait();
+            loadDataVaoBang();
         });
 
         //cài đặt và load data vào giao diện
@@ -191,6 +192,7 @@ public class ThemPhieuDatController {
     }
 
     private void loadDataVaoBang() {
+        listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
         origin = FXCollections.observableArrayList(listPDT);
         filter = FXCollections.observableArrayList(origin);
         tvPhieuDat.setItems(filter);

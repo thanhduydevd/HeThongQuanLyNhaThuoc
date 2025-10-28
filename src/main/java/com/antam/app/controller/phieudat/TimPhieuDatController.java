@@ -57,6 +57,7 @@ public class TimPhieuDatController {
             else {
                 selectedPhieuDatThuoc = tvPhieuDat.getSelectionModel().getSelectedItem();
                 new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                loadDataVaoBang();
             }
         });
         //cài đặt và load data vào giao diện
@@ -70,6 +71,7 @@ public class TimPhieuDatController {
             if (e.getClickCount() ==2 ){
                 selectedPhieuDatThuoc = tvPhieuDat.getSelectionModel().getSelectedItem();
                 new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                loadDataVaoBang();
             }
 
         });
@@ -215,6 +217,7 @@ public class TimPhieuDatController {
     }
 
     private void loadDataVaoBang() {
+        listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
         origin = FXCollections.observableArrayList(listPDT);
         filter = FXCollections.observableArrayList(origin);
         tvPhieuDat.setItems(filter);
