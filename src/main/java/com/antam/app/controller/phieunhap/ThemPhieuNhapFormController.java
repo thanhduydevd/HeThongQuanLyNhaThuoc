@@ -6,10 +6,7 @@
 package com.antam.app.controller.phieunhap;
 
 import com.antam.app.connect.ConnectDB;
-import com.antam.app.dao.DonViTinh_DAO;
-import com.antam.app.dao.NhanVien_DAO;
-import com.antam.app.dao.PhieuNhap_DAO;
-import com.antam.app.dao.Thuoc_DAO;
+import com.antam.app.dao.*;
 import com.antam.app.entity.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,6 +45,9 @@ public class ThemPhieuNhapFormController {
 
     private Thuoc_DAO thuoc_DAO = new Thuoc_DAO();
     private DonViTinh_DAO donViTinh_DAO = new DonViTinh_DAO();
+    private PhieuNhap_DAO phieuNhap_DAO = new PhieuNhap_DAO();
+    private ChiTietPhieuNhap_DAO chiTietPhieuNhap_DAO = new ChiTietPhieuNhap_DAO();
+    private ChiTietThuoc_DAO chiTietThuoc_DAO = new ChiTietThuoc_DAO();
 
     private ArrayList<Thuoc> dsThuoc;
     private ArrayList<DonViTinh> dsDonViTinh;
@@ -67,6 +67,10 @@ public class ThemPhieuNhapFormController {
         dsThuoc = thuoc_DAO.getAllThuoc();
         dsDonViTinh = donViTinh_DAO.getAllDonViTinh();
 
+        //Tạo mã phiếu nhập tự động
+        tfMaPhieuNhap.setText(phieuNhap_DAO.taoMaPhieuNhapTuDong());
+        tfMaPhieuNhap.setEditable(false);
+
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
         this.dialogPane.getButtonTypes().add(cancelButton);
@@ -77,8 +81,16 @@ public class ThemPhieuNhapFormController {
             if (!checkTruongDuLieu() || !checkChiTietPhieuNhap()){
                 event.consume();
             }else{
+                boolean kiemTraThanhCong = true;
                 PhieuNhap pn = new PhieuNhap(tfMaPhieuNhap.getText(), tfNhaCungCap.getText(), LocalDate.now(), tfDiaChi.getText(), tfLyDo.getText(), PhienNguoiDung.getMaNV(), tinhTongTien(), false);
-                System.out.println(pn);
+                if (phieuNhap_DAO.tonTaiMaPhieuNhap(tfMaPhieuNhap.getText())) {
+                    showCanhBao("Trùng mã phiếu nhập", "Mã phiếu nhập này đã tồn tại. Vui lòng nhập mã khác!");
+                    event.consume();
+                    kiemTraThanhCong = false;
+                }else{
+                    phieuNhap_DAO.themPhieuNhap(pn);
+                    kiemTraThanhCong = true;
+                }
                 for (Node node : vbDanhSachThuocNhap.getChildren()) {
                     if (node instanceof HBox hBox) {
 
@@ -99,11 +111,16 @@ public class ThemPhieuNhapFormController {
                         Spinner<Double> spGiaNhap = (Spinner<Double>) vboxGiaNhap.getChildren().get(1);
 
                         // Nếu tất cả các trường đều hợp lệ
-                        ChiTietPhieuNhap ctpt = new ChiTietPhieuNhap(new PhieuNhap(tfMaPhieuNhap.getText()), cbDanhSachThuocNhap.getValue(), cbDonViTinh.getValue(), spSoLuong.getValue(), spGiaNhap.getValue(), 0.0);
+                        ChiTietPhieuNhap ctpt = new ChiTietPhieuNhap(new PhieuNhap(tfMaPhieuNhap.getText()), cbDanhSachThuocNhap.getValue(), cbDonViTinh.getValue(), spSoLuong.getValue(), spGiaNhap.getValue());
                         ChiTietThuoc ctt = new ChiTietThuoc(-1, pn, cbDanhSachThuocNhap.getValue(), spSoLuong.getValue(), dpHanSuDung.getValue(), dpNgaySanXuat.getValue());
-                        System.out.println(ctpt);
-                        System.out.println(ctt);
+                        if(kiemTraThanhCong){
+                            chiTietPhieuNhap_DAO.themChiTietPhieuNhap(ctpt);
+                            chiTietThuoc_DAO.themChiTietThuoc(ctt);
+                        }
                     }
+                }
+                if(kiemTraThanhCong){
+                    showCanhBao("Thành công", "Lưu phiếu nhập thành công!");
                 }
             }
         });

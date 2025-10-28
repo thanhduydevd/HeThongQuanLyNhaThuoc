@@ -7,6 +7,7 @@
 package com.antam.app.dao;
 
 import com.antam.app.connect.ConnectDB;
+import com.antam.app.entity.ChiTietPhieuNhap;
 import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.PhieuNhap;
 import com.antam.app.entity.Thuoc;
@@ -14,6 +15,7 @@ import com.antam.app.entity.Thuoc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /*
@@ -23,6 +25,27 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class ChiTietThuoc_DAO {
+
+    /** Duy - Thêm chi tiết thuốc */
+    public boolean themChiTietThuoc(ChiTietThuoc ctt){
+        String sql = "INSERT INTO ChiTietThuoc (MaPN, MaThuoc, HanSuDung, NgaySanXuat, TonKho) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, ctt.getMaPN().getMaPhieuNhap());
+            ps.setString(2, ctt.getMaThuoc().getMaThuoc());
+            ps.setString(3, ctt.getHanSuDung().toString());
+            ps.setString(4, ctt.getNgaySanXuat().toString());
+            ps.setInt(5, ctt.getSoLuong());
+            int kq = ps.executeUpdate();
+            return kq > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * Lấy tất cả chi tiết thuốc từ database
      * @return danh sách chi tiết thuốc

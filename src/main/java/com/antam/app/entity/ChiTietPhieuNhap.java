@@ -38,14 +38,6 @@ public class ChiTietPhieuNhap {
         setThanhTien();
     }
 
-    public ChiTietPhieuNhap(PhieuNhap maPN, Thuoc maThuoc, DonViTinh maDVT, int soLuong, double giaNhap, double thanhTien) {
-        this.MaPN = maPN;
-        this.maThuoc = maThuoc;
-        this.maDVT = maDVT;
-        setSoLuong(soLuong);
-        setGiaNhap(giaNhap);
-        this.thanhTien = thanhTien;
-    }
 
     public PhieuNhap getMaPN() {
         return MaPN;
@@ -100,9 +92,8 @@ public class ChiTietPhieuNhap {
 
 
     public double thanhTien() {
-        double giaBan = maThuoc.getGiaBan();
         float thue = maThuoc.getThue();
-        return soLuong * giaBan * (1 + thue);
+        return soLuong * giaNhap * (1 + thue);
     }
     @Override
     public String toString() {

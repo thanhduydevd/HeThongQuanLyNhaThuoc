@@ -37,7 +37,7 @@
                <children>
                   <ScrollPane fitToWidth="true">
                      <content>
-                        <VBox prefHeight="354.0" prefWidth="778.0" spacing="10.0">
+                        <VBox spacing="10.0">
                            <children>
                               <GridPane hgap="5.0">
                                 <columnConstraints>

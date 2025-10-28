@@ -38,7 +38,7 @@
                   </Button>
                </children>
             </HBox>
-            <TabPane prefHeight="500.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css" tabClosingPolicy="UNAVAILABLE">
+            <TabPane prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css" tabClosingPolicy="UNAVAILABLE">
                <tabs>
                   <Tab text="Phiếu nhập">
                      <content>
@@ -96,6 +96,20 @@
                                           <ComboBox fx:id="cbKhoangGia" prefHeight="40.0" prefWidth="200.0" promptText="Chọn khoảng giá" styleClass="combo-box" stylesheets="@../../styles/dashboard_style.css" />
                                        </children>
                                     </VBox>
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <Button fx:id="btnXoaRong" mnemonicParsing="false" prefHeight="40.0" prefWidth="93.0" styleClass="btn-xoarong" stylesheets="@../../styles/dashboard_style.css" text="Xoá rỗng" textFill="WHITE">
+                                             <graphic>
+                                                <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </FlowPane>
                               <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="888.0" spacing="10.0">
@@ -112,7 +126,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <TableView fx:id="tbPhieuNhap" maxWidth="1.7976931348623157E308" stylesheets="@../../styles/dashboard_style.css">
+                              <TableView fx:id="tbPhieuNhap" maxWidth="1.7976931348623157E308" prefHeight="800.0" stylesheets="@../../styles/dashboard_style.css">
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>

@@ -20,13 +20,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class ThemPhieuNhapController {
     @FXML
-    private Button btnAddGoodsReceipt;
+    private Button btnAddGoodsReceipt, btnXoaRong;
 
     @FXML
     private TableView<PhieuNhap> tbPhieuNhap;
@@ -78,6 +80,21 @@ public class ThemPhieuNhapController {
         dpDenNgay.setOnAction(e -> filterAndSearch());
         cbKhoangGia.setOnAction(e -> filterAndSearch());
         tfTimPhieuNhap.setOnKeyReleased(e -> filterAndSearch());
+
+        //Tuỳ chỉnh field
+        dpTuNgay.setPromptText("Chọn ngày");
+        dpDenNgay.setPromptText("Đến ngày");
+
+        //Nút xoá rỗng
+        btnXoaRong.setOnAction(e -> {
+            cbNhanVienNhap.getSelectionModel().clearSelection();
+            dpTuNgay.setValue(null);
+            dpDenNgay.setValue(null);
+            cbKhoangGia.getSelectionModel().clearSelection();
+            tfTimPhieuNhap.clear();
+            data.setAll(dsPhieuNhap);
+            tbPhieuNhap.setItems(data);
+        });
     }
 
     public void loadDanhSachNhanVien(){
@@ -88,7 +105,7 @@ public class ThemPhieuNhapController {
     }
 
     public void loadKhoangGia(){
-        cbKhoangGia.getItems().addAll("0-100.000d","100.000d-300.000d","300.000d-tro di");
+        cbKhoangGia.getItems().addAll("0đ-500.000đ","500.000đ-1.000.000đ","1.000.000đ trở lên");
     }
 
 
@@ -111,59 +128,76 @@ public class ThemPhieuNhapController {
         colLyDo.setCellValueFactory(new PropertyValueFactory<>("lyDo"));
 
         TableColumn<PhieuNhap, String> colHoTenNhanVien = new TableColumn<>("Nhân Viên");
-        colHoTenNhanVien.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaNV().getMaNV()));
+        colHoTenNhanVien.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaNV().getHoTen()));
 
         TableColumn<PhieuNhap, Double> colTongTien = new TableColumn<>("Tổng tiền");
         colTongTien.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
+        colTongTien.setCellFactory(column -> new TableCell<PhieuNhap, Double>() {
+            private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                if (empty || value == null) {
+                    setText(null);
+                } else {
+                    setText(currencyFormat.format(value));
+                }
+            }
+        });
 
         tbPhieuNhap.getColumns().addAll(colMaPhieuNhap, colNhaCungCap, colNgayNhap, colDiaChi, colLyDo, colHoTenNhanVien, colTongTien);
 
     }
 
     public void filterAndSearch(){
-        String tenNhanVien = cbNhanVienNhap.getValue().getMaNV();
+        NhanVien selectedNV = cbNhanVienNhap.getValue();
+        String maNV = selectedNV != null ? selectedNV.getMaNV() : null;
+
         LocalDate tuNgay = dpTuNgay.getValue();
         LocalDate denNgay = dpDenNgay.getValue();
         String khoangGia = cbKhoangGia.getValue();
         String maPhieuNhap = tfTimPhieuNhap.getText().trim();
 
-        ArrayList<PhieuNhap> phieuNhap = new ArrayList();
-        for (PhieuNhap ds : dsPhieuNhap){
+        ArrayList<PhieuNhap> phieuNhap = new ArrayList<>();
+        for (PhieuNhap ds : dsPhieuNhap) {
             boolean check = true;
-            if(!tenNhanVien.isEmpty() && !tenNhanVien.equals(ds.getMaNV().getMaNV())){
+
+            // lọc theo nhân viên
+            if (maNV != null && !maNV.equals(ds.getMaNV().getMaNV())) {
                 check = false;
             }
 
-            if(tuNgay != null && ds.getNgayNhap().isAfter(tuNgay)){
+            // lọc theo ngày
+            if (tuNgay != null && ds.getNgayNhap().isBefore(tuNgay)) {
+                check = false;
+            }
+            if (denNgay != null && ds.getNgayNhap().isAfter(denNgay)) {
                 check = false;
             }
 
-            if(denNgay != null && ds.getNgayNhap().isBefore(denNgay)){
-                check = false;
-            }
-
-            if(khoangGia != null){
-                if(khoangGia.equals("0-100.000d") && ds.getTongTien() > 100000){
+            // lọc theo khoảng giá
+            if (khoangGia != null) {
+                double tongTien = ds.getTongTien();
+                if (khoangGia.equals("0đ-500.000đ") && tongTien > 500000) {
                     check = false;
-                }else if(khoangGia.equals("100.000d-300.000d") && ds.getTongTien() < 100000 && ds.getTongTien() > 300000){
+                } else if (khoangGia.equals("500.000đ-1.000.000đ") && (tongTien < 500000 || tongTien > 1000000)) {
                     check = false;
-                }else if(khoangGia.equals("300.000d-tro di") && ds.getTongTien() < 300000){
+                } else if (khoangGia.equals("1.000.000đ trở lên") && tongTien < 1000000) {
                     check = false;
                 }
             }
 
-            if(maPhieuNhap != null && !ds.getMaPhieuNhap().contains(maPhieuNhap)){
-                    check = false;
+            // lọc theo mã phiếu nhập
+            if (maPhieuNhap != null && !maPhieuNhap.isEmpty() && !ds.getMaPhieuNhap().contains(maPhieuNhap)) {
+                check = false;
             }
 
-            if(check){
+            if (check) {
                 phieuNhap.add(ds);
             }
         }
 
-        data.clear();
         data.setAll(phieuNhap);
         tbPhieuNhap.setItems(data);
-
     }
 }
