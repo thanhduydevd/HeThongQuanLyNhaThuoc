@@ -70,6 +70,9 @@ public class GiaoDienCuaSo extends Dialog {
             //nhan vien
             case "themnhanvien" -> var10000 = "/com/antam/app/views/nhanvien/dialog/themNhanVienForm.fxml";
             case "capnhatnhanvien" -> var10000 = "/com/antam/app/views/nhanvien/dialog/capNhatNhanVienForm.fxml";
+
+            //phieunhap
+            case "xemchitietphieunhap" -> var10000 = "/com/antam/app/views/phieunhap/dialog/xemChiTietPhieuNhapForm.fxml";
         }
 
         return var10000;

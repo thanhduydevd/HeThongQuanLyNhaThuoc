@@ -115,8 +115,18 @@ public class TimPhieuNhapController {
                 XemChiTietPhieuNhapFormController controller = dialog.getController();
                 controller.showChiTietPhieuNhap(phieuNhapDuocChon);
                 dialog.showAndWait();
+            }else{
+                showMess("Cảnh báo","Hãy chọn một phiếu nhập để xem chi tiết");
             }
         });
+    }
+
+    private void showMess(String canhBao, String s) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(canhBao);
+        alert.setHeaderText(null);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 
     public void loadDanhSachNhanVien(){

@@ -6,12 +6,20 @@
 package com.antam.app.controller.menu;
 
 import java.io.IOException;
+
+import com.antam.app.entity.PhienNguoiDung;
+import com.antam.app.gui.GiaoDienChinh;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class MenuController {
     @FXML
@@ -25,13 +33,15 @@ public class MenuController {
 
     @FXML
     private AnchorPane paneContent;
-
+    @FXML
+    private Button btnDangXuat;
 
 
     public MenuController() {
     }
 
     private void setActiveButton(Button activeButton) {
+
         Button[] buttons = {
                 btnTrangChinh, btnXemHoaDon, btnThemHoaDon, btnCapNhatHoaDon, btnThongKeDoanhThu, btnXemThuoc, btnThemThuoc, btnCapNhatThuoc, btnXemKeThuoc, btnThemKeThuoc, btnCapNhatKeThuoc, btnThemDangDieuChe, btnCapNhatDangDieuChe, btnThemDonViTinh, btnCapNhatDonViTinh, btnXemKhuyenMai, btnThemKhuyenMai, btnCapNhatKhuyenMai, btnXemPhieuNhap, btnThemPhieuNhap,
                 btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat, btnCapNhatPhieuNhap
@@ -252,6 +262,24 @@ public class MenuController {
 
         this.subMenuCaiDat.setVisible(false);
         this.subMenuCaiDat.setManaged(false);
+
+        //sự kiện đăng xuất
+        btnDangXuat.setOnAction((e) -> {
+            try{
+                FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/login.fxml"));
+                Parent root = (Parent) fxmlLoader.load();
+                Stage newStage = new Stage();
+                newStage.setTitle("");
+                newStage.setScene(new Scene(root));
+                newStage.setMaximized(true);
+                newStage.initStyle(StageStyle.DECORATED);
+                newStage.show();
+                Stage oldStage = (Stage) this.btnDangXuat.getScene().getWindow();
+                oldStage.close();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        });
     }
 
     @FXML

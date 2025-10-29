@@ -104,7 +104,7 @@
                   </Button>
                </children>
             </HBox>
-            <TableView fx:id="tableThuoc" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
+            <TableView fx:id="tableThuoc" prefHeight="800.0" stylesheets="@../../styles/dashboard_style.css">
                <columns>
                   <TableColumn fx:id="colMaThuoc" prefWidth="75.0" text="Mã Thuốc" />
                   <TableColumn fx:id="colTenThuoc" prefWidth="75.0" text="Tên thuốc" />

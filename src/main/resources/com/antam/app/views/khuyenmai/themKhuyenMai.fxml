@@ -101,7 +101,7 @@
                   </Button>
                </children>
             </HBox>
-            <TableView fx:id="tableKhuyenMai" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../styles/dashboard_style.css">
+            <TableView fx:id="tableKhuyenMai" prefHeight="800.0" stylesheets="@../../styles/dashboard_style.css">
                <columns>
                   <TableColumn fx:id="colMaKhuyenMai" prefWidth="75.0" text="Mã khuyến mãi" />
                   <TableColumn fx:id="colTenKhuyenMai" prefWidth="75.0" text="Tên khuyến mãi" />

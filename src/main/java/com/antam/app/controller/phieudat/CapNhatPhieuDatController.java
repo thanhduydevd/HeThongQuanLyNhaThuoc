@@ -67,11 +67,18 @@ public class CapNhatPhieuDatController {
         loadDataVaoBang();
 
         //set phiếu đặt được chọn cho xem chi tiết
-        tvPhieuDat.setOnMouseClicked(e->{
-            if (e.getClickCount() ==2 ){
-                selectedPDT = tvPhieuDat.getSelectionModel().getSelectedItem();
-                new GiaoDienCuaSo("capnhatphieudat").showAndWait();
-                loadDataVaoBang();
+
+        tvPhieuDat.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+
+                // Kiểm tra có chọn dòng nào không
+
+                if (selected != null) {
+                    selectedPDT = selected; // lưu lại để truyền qua form chi tiết
+                    new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                    loadDataVaoBang();
+                }
             }
         });
 

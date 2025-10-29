@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -64,7 +65,8 @@ public class XemChiTietPhieuNhapFormController {
         txtDiaChi.setText("Địa chỉ: " + phieuNhap.getDiaChi());
         txtLyDo.setText("Lý do nhập: " + phieuNhap.getLyDo());
         txtNgayNhap.setText("Ngày nhập: " + String.valueOf(phieuNhap.getNgayNhap()));
-        txtTongTien.setText(String.valueOf(phieuNhap.getTongTien()));
+        DecimalFormat decimal = new DecimalFormat("#,### đ");
+        txtTongTien.setText(decimal.format(phieuNhap.getTongTien()));
         txtNhanVien.setText("Nhân viên nhập: " + phieuNhap.getMaNV().getHoTen());
         txtNhaCungCap.setText("Nhà cung cấp: " + phieuNhap.getNhaCungCap());
 
@@ -89,6 +91,19 @@ public class XemChiTietPhieuNhapFormController {
 
         TableColumn<ChiTietPhieuNhap, Double> colGiaNhap = new TableColumn<>("Giá Nhập");
         colGiaNhap.setCellValueFactory(new PropertyValueFactory<>("giaNhap"));
+        colGiaNhap.setCellFactory(tc -> new TableCell<ChiTietPhieuNhap, Double>() {
+            @Override
+            protected void updateItem(Double giaNhap, boolean empty) {
+                super.updateItem(giaNhap, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    DecimalFormat df = new DecimalFormat("#,###");
+                    setText(df.format(giaNhap) + " đ");
+                }
+            }
+        });
         tbChiTietPhieuNhap.getColumns().addAll(colSoThuTu, colMaThuoc, colDonViTinh, colSoLuongNhap, colGiaNhap);
     }
+
 }

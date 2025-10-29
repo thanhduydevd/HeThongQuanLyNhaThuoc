@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.thuoc.ThemThuocFormController">
+<DialogPane fx:id="dialogPane" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.thuoc.ThemThuocFormController">
     <header>
         <FlowPane alignment="CENTER" style="-fx-background-color: #1e3a8a;">
             <children>
@@ -73,7 +73,7 @@
                         <Text fx:id="notification_addThuoc" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="786.9366512298584" />
                         <VBox spacing="10.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-background-radius: 8px; -fx-background-radius: 8px;">
                             <children>
-                                <Text fill="#4a5568" strokeType="OUTSIDE" strokeWidth="0.0" text="Quy đổi đơn vị:">
+                                <Text fill="#4a5568" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn đơn vị tính:">
                                     <font>
                                         <Font name="System Bold" size="15.0" />
                                     </font>
@@ -81,7 +81,7 @@
                                 <HBox prefWidth="200.0">
                                     <children>
                                         <FontAwesomeIcon fill="#666666" glyphName="INFO" />
-                                        <Text fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text=" Đơn vị cơ sở được tự động chọn theo dạng điều chế. Số lượng tồn kho sẽ được lưu theo đơn vị này." />
+                                        <Text fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng tồn kho sẽ được lưu theo đơn vị này." />
                                     </children>
                                 </HBox>
                                 <GridPane hgap="5.0">

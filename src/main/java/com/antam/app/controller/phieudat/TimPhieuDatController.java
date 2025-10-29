@@ -67,14 +67,22 @@ public class TimPhieuDatController {
 
         //set phiếu đặt được chọn cho xem chi tiết
         selectedPhieuDatThuoc = tvPhieuDat.getItems().getFirst();
-        tvPhieuDat.setOnMouseClicked(e->{
-            if (e.getClickCount() ==2 ){
-                selectedPhieuDatThuoc = tvPhieuDat.getSelectionModel().getSelectedItem();
-                new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
-                loadDataVaoBang();
-            }
 
+        //sự kiện double click vào bảng phiếu đặt
+        tvPhieuDat.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+
+                // Kiểm tra có chọn dòng nào không
+
+                if (selected != null) {
+                    selectedPhieuDatThuoc = selected; // lưu lại để truyền qua form chi tiết
+                    new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                    loadDataVaoBang();
+                }
+            }
         });
+
 
         //sự kiện nút tìm kiếm phiếu đặt
         btnFind.setOnAction(e->{

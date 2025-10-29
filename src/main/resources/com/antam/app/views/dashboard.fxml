@@ -41,20 +41,7 @@
                      </children>
                   </VBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="user-info" stylesheets="@../styles/dashboard_style.css">
-                     <children>
-                        <FontAwesomeIcon fill="#374151" glyphName="USER" size="1.5em" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Text>
-                     </children>
-                     <padding>
-                        <Insets left="10.0" right="10.0" />
-                     </padding>
-                  </HBox>
-                  <Button mnemonicParsing="false" styleClass="btn-logout" stylesheets="@../styles/dashboard_style.css" text="Đăng xuất" />
+                  <Button fx:id="btnDangXuat" mnemonicParsing="false" styleClass="btn-logout" stylesheets="@../styles/dashboard_style.css" text="Đăng xuất" />
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
