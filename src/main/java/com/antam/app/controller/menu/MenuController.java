@@ -21,7 +21,7 @@ public class MenuController {
     private VBox subMenuHoaDon, subMenuPhieuDat, subMenuThuoc, subMenuKeThuoc, subMenuDangDieuChe, subMenuDonViTinh, subMenuKhuyenMai, subMenuPhieuNhap, subMenuKhachHang, subMenuNhanVien, subMenuCaiDat;
 
     @FXML
-    private Button btnXemHoaDon, btnThemHoaDon, btnCapNhatHoaDon, btnThongKeDoanhThu, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat, btnXemThuoc, btnThemThuoc, btnCapNhatThuoc, btnXemKeThuoc, btnThemKeThuoc, btnCapNhatKeThuoc, btnThemDangDieuChe, btnCapNhatDangDieuChe, btnThemDonViTinh, btnCapNhatDonViTinh, btnXemKhuyenMai, btnThemKhuyenMai, btnCapNhatKhuyenMai, btnXemPhieuNhap, btnThemPhieuNhap, btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan;
+    private Button btnXemHoaDon, btnThemHoaDon, btnCapNhatHoaDon, btnThongKeDoanhThu, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat, btnXemThuoc, btnThemThuoc, btnCapNhatThuoc, btnXemKeThuoc, btnThemKeThuoc, btnCapNhatKeThuoc, btnThemDangDieuChe, btnCapNhatDangDieuChe, btnThemDonViTinh, btnCapNhatDonViTinh, btnXemKhuyenMai, btnThemKhuyenMai, btnCapNhatKhuyenMai, btnXemPhieuNhap, btnThemPhieuNhap, btnCapNhatPhieuNhap , btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan;
 
     @FXML
     private AnchorPane paneContent;
@@ -34,7 +34,7 @@ public class MenuController {
     private void setActiveButton(Button activeButton) {
         Button[] buttons = {
                 btnTrangChinh, btnXemHoaDon, btnThemHoaDon, btnCapNhatHoaDon, btnThongKeDoanhThu, btnXemThuoc, btnThemThuoc, btnCapNhatThuoc, btnXemKeThuoc, btnThemKeThuoc, btnCapNhatKeThuoc, btnThemDangDieuChe, btnCapNhatDangDieuChe, btnThemDonViTinh, btnCapNhatDonViTinh, btnXemKhuyenMai, btnThemKhuyenMai, btnCapNhatKhuyenMai, btnXemPhieuNhap, btnThemPhieuNhap,
-                btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat
+                btnXemKhachHang, btnThemKhachHang, btnCapNhatKhachHang, btnXemNhanVien, btnThemNhanVien, btnCapNhatNhanVien, btnCaiDatTaiKhoan, btnTimPhieuDat, btnThemPhieuDat, btnCapNhatPhieuDat, btnCapNhatPhieuNhap
         };
         for (Button btn : buttons) {
             // Add null check to prevent NullPointerException
@@ -187,6 +187,10 @@ public class MenuController {
         this.btnThemPhieuNhap.setOnAction((e) -> {
             this.loadPage("/com/antam/app/views/phieunhap/themPhieuNhap.fxml");
             setActiveButton(btnThemPhieuNhap);
+        });
+        this.btnCapNhatPhieuNhap.setOnAction((e) -> {
+            this.loadPage("/com/antam/app/views/phieunhap/capNhatPhieuNhap.fxml");
+            setActiveButton(btnCapNhatPhieuNhap);
         });
         //Kh hang
         this.btnXemKhachHang.setOnAction((e) -> {

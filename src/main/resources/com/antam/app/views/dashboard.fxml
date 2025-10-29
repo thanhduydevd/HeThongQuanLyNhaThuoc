@@ -445,6 +445,17 @@
                                           <Insets left="50.0" />
                                        </padding>
                                     </Button>
+                                    <Button fx:id="btnCapNhatPhieuNhap" graphicTextGap="5.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-sub-item" stylesheets="@../styles/dashboard_style.css" text="Cập nhật phiếu nhập">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#333333" glyphName="REFRESH" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets left="50.0" />
+                                       </padding>
+                                    </Button>
                                  </children>
                               </VBox>
                               <Button fx:id="btnKhachHang" layoutX="10.0" layoutY="1376.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="54.0" styleClass="sidebar-item" stylesheets="@../styles/dashboard_style.css" text="Khách hàng">

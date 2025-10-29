@@ -13,11 +13,103 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PhieuNhap_DAO {
+    /* Duy- Huỷ phiếu nhập */
+    public boolean huyPhieuNhap(String maPhieuNhap){
+        String sql = "UPDATE PhieuNhap SET DeleteAt = 1 WHERE MaPhieuNhap = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maPhieuNhap);
+            int kq = ps.executeUpdate();
+            return kq > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /* Duy- Cập nhật phiếu nhập */
+    public boolean suaPhieuNhap(PhieuNhap pn){
+        String sql = "UPDATE PhieuNhap SET NhaCungCap = ?, DiaChi = ?, LyDo = ? WHERE MaPhieuNhap = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, pn.getNhaCungCap());
+            ps.setString(2, pn.getDiaChi());
+            ps.setString(3, pn.getLyDo());
+            ps.setString(4, pn.getMaPhieuNhap());
+            int kq = ps.executeUpdate();
+            return kq > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /* Duy - Tạo mã phiêu nhập tự động */
+    public String taoMaPhieuNhapTuDong(){
+        String sql = "SELECT TOP 1 MaPhieuNhap FROM PhieuNhap ORDER BY MaPhieuNhap DESC";
+        String maPhieuNhapMoi = "";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                String maPhieuNhap = rs.getString("MaPhieuNhap");
+                int soThuTu = Integer.parseInt(maPhieuNhap.substring(2)) + 1;
+                maPhieuNhapMoi = String.format("PN%06d", soThuTu);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return maPhieuNhapMoi;
+    }
+
+    /* Duy - Kiểm tra phiếu nhập tồn tại */
+    public boolean tonTaiMaPhieuNhap(String maPhieuNhap) {
+        String sql = "SELECT COUNT(*) FROM PhieuNhap WHERE MaPhieuNhap = ?";
+        try  {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maPhieuNhap);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    /* Duy- Thêm phiếu nhập */
+    public boolean themPhieuNhap(PhieuNhap pn){
+        String sql = "INSERT INTO PhieuNhap (MaPhieuNhap, NhaCungCap, NgayNhap, DiaChi, LyDo, MaNV, TongTien, DeleteAt) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, pn.getMaPhieuNhap());
+            ps.setString(2, pn.getNhaCungCap());
+            ps.setString(3, pn.getNgayNhap().toString());
+            ps.setString(4, pn.getDiaChi());
+            ps.setString(5, pn.getLyDo());
+            ps.setString(6, pn.getMaNV().getMaNV().toString());
+            ps.setDouble(7, pn.getTongTien());
+            ps.setBoolean(8, pn.isDeleteAt());
+            int kq = ps.executeUpdate();
+            return kq > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /* Lấy danh sách phiếu nhập */
     public ArrayList<PhieuNhap> getDanhSachPhieuNhap(){
         ArrayList<PhieuNhap> list = new ArrayList<>();
-        String sql = "SELECT * FROM PhieuNhap";
+        String sql = "SELECT * FROM PhieuNhap as P JOIN NhanVien as N on N.MaNV = P.MaNV WHERE P.DeleteAt = 0";
 
         try{
             Connection con = ConnectDB.getConnection();
@@ -29,12 +121,11 @@ public class PhieuNhap_DAO {
                 LocalDate ngayNhap = rs.getDate("NgayNhap").toLocalDate();
                 String diaChi = rs.getString("DiaChi");
                 String maNhanVien = rs.getString("MaNV");
+                String tenNhanVien = rs.getString("HoTen");
                 String lyDo = rs.getString("LyDo");
                 double tongTien = rs.getDouble("TongTien");
                 boolean deleteAt = rs.getBoolean("DeleteAt");
-
-                PhieuNhap pn = new PhieuNhap(maPhieuNhap, nhaCungCap, ngayNhap, diaChi, lyDo, new NhanVien(maNhanVien), tongTien, deleteAt);
-
+                PhieuNhap pn = new PhieuNhap(maPhieuNhap, nhaCungCap, ngayNhap, diaChi, lyDo, new NhanVien(maNhanVien, tenNhanVien), tongTien, deleteAt);
                 list.add(pn);
             }
         } catch (SQLException e) {

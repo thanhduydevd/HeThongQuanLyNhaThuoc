@@ -8,6 +8,7 @@ package com.antam.app.controller.phieunhap;
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.dao.PhieuNhap_DAO;
+import com.antam.app.entity.HoaDon;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuNhap;
 import com.antam.app.gui.GiaoDienCuaSo;
@@ -26,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class TimPhieuNhapController {
+public class CapNhatPhieuNhapController {
+    @FXML
+    private Button btnTuyChon, btnXoaRong;
 
     @FXML
     private TableView<PhieuNhap> tbPhieuNhap;
@@ -43,9 +46,6 @@ public class TimPhieuNhapController {
     @FXML
     private TextField tfTimPhieuNhap;
 
-    @FXML
-    private Button btnXoaRong;
-
     private PhieuNhap_DAO phieuNhap_DAO = new PhieuNhap_DAO();
     private NhanVien_DAO nhanVien_DAO = new NhanVien_DAO();
 
@@ -55,7 +55,7 @@ public class TimPhieuNhapController {
 
     private PhieuNhap phieuNhapDuocChon;
 
-    public TimPhieuNhapController() {
+    public CapNhatPhieuNhapController() {
 
     }
 
@@ -66,6 +66,23 @@ public class TimPhieuNhapController {
             throw new RuntimeException(e);
         }
 
+        this.btnTuyChon.setOnAction((e) -> {
+            if (phieuNhapDuocChon == null){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Chưa chọn phiếu nhập");
+                alert.setHeaderText(null);
+                alert.setContentText("Vui lòng chọn phiếu nhập để thực hiện tuỳ chọn!");
+                alert.showAndWait();
+            } else {
+                GiaoDienCuaSo dialog = new GiaoDienCuaSo("capnhatphieunhap");
+                CapNhatPhieuNhapFormController controller = dialog.getController();
+                controller.showPhieuNhap(phieuNhapDuocChon);
+                dialog.showAndWait();
+                tbPhieuNhap.refresh();
+                ObservableList<PhieuNhap> phieuNhapList = FXCollections.observableArrayList(phieuNhap_DAO.getDanhSachPhieuNhap());
+                tbPhieuNhap.setItems(phieuNhapList);
+            }
+        });
 
         loadDanhSachPhieuNhap();
         loadDanhSachNhanVien();
@@ -81,26 +98,12 @@ public class TimPhieuNhapController {
         cbKhoangGia.setOnAction(e -> filterAndSearch());
         tfTimPhieuNhap.setOnKeyReleased(e -> filterAndSearch());
 
-        //Tuỳ chỉnh field
-        dpTuNgay.setPromptText("Chọn ngày");
-        dpDenNgay.setPromptText("Chọn ngày");
-        //Nút xoá rỗng
-        btnXoaRong.setOnAction(e -> {
-            cbNhanVienNhap.getSelectionModel().clearSelection();
-            dpTuNgay.setValue(null);
-            dpDenNgay.setValue(null);
-            cbKhoangGia.getSelectionModel().clearSelection();
-            tfTimPhieuNhap.clear();
-            data.setAll(dsPhieuNhap);
-            tbPhieuNhap.setItems(data);
-        });
-
-        //Khi click double vào 1 phiếu nhập sẽ hiện chi tiết phiếu nhập
         //Sự kiện khi click table
         tbPhieuNhap.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        tbPhieuNhap.setOnMousePressed(e -> {
+        tbPhieuNhap.setOnMouseClicked(e -> {
             PhieuNhap selected = tbPhieuNhap.getSelectionModel().getSelectedItem();
             if (selected != null) {
+                System.out.println(selected.getMaPhieuNhap());
                 phieuNhapDuocChon = new PhieuNhap(
                         selected.getMaPhieuNhap(),
                         selected.getNhaCungCap(),
@@ -111,11 +114,23 @@ public class TimPhieuNhapController {
                         selected.getTongTien(),
                         selected.isDeleteAt()
                 );
-                GiaoDienCuaSo dialog = new GiaoDienCuaSo("xemchitietphieunhap");
-                XemChiTietPhieuNhapFormController controller = dialog.getController();
-                controller.showChiTietPhieuNhap(phieuNhapDuocChon);
-                dialog.showAndWait();
+                System.out.println(phieuNhapDuocChon);
             }
+        });
+
+        //Tuỳ chỉnh field
+        dpTuNgay.setPromptText("Chọn ngày");
+        dpDenNgay.setPromptText("Đến ngày");
+
+        //Nút xoá rỗng
+        btnXoaRong.setOnAction(e -> {
+            cbNhanVienNhap.getSelectionModel().clearSelection();
+            dpTuNgay.setValue(null);
+            dpDenNgay.setValue(null);
+            cbKhoangGia.getSelectionModel().clearSelection();
+            tfTimPhieuNhap.clear();
+            data.setAll(dsPhieuNhap);
+            tbPhieuNhap.setItems(data);
         });
     }
 

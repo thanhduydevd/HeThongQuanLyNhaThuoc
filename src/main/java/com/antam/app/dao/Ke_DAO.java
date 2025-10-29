@@ -19,6 +19,71 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class Ke_DAO {
+    /* Duy - Xoá kệ */
+    public boolean xoaKe(String maKe) {
+        String sql = "UPDATE KeThuoc SET DeleteAt = 1 WHERE MaKe = ? AND DeleteAt = 0";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maKe);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /* Duy - Sửa kệ */
+    public boolean suaKe(Ke ke) {
+        String sql = "UPDATE KeThuoc SET TenKe = ?, LoaiKe = ? WHERE MaKe = ? AND DeleteAt = 0";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, ke.getTenKe());
+            ps.setString(2, ke.getLoaiKe());
+            ps.setString(3, ke.getMaKe());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /* Duy - Thêm kệ */
+    public boolean themKe(Ke ke) {
+        String sql = "INSERT INTO KeThuoc (MaKe, TenKe, LoaiKe, DeleteAt) VALUES (?, ?, ?, 0)";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, ke.getMaKe());
+            ps.setString(2, ke.getTenKe());
+            ps.setString(3, ke.getLoaiKe());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /* Duy - Tạo mã kệ tự động */
+    public String taoMaKeTuDong(){
+        String sql = "SELECT TOP 1 MaKe FROM KeThuoc ORDER BY MaKe DESC";
+        String maKeMoi = "";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                String maPhieuNhap = rs.getString("MaKe");
+                int soThuTu = Integer.parseInt(maPhieuNhap.substring(2)) + 1;
+                maKeMoi = String.format("KE%04d", soThuTu);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return maKeMoi;
+    }
+
     /**
      * Lấy tất cả kệ chưa bị xóa
      * @return Danh sách kệ

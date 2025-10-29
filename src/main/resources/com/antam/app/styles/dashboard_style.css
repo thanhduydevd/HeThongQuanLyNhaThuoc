@@ -430,3 +430,11 @@
     -fx-border-color:  #2563eb;
     -fx-border-radius: 6px;
 }
+
+/* Button xoá */
+.btn-xoa{
+    -fx-background-color: #dc0000;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 95px;
+}
