@@ -5,6 +5,7 @@ package com.antam.app.gui;/*
  * @version: 1.0
  */
 
+import com.antam.app.dao.DonViTinh_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.ChiTietPhieuDatThuoc;
 import com.antam.app.entity.PhieuDatThuoc;
@@ -24,9 +25,11 @@ public class KiemNghiem {
         }
     }
     public static void main(String[] args) {
-        ArrayList<ChiTietPhieuDatThuoc> list = PhieuDat_DAO.getChiTietTheoPhieu("PDT001");
-        for (ChiTietPhieuDatThuoc p : list) {
-            System.out.println(p.toString());
-        }
+//        ArrayList<ChiTietPhieuDatThuoc> list = PhieuDat_DAO.getChiTietTheoPhieu("PDT001");
+        String maDVT = DonViTinh_DAO.getHashDVT();
+        System.out.println(maDVT);
+//        for (ChiTietPhieuDatThuoc p : list) {
+//            System.out.println(p.toString());
+//        }
     }
 }

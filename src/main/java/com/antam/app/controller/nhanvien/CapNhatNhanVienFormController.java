@@ -54,7 +54,7 @@ public class CapNhatNhanVienFormController {
 
         // Cập nhật nhân viên
         btnSua.setOnAction(e -> {
-            try {
+//            try {
                 if (txtHoTen.getText().isBlank() || txtSDT.getText().isBlank() || txtEmail.getText().isBlank()) {
                     showMess("Vui lòng nhập đầy đủ thông tin!");
                     return;
@@ -72,12 +72,12 @@ public class CapNhatNhanVienFormController {
                         select.getMaNV(), hoTen, soDienThoai, email,
                         diaChi, luongCoBan, taiKhoan, select.getMatKhau(), quanLy
                 );
-
+                System.out.println(nvUpdate);
                 boolean result = NhanVien_DAO.updateNhanVienTrongDBS(nvUpdate);
                 showMess(result ? "Cập nhật nhân viên thành công!" : "Cập nhật nhân viên thất bại!");
-            } catch (Exception ex) {
-                showMess("Lỗi: " + ex.getMessage());
-            }
+//            } catch (Exception ex) {
+//                showMess("Lỗi: " + ex.getMessage());
+//            }
         });
 
         // Xóa nhân viên
@@ -130,6 +130,5 @@ public class CapNhatNhanVienFormController {
         alert.setHeaderText(null);
         alert.setContentText(mess);
         alert.showAndWait();
-        dialogPane.getScene().getWindow().hide();
     }
 }

@@ -1,4 +1,4 @@
-CREATE DATABASE QuanLyNhaThuoc;
+﻿CREATE DATABASE QuanLyNhaThuoc;
 GO
 USE QuanLyNhaThuoc;
 GO

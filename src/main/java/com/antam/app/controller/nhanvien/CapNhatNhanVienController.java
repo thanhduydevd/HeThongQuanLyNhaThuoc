@@ -75,9 +75,14 @@ public class CapNhatNhanVienController {
 
     private void loadNhanVien() {
         listNV = NhanVien_DAO.getDsNhanVienformDBS();
-        TVNhanVien = FXCollections.observableArrayList(listNV);
+        TVNhanVien = FXCollections.observableArrayList(
+                listNV.stream()
+                        .filter(nv -> !nv.isDeleteAt())
+                        .toList()
+        );
         tbNhanVien.setItems(TVNhanVien);
     }
+
 
     private void setupTableNhanVien() {
         colMaNV.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaNV()));

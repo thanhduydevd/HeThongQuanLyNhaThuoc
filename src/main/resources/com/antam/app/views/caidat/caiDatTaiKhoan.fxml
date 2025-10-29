@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="730.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antam.app.controller.caidatTK.CaiDatTaiKhoanController">
    <content>
       <VBox spacing="30.0" style="-fx-background-color: #f8fafc;">
          <children>
@@ -58,18 +58,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
                               <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu hiện tại:" />
-                              <TextField maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu hiện tại:" GridPane.rowIndex="2" />
-                              <TextField prefHeight="40.0" styleClass="text-field" stylesheets="@../../styles/dashboard_style.css" GridPane.rowIndex="3" />
-                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Xác nhận mật khẩu mới:" GridPane.rowIndex="4" />
-                              <TextField prefHeight="40.0" styleClass="text-field" stylesheets="@../../styles/dashboard_style.css" GridPane.rowIndex="5" />
-                              <Button mnemonicParsing="false" prefHeight="40.0" styleClass="btn-primary" stylesheets="@../../styles/dashboard_style.css" text="Đổi mật khẩu" GridPane.rowIndex="6" />
+                              <TextField fx:id="txtMKnow" prefHeight="40.0" styleClass="text-field" stylesheets="@../../styles/dashboard_style.css" GridPane.rowIndex="1" />
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Xác nhận mật khẩu mới:" GridPane.rowIndex="2" />
+                              <TextField fx:id="txtMKnew" prefHeight="40.0" styleClass="text-field" stylesheets="@../../styles/dashboard_style.css" GridPane.rowIndex="3" />
+                              <Button fx:id="btnDoiMK" mnemonicParsing="false" prefHeight="40.0" styleClass="btn-primary" stylesheets="@../../styles/dashboard_style.css" text="Đổi mật khẩu" GridPane.rowIndex="4" />
                            </children>
                         </GridPane>
                      </children>
@@ -100,7 +96,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Text>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Admin">
+                                    <Text fx:id="txtTK" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
@@ -117,7 +113,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Text>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Quản trị viên">
+                                    <Text fx:id="txtVaiTro" strokeType="OUTSIDE" strokeWidth="0.0" text="Quản trị viên">
                                        <font>
                                           <Font size="13.0" />
                                        </font>

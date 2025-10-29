@@ -27,7 +27,8 @@ public class TimNhanVienController {
     private ComboBox<String> cbChucVu, cbLuongCB;
 
     private ObservableList<NhanVien> TVNhanVien;
-    private final ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
+    private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
+    private ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
 
     public void initialize() {
         setupTableNhanVien();
@@ -48,10 +49,15 @@ public class TimNhanVienController {
     }
 
     private void loadNhanVien() {
-        ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
-        TVNhanVien = FXCollections.observableArrayList(listNV);
+        listNV = NhanVien_DAO.getDsNhanVienformDBS();
+        TVNhanVien = FXCollections.observableArrayList(
+                listNV.stream()
+                        .filter(nv -> !nv.isDeleteAt())
+                        .toList()
+        );
         tbNhanVien.setItems(TVNhanVien);
     }
+
 
     private void setupTableNhanVien() {
         colMaNV.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaNV()));

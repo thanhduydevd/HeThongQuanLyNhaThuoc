@@ -41,23 +41,18 @@ public class NhanVien_DAO {
             PreparedStatement state = con.prepareStatement(sql);
             ResultSet result = state.executeQuery();
             while (result.next()){
-                boolean isXoa = result.getBoolean("DeleteAt");
-                if (!isXoa){
-                    String maNV = result.getNString("MaNV");
-                    String hoTen = result.getNString("HoTen");
-                    String soDT = result.getNString("SoDienThoai");
-                    String email = result.getNString("Email");
-                    String diaChi = result.getNString("DiaChi");
-                    double luongCb = result.getDouble("LuongCoBan");
-                    String taiKhoan = result.getNString("TaiKhoan");
-                    String matKhau = result.getNString("MatKhau");
-                    boolean deleteAt = result.getBoolean("DeleteAt");
-                    boolean isQL = result.getBoolean("IsQuanLi");
-                    NhanVien e = new NhanVien(maNV,hoTen,soDT,email,diaChi,luongCb
-                    ,taiKhoan,matKhau,deleteAt,isQL);
-                    list.add(e);
-                }
-
+                String maNV = result.getNString("MaNV");
+                String hoTen = result.getNString("HoTen");
+                String soDT = result.getNString("SoDienThoai");
+                String email = result.getNString("Email");
+                String diaChi = result.getNString("DiaChi");
+                double luongCb = result.getDouble("LuongCoBan");
+                String taiKhoan = result.getNString("TaiKhoan");
+                String matKhau = result.getNString("MatKhau");
+                boolean deleteAt = result.getBoolean("DeleteAt");
+                boolean isQL = result.getBoolean("IsQuanLi");
+                NhanVien e = new NhanVien(maNV,hoTen,soDT,email,diaChi,luongCb,taiKhoan,matKhau,deleteAt,isQL);
+                list.add(e);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -203,7 +198,7 @@ public class NhanVien_DAO {
         Connection con = ConnectDB.getConnection();
         PreparedStatement state = null;
         String updateSQL = "Update NhanVien Set HoTen = ?,SoDienThoai = ?,Email = ?,DiaChi =?,LuongCoBan =?,TaiKhoan=?," +
-                "MatKhau=?,IsQuanLy=?,DeleteAt = ? where MaNV = ?";
+                "MatKhau=?,IsQuanLi=?,DeleteAt = ? where MaNV = ?";
         try {
             state = con.prepareStatement(updateSQL);
             state.setString(10, nv.getMaNV());
@@ -236,7 +231,7 @@ public class NhanVien_DAO {
         }
         PreparedStatement state = null;
         Connection con = ConnectDB.getConnection();
-        String sql = "Update TenBang set DeleteAt = 0 where MaNV = ?";
+        String sql = "Update [NhanVien] set DeleteAt = 1 where MaNV = ?";
         int kq =0;
         try {
             state = con.prepareStatement(sql);

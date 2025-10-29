@@ -17,6 +17,8 @@ import java.util.Objects;
 public class DonViTinh {
     private final int MaDVT;
     private String TenDVT;
+    private boolean isDelete;
+
     public DonViTinh() {
         MaDVT = 0;
         TenDVT = "";
@@ -25,10 +27,13 @@ public class DonViTinh {
         MaDVT = maDVT;
         TenDVT = "";
     }
-    public DonViTinh(int maDVT, String tenDVT) {
+    public DonViTinh(int maDVT, String tenDVT,boolean isDelete) {
         MaDVT = maDVT;
         setTenDVT(tenDVT);
+        this.isDelete = isDelete;
     }
+
+
     public int getMaDVT() {
         return MaDVT;
     }
@@ -58,5 +63,13 @@ public class DonViTinh {
     @Override
     public int hashCode() {
         return Objects.hashCode(MaDVT);
+    }
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
     }
 }

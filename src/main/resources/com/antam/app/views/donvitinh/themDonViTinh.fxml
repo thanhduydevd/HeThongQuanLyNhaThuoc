@@ -39,7 +39,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <TextField prefHeight="40.0" prefWidth="200.0" promptText="Nhập mã đơn vị tính" />
+                        <TextField fx:id="txtMa" prefHeight="40.0" prefWidth="200.0" promptText="Nhập mã đơn vị tính" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
@@ -49,7 +49,7 @@
                               <Font size="13.0" />
                            </font>
                         </Text>
-                        <TextField prefHeight="40.0" prefWidth="200.0" promptText="Nhập tên đơn vị tính" />
+                        <TextField fx:id="txtTen" prefHeight="40.0" prefWidth="200.0" promptText="Nhập tên đơn vị tính" />
                      </children>
                   </VBox>
                   <VBox alignment="CENTER" spacing="5.0">

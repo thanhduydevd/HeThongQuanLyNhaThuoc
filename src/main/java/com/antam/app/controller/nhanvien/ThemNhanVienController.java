@@ -60,10 +60,15 @@ public class ThemNhanVienController {
     }
 
     private void loadNhanVien() {
-        ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
-        TVNhanVien = FXCollections.observableArrayList(listNV);
+        listNV = NhanVien_DAO.getDsNhanVienformDBS();
+        TVNhanVien = FXCollections.observableArrayList(
+                listNV.stream()
+                        .filter(nv -> !nv.isDeleteAt())
+                        .toList()
+        );
         tbNhanVien.setItems(TVNhanVien);
     }
+
 
     private void setupTableNhanVien() {
         colMaNV.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaNV()));

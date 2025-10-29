@@ -9,10 +9,7 @@ package com.antam.app.dao;
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.entity.DonViTinh;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 /*
@@ -39,7 +36,8 @@ public class DonViTinh_DAO {
             if (rs.next()) {
                 int maDVT = rs.getInt("MaDVT");
                 String tenDVT = rs.getString("TenDVT");
-                dvt = new DonViTinh(maDVT, tenDVT);
+                boolean isDelete = rs.getBoolean("DeleteAt");
+                dvt = new DonViTinh(maDVT, tenDVT,isDelete);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,7 +57,8 @@ public class DonViTinh_DAO {
             while (rs.next()) {
                 int maDVT = rs.getInt("MaDVT");
                 String tenDVT = rs.getString("TenDVT");
-                DonViTinh dvt = new DonViTinh(maDVT, tenDVT);
+                boolean isDelete = rs.getBoolean("DeleteAt");
+                DonViTinh dvt = new DonViTinh(maDVT, tenDVT,isDelete);
                 list.add(dvt);
             }
         } catch (SQLException e) {
@@ -86,7 +85,8 @@ public class DonViTinh_DAO {
             while (rs.next()) {
                 int maDVT = rs.getInt("MaDVT");
                 String tenDVT = rs.getString("TenDVT");
-                DonViTinh dvt = new DonViTinh(maDVT, tenDVT);
+                boolean isDelete = rs.getBoolean("DeleteAt");
+                DonViTinh dvt = new DonViTinh(maDVT, tenDVT,isDelete);
                 listDVT.add(dvt);
             }
         } catch (Exception e) {
@@ -115,7 +115,8 @@ public class DonViTinh_DAO {
             if (rs.next()) {
                 int maDVT = rs.getInt("MaDVT");
                 String tenDVT = rs.getString("TenDVT");
-                dvt = new DonViTinh(maDVT, tenDVT);
+                boolean isDelete = rs.getBoolean("DeleteAt");
+                dvt = new DonViTinh(maDVT, tenDVT,isDelete);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,7 +143,8 @@ public class DonViTinh_DAO {
             if (rs.next()) {
                 int maDVT = rs.getInt("MaDVT");
                 String tenDVT = rs.getString("TenDVT");
-                dvt = new DonViTinh(maDVT, tenDVT);
+                boolean isDelete = rs.getBoolean("DeleteAt");
+                dvt = new DonViTinh(maDVT, tenDVT,isDelete);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,4 +152,87 @@ public class DonViTinh_DAO {
         return dvt;
     }
 
+    public static String getHashDVT(){
+        String sql = "select top 1 MaDVT from DonViTinh order by MaDVT desc";
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+        try {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+                return rs.getString("MaDVT");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+
+    public int themDonViTinh(DonViTinh donViTinh) {
+        try {
+            // Đảm bảo đã kết nối đến DB
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+
+            String sql = "INSERT INTO DonViTinh (TenDVT, DeleteAt) VALUES (?, ?)";
+            try (PreparedStatement state = con.prepareStatement(sql)) {
+                state.setString(1, donViTinh.getTenDVT());
+                state.setBoolean(2, donViTinh.isDelete());
+                return state.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int updateDonViTinh(DonViTinh donViTinh) {
+        String sql = "UPDATE DonViTinh SET TenDVT = ?, DeleteAt = ? WHERE MaDVT = ?";
+
+        try {
+            // Đảm bảo đã có kết nối tới DB
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+
+            try (PreparedStatement state = con.prepareStatement(sql)) {
+                state.setString(1, donViTinh.getTenDVT());
+                state.setBoolean(2, donViTinh.isDelete());
+                state.setInt(3, donViTinh.getMaDVT());
+
+                return state.executeUpdate(); // trả về số dòng bị ảnh hưởng (1 nếu thành công)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int xoaDonViTinh(DonViTinh donViTinh) {
+        String sql = "UPDATE DonViTinh SET DeleteAt = ? WHERE MaDVT = ?";
+
+        try {
+            // Đảm bảo đã có kết nối tới DB
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+
+            try (PreparedStatement state = con.prepareStatement(sql)) {
+                state.setBoolean(1, true);
+                state.setInt(2, donViTinh.getMaDVT());
+
+                return state.executeUpdate(); // trả về số dòng bị ảnh hưởng (1 nếu thành công)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
+
+

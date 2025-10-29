@@ -18,7 +18,7 @@ public class GiaoDienChinh extends Application {
     }
 
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/login.fxml"));
         Scene scene = new Scene((Parent)fxmlLoader.load());
         stage.initStyle(StageStyle.DECORATED);
         stage.setMaximized(true);
