@@ -73,7 +73,7 @@
                         <Text fx:id="notification_DUThuoc" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="786.9366512298584" />
                         <VBox spacing="10.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-background-radius: 8px; -fx-background-radius: 8px;">
                             <children>
-                                <Text fill="#4a5568" strokeType="OUTSIDE" strokeWidth="0.0" text="Quy đổi đơn vị:">
+                                <Text fill="#4a5568" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn đơn vị tính:">
                                     <font>
                                         <Font name="System Bold" size="15.0" />
                                     </font>
@@ -81,7 +81,7 @@
                                 <HBox prefWidth="200.0">
                                     <children>
                                         <FontAwesomeIcon fill="#666666" glyphName="INFO" />
-                                        <Text fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text=" Đơn vị cơ sở được tự động chọn theo dạng điều chế. Số lượng tồn kho sẽ được lưu theo đơn vị này." />
+                                        <Text fill="#666666" strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng tồn kho sẽ được lưu theo đơn vị này." />
                                     </children>
                                 </HBox>
                                 <GridPane hgap="5.0">
@@ -95,12 +95,7 @@
                                     </rowConstraints>
                                     <children>
                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị cơ sở (tự động):" />
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Giá tính theo:" GridPane.columnIndex="1" />
                                         <ComboBox fx:id="cbDUDVCS" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-box" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                                        <Text fx:id="txtDUGiaByDV" fill="#059669" strokeType="OUTSIDE" strokeWidth="0.0" text="Viên" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                            <font>
-                                                <Font name="System Bold" size="15.0" />
-                                            </font></Text>
                                     </children>
                                 </GridPane>
                             </children>

@@ -31,7 +31,7 @@ public class CapNhatThuocFormController {
     private TextField txtDUMaThuoc, txtDUTenThuoc, txtDUHamLuong;
 
     @FXML
-    private Text txtDUGiaByDV, notification_DUThuoc;
+    private Text notification_DUThuoc;
 
 
     @FXML
@@ -71,7 +71,6 @@ public class CapNhatThuocFormController {
         txtDUHamLuong.setText(t.getHamLuong());
         cbDUKe.setValue(t.getMaKe());
         cbDUDVCS.setValue(t.getMaDVTCoSo());
-        txtDUGiaByDV.setText(dvt_dao.getDVTTheoMa(t.getMaDVTCoSo().getMaDVT()).getTenDVT());
     }
 
 
@@ -166,9 +165,6 @@ public class CapNhatThuocFormController {
         addComBoBoxDVCS();
         //them combo box dang dieu che
         addComBoBoxDDC();
-        cbDUDVCS.setOnAction(e -> {
-            txtDUGiaByDV.setText(cbDUDVCS.getValue().getTenDVT());
-        });
     }
     // hien thi hop thoai xac nhan xoa
     public boolean showConfirmDeleteDialog(String tenThuoc) {
@@ -283,7 +279,6 @@ public class CapNhatThuocFormController {
         cbDUDVCS.getItems().clear();
         arrayDVT.forEach(dvt -> cbDUDVCS.getItems().add(dvt));
         cbDUDVCS.getSelectionModel().selectFirst();
-        txtDUGiaByDV.setText(cbDUDVCS.getValue().toString());
     }
 
     // Cat chuoi

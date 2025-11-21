@@ -91,24 +91,6 @@ public class ThemThuocController {
         // Event tìm kiếm
         btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
         searchNameThuoc.setOnKeyReleased(e -> filterAndSearchThuoc());
-        // su kien table view
-        tableThuoc.setRowFactory(tv -> {
-            TableRow<Thuoc> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    Thuoc selectedThuoc = row.getItem();
-                    // Mở dialog
-                    GiaoDienCuaSo dialog = new GiaoDienCuaSo("xemchitietthuoc");
-                    // Lấy controller và set Thuoc vào
-                    XemChiTietThuocFormController controller = dialog.getController();
-                    controller.setThuoc(selectedThuoc);
-                    controller.showData();
-                    // Show dialog
-                    dialog.showAndWait();
-                }
-            });
-            return row;
-        });
 
         btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
     }

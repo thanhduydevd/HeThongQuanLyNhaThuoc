@@ -369,6 +369,15 @@ public class DoiThuocFormController {
             throw new RuntimeException(e);
         }
         comboBoxThuoc.setOnAction(event -> {
+            if (!checkTrung(comboBoxThuoc.getValue())) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Thuốc đã được thêm");
+                alert.setContentText("Vui lòng chọn thuốc khác.");
+                alert.showAndWait();
+                comboBoxThuoc.getSelectionModel().clearSelection();
+                return;
+            }
             comboBoxDVT.getItems().clear();
             comboBoxDVT.getItems().add(donViTinh_dao.getDVTTheoMa(comboBoxThuoc.getValue().getMaDVTCoSo().getMaDVT()));
             comboBoxDVT.getSelectionModel().selectFirst();
@@ -485,5 +494,19 @@ public class DoiThuocFormController {
             }
         }
         return true;
+    }
+    public boolean checkTrung(Thuoc thuocKiemTra) {
+        int count = 0;
+        for (Node node : vhDSCTHDM.getChildren()) {
+            if (node instanceof HBox hBox) {
+                VBox vbThuoc = (VBox) hBox.getChildren().get(0);
+
+                ComboBox<Thuoc> comboThuoc = (ComboBox<Thuoc>) vbThuoc.getChildren().get(1);
+                if (comboThuoc.getValue().getMaThuoc().equals(thuocKiemTra.getMaThuoc())) {
+                    count += 1;
+                }
+            }
+        }
+        return count == 1 ? true : false;
     }
 }

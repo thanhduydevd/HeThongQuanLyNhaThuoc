@@ -39,7 +39,7 @@ public class ThemThuocFormController {
     @FXML
     private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddHamLuong;
     @FXML
-    private Text txtAddGiaByDV, notification_addThuoc;
+    private Text notification_addThuoc;
     @FXML
     private Spinner<Double> spAddGiaGoc, spAddGiaBan, spAddThue;
     @FXML
@@ -288,7 +288,6 @@ public class ThemThuocFormController {
         cbAddDVCS.getItems().clear();
         arrayDVT.forEach(dvt -> cbAddDVCS.getItems().add(dvt));
         cbAddDVCS.getSelectionModel().selectFirst();
-        txtAddGiaByDV.setText(cbAddDVCS.getValue().toString());
     }
 
     // Cat chuoi lay don vi
