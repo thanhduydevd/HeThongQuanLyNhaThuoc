@@ -76,7 +76,7 @@ public class CapNhatPhieuDatController {
 
                 if (selected != null) {
                     selectedPDT = selected; // lưu lại để truyền qua form chi tiết
-                    new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                    new GiaoDienCuaSo("capnhatphieudat").showAndWait();
                     loadDataVaoBang();
                 }
             }
