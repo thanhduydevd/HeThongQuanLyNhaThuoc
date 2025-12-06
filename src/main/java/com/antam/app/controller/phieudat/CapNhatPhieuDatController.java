@@ -53,11 +53,14 @@ public class CapNhatPhieuDatController {
         this.btnThanhToan.setOnAction((e) -> {
             if (tvPhieuDat.getSelectionModel().getSelectedItem() == null){
                 showMess("Cảnh báo","Hãy chọn một phiếu đặt thuốc");
-            }
-            else {
+            } else if (tvPhieuDat.getSelectionModel().getSelectedItem().isThanhToan()) {
+                showMess("Cảnh báo","Phiếu đặt thuốc đã được thanh toán");
+
+            } else {
                 selectedPDT = tvPhieuDat.getSelectionModel().getSelectedItem();
                 new GiaoDienCuaSo("capnhatphieudat").showAndWait();
                 loadDataVaoBang();
+                tvPhieuDat.refresh();
             }
         });
 
@@ -76,7 +79,7 @@ public class CapNhatPhieuDatController {
 
                 if (selected != null) {
                     selectedPDT = selected; // lưu lại để truyền qua form chi tiết
-                    new GiaoDienCuaSo("xemchitietphieudat").showAndWait();
+                    new GiaoDienCuaSo("capnhatphieudat").showAndWait();
                     loadDataVaoBang();
                 }
             }

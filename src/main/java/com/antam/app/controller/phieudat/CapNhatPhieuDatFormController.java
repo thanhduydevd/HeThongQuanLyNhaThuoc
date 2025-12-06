@@ -52,12 +52,14 @@ public class CapNhatPhieuDatFormController {
         setupTable();
         loadBangChiTiet();
 
+
         Button btnThanhToan = (Button) this.dialogPane.lookupButton(applyButton);
         btnThanhToan.setOnAction(event -> {
             if (select.isThanhToan()) {
                 showMess("Cảnh báo","Phiếu đặt thuốc đã được thanh toán");
             }else{
                 thanhToanPhieuDat();
+                showMess("Thông báo","Thanh toán phiếu đặt thuốc thành công");
             }
         });
     }
@@ -69,7 +71,6 @@ public class CapNhatPhieuDatFormController {
     private void showMess(String tieude, String noidung) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(tieude);
-        alert.setHeaderText(null);
         alert.setContentText(noidung);
         alert.showAndWait();
     }

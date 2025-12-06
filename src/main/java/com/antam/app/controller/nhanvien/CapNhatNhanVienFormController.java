@@ -49,8 +49,6 @@ public class CapNhatNhanVienFormController {
             } catch (NumberFormatException ignored) {}
         });
 
-        // Nút Hủy
-        btnHuy.setOnAction(e -> dialogPane.getScene().getWindow().hide());
 
         // Cập nhật nhân viên
         btnSua.setOnAction(e -> {
