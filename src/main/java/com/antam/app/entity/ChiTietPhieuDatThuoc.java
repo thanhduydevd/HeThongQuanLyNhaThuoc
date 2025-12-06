@@ -36,6 +36,15 @@ public class ChiTietPhieuDatThuoc {
         setThanhTien();
     }
 
+    //Constructor cho lúc khởi tạo mẫu chi tiết phiếu đặt
+    public ChiTietPhieuDatThuoc(Thuoc thuoc, int soLuong, DonViTinh dvt){
+        this.maPhieu = new PhieuDatThuoc();
+        this.maThuoc = thuoc;
+        this.soLuong = soLuong;
+        this.donViTinh = dvt;
+        this.thanhTien = soLuong * thuoc.getGiaBan() * (1 + thuoc.getThue());
+    }
+
     public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, Thuoc maThuoc, int soLuong, DonViTinh donViTinh, double thanhTien) {
         this.maPhieu = maPhieu;
         this.maThuoc = maThuoc;
