@@ -49,13 +49,15 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã hóa đơn:" />
                         <TextField fx:id="txtMaHoaDon" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtTenKhachHang" maxHeight="-Infinity" prefHeight="40.0" promptText="Nhập tên khách hàng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc bán:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtSoDienThoai" maxHeight="-Infinity" prefHeight="40.0" promptText="Nhập số điện thoại" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" GridPane.columnIndex="1" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtTenKhachHang" maxHeight="-Infinity" prefHeight="40.0" promptText="Nhập tên khách hàng" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <!-- Header row for medicine section -->

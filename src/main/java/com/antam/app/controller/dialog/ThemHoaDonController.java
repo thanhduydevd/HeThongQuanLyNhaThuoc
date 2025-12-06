@@ -32,6 +32,8 @@ public class ThemHoaDonController {
     @FXML
     private TextField txtMaHoaDon;
     @FXML
+    private TextField txtSoDienThoai;
+    @FXML
     private TextField txtTenKhachHang;
     @FXML
     private ComboBox<Thuoc> cbMedicine;
@@ -78,6 +80,32 @@ public class ThemHoaDonController {
         // Tự động sinh mã hoá đơn mới
         txtMaHoaDon.setText(generateNewMaHoaDon());
         txtMaHoaDon.setEditable(false); // Khóa không cho sửa mã hoá đơn
+
+        // Xử lý tự động điền tên khách hàng khi nhập số điện thoại
+        KhachHang_DAO khachHangDAO = new KhachHang_DAO();
+        txtSoDienThoai.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.trim().isEmpty()) {
+                // Tìm khách hàng theo số điện thoại
+                KhachHang kh = khachHangDAO.getKhachHangTheoSoDienThoai(newVal.trim());
+                if (kh != null) {
+                    // Nếu tìm thấy khách hàng, tự động điền tên và disable ô tên
+                    txtTenKhachHang.setText(kh.getTenKH());
+                    txtTenKhachHang.setDisable(true);
+                    txtTenKhachHang.setStyle("-fx-opacity: 1.0;"); // Giữ màu chữ rõ ràng khi disable
+                } else {
+                    // Nếu không tìm thấy, cho phép nhập tên mới
+                    txtTenKhachHang.clear();
+                    txtTenKhachHang.setDisable(false);
+                    txtTenKhachHang.setStyle("");
+                }
+            } else {
+                // Nếu xóa số điện thoại, reset ô tên
+                txtTenKhachHang.clear();
+                txtTenKhachHang.setDisable(false);
+                txtTenKhachHang.setStyle("");
+            }
+        });
+
         // Load thuốc vào cbMedicine
         Thuoc_DAO thuocDAO = new Thuoc_DAO();
         var thuocList = FXCollections.observableArrayList(thuocDAO.getAllThuoc());
@@ -170,6 +198,17 @@ public class ThemHoaDonController {
             // Reset warning
             txtWarning.setVisible(false);
             txtWarning.setText("");
+
+            // Validate số điện thoại
+            String soDienThoai = txtSoDienThoai.getText().trim();
+            if (soDienThoai.isEmpty()) {
+                txtWarning.setText("Vui lòng nhập số điện thoại khách hàng!");
+                txtWarning.setVisible(true);
+                e.consume();
+                return;
+            }
+
+            // Validate tên khách hàng
             String tenKH = txtTenKhachHang.getText().trim();
             if (tenKH.isEmpty()) {
                 txtWarning.setText("Vui lòng nhập tên khách hàng!");
@@ -241,7 +280,6 @@ public class ThemHoaDonController {
             txtWarning.setText("");
             // 1. Lấy mã khách hàng (tự động thêm nếu chưa có)
             String maKH = getOrCreateMaKhachHang();
-            KhachHang_DAO khachHangDAO = new KhachHang_DAO();
             KhachHang kh = khachHangDAO.getKhachHangTheoMa(maKH);
             // 2. Lấy nhân viên (nếu có ComboBox chọn nhân viên, ví dụ cbEmployee)
             NhanVien_DAO nhanVienDAO = new NhanVien_DAO();
@@ -471,21 +509,25 @@ public class ThemHoaDonController {
         return String.format("HD%03d", max + 1);
     }
 
-    // Xử lý khi nhấn nút tạo hóa đơn
+    // Xử lý khi nhấn nút tạo hóa đơn - Lấy hoặc tạo mã khách hàng dựa trên số điện thoại
     private String getOrCreateMaKhachHang() {
+        String soDienThoai = txtSoDienThoai.getText().trim();
         String tenKH = txtTenKhachHang.getText().trim();
-        if (tenKH.isEmpty()) return null;
+        if (soDienThoai.isEmpty() || tenKH.isEmpty()) return null;
+
         KhachHang_DAO khachHangDAO = new KhachHang_DAO();
-        List<KhachHang> allKH = khachHangDAO.getAllKhachHang();
-        for (KhachHang kh : allKH) {
-            if (kh.getTenKH().equalsIgnoreCase(tenKH)) {
-                return kh.getMaKH();
-            }
+
+        // Tìm khách hàng theo số điện thoại
+        KhachHang existingKH = khachHangDAO.getKhachHangTheoSoDienThoai(soDienThoai);
+        if (existingKH != null) {
+            // Nếu đã có khách hàng với số điện thoại này, trả về mã của họ
+            return existingKH.getMaKH();
         }
+
+        // Nếu chưa có, tạo khách hàng mới với số điện thoại và tên đã nhập
+        List<KhachHang> allKH = khachHangDAO.getAllKhachHang();
         String newMaKH = generateNewMaKhachHang(allKH);
-        // Sinh số điện thoại ngẫu nhiên, đảm bảo không trùng lặp
-        String uniquePhone = generateUniquePhoneNumber(allKH);
-        KhachHang newKH = new KhachHang(newMaKH, tenKH, uniquePhone, false);
+        KhachHang newKH = new KhachHang(newMaKH, tenKH, soDienThoai, false);
         khachHangDAO.insertKhachHang(newKH);
         return newMaKH;
     }

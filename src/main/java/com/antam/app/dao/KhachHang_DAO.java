@@ -110,6 +110,36 @@ public class KhachHang_DAO {
     }
 
     /**
+     * Lấy khách hàng theo số điện thoại
+     * @param soDienThoai số điện thoại khách hàng
+     * @return khách hàng nếu tìm thấy, null nếu không
+     */
+    public KhachHang getKhachHangTheoSoDienThoai(String soDienThoai) {
+        KhachHang kh = null;
+        String sql = "SELECT * FROM KhachHang WHERE SoDienThoai = ? AND DeleteAt = 0";
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, soDienThoai);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                String maKH = rs.getString("MaKH");
+                String tenKH = rs.getString("TenKH");
+                String sdt = rs.getString("SoDienThoai");
+                boolean deleteAt = rs.getBoolean("DeleteAt");
+                kh = new KhachHang(maKH, tenKH, sdt, deleteAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return kh;
+    }
+
+    /**
      * Trả về danh sách tất cả khách hàng trong CSDL
      */
     public ArrayList<KhachHang> getAllKhachHang() {

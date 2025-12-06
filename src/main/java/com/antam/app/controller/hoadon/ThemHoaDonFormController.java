@@ -18,6 +18,8 @@ import javafx.scene.text.Text;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ThemHoaDonFormController {
@@ -25,6 +27,8 @@ public class ThemHoaDonFormController {
     private DialogPane dialogPane;
     @FXML
     private TextField txtMaHoaDon;
+    @FXML
+    private TextField txtSoDienThoai;
     @FXML
     private TextField txtTenKhachHang;
     @FXML
@@ -73,6 +77,31 @@ public class ThemHoaDonFormController {
         // Tự động sinh mã hoá đơn mới
         txtMaHoaDon.setText(generateNewMaHoaDon());
         txtMaHoaDon.setEditable(false); // Khóa không cho sửa mã hoá đơn
+
+        // Xử lý tìm kiếm khách hàng realtime khi nhập số điện thoại
+        KhachHang_DAO khachHangDAO = new KhachHang_DAO();
+        txtSoDienThoai.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.trim().isEmpty()) {
+                // Tìm khách hàng theo số điện thoại
+                KhachHang kh = khachHangDAO.getKhachHangTheoSoDienThoai(newVal.trim());
+                if (kh != null) {
+                    // Nếu tìm thấy khách hàng, tự động điền tên và disable ô tên
+                    txtTenKhachHang.setText(kh.getTenKH());
+                    txtTenKhachHang.setDisable(true);
+                    txtTenKhachHang.setStyle("-fx-opacity: 1.0;"); // Giữ màu chữ rõ ràng khi disable
+                } else {
+                    // Nếu không tìm thấy, cho phép nhập tên mới
+                    txtTenKhachHang.clear();
+                    txtTenKhachHang.setDisable(false);
+                    txtTenKhachHang.setStyle("");
+                }
+            } else {
+                // Nếu xóa số điện thoại, reset ô tên
+                txtTenKhachHang.clear();
+                txtTenKhachHang.setDisable(false);
+                txtTenKhachHang.setStyle("");
+            }
+        });
 
         // Load thuốc vào cbMedicine
         Thuoc_DAO thuocDAO = new Thuoc_DAO();
@@ -171,6 +200,17 @@ public class ThemHoaDonFormController {
             // Reset warning
             txtWarning.setVisible(false);
             txtWarning.setText("");
+
+            // Validate số điện thoại
+            String soDienThoai = txtSoDienThoai.getText().trim();
+            if (soDienThoai.isEmpty()) {
+                txtWarning.setText("Vui lòng nhập số điện thoại khách hàng!");
+                txtWarning.setVisible(true);
+                e.consume();
+                return;
+            }
+
+            // Validate tên khách hàng
             String tenKH = txtTenKhachHang.getText().trim();
             if (tenKH.isEmpty()) {
                 txtWarning.setText("Vui lòng nhập tên khách hàng!");
@@ -236,25 +276,59 @@ public class ThemHoaDonFormController {
             }
             // Kiểm tra tồn kho cho từng thuốc
             ChiTietThuoc_DAO chiTietThuocDAO = new ChiTietThuoc_DAO();
-            boolean enoughStock = true;
-            String outOfStockMedicine = null;
+
+            // Validate và gộp số lượng thuốc trùng lặp
+            Map<String, Integer> medicineQuantityMap = new HashMap<>();
+            Map<String, Double> medicinePriceMap = new HashMap<>();
+            Map<String, DonViTinh> medicineUnitMap = new HashMap<>();
+
             for (var node : medicineRowsVBox.getChildren()) {
                 if (node instanceof HBox hbox) {
                     ComboBox<Thuoc> cb = (ComboBox<Thuoc>) hbox.getChildren().get(0);
+                    ComboBox<DonViTinh> cbUnit = (ComboBox<DonViTinh>) hbox.getChildren().get(1);
                     TextField txtQuantity = (TextField) hbox.getChildren().get(2);
+                    TextField txtPrice = (TextField) hbox.getChildren().get(3);
                     Thuoc thuoc = cb.getValue();
+                    DonViTinh dvt = cbUnit.getValue();
                     int soLuong = 0;
+                    double donGia = 0;
                     try { soLuong = Integer.parseInt(txtQuantity.getText().trim()); } catch(Exception ex) {}
-                    if (thuoc != null && soLuong > 0) {
-                        int tongTonKho = chiTietThuocDAO.getTongTonKhoTheoMaThuoc(thuoc.getMaThuoc());
-                        if (tongTonKho < soLuong) {
-                            enoughStock = false;
-                            outOfStockMedicine = thuoc.getTenThuoc();
-                            break;
-                        }
+                    try { donGia = parseCurrency(txtPrice.getText().trim()); } catch(Exception ex) {}
+
+                    if (thuoc != null && dvt != null && soLuong > 0) {
+                        String maThuoc = thuoc.getMaThuoc();
+                        // Gộp số lượng nếu thuốc trùng
+                        medicineQuantityMap.put(maThuoc, medicineQuantityMap.getOrDefault(maThuoc, 0) + soLuong);
+                        medicinePriceMap.put(maThuoc, donGia);
+                        medicineUnitMap.put(maThuoc, dvt);
                     }
                 }
             }
+
+            // Kiểm tra tồn kho cho các thuốc đã gộp
+            boolean enoughStock = true;
+            String outOfStockMedicine = null;
+            for (Map.Entry<String, Integer> entry : medicineQuantityMap.entrySet()) {
+                String maThuoc = entry.getKey();
+                int tongSoLuong = entry.getValue();
+                int tongTonKho = chiTietThuocDAO.getTongTonKhoTheoMaThuoc(maThuoc);
+                if (tongTonKho < tongSoLuong) {
+                    enoughStock = false;
+                    // Tìm tên thuốc để hiển thị
+                    for (var node : medicineRowsVBox.getChildren()) {
+                        if (node instanceof HBox hbox) {
+                            ComboBox<Thuoc> cb = (ComboBox<Thuoc>) hbox.getChildren().get(0);
+                            Thuoc thuoc = cb.getValue();
+                            if (thuoc != null && thuoc.getMaThuoc().equals(maThuoc)) {
+                                outOfStockMedicine = thuoc.getTenThuoc();
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+
             if (!enoughStock) {
                 txtWarning.setText("Số lượng tồn không đủ cho thuốc: " + outOfStockMedicine);
                 txtWarning.setVisible(true);
@@ -267,7 +341,6 @@ public class ThemHoaDonFormController {
 
             // 1. Lấy mã khách hàng (tự động thêm nếu chưa có)
             String maKH = getOrCreateMaKhachHang();
-            KhachHang_DAO khachHangDAO = new KhachHang_DAO();
             KhachHang kh = khachHangDAO.getKhachHangTheoMa(maKH);
 
             // 2. Lấy nhân viên (nếu có ComboBox chọn nhân viên, ví dụ cbEmployee)
@@ -302,41 +375,37 @@ public class ThemHoaDonFormController {
                 e.consume();
                 return;
             }
-            // 5. Thêm chi tiết hoá đơn cho từng thuốc và trừ kho
+            // 5. Thêm chi tiết hoá đơn cho từng thuốc và trừ kho (sử dụng map đã gộp)
             ChiTietHoaDon_DAO chiTietHoaDonDAO = new ChiTietHoaDon_DAO();
-            for (var node : medicineRowsVBox.getChildren()) {
-                if (node instanceof HBox hbox) {
-                    ComboBox<Thuoc> cb = (ComboBox<Thuoc>) hbox.getChildren().get(0);
-                    ComboBox<DonViTinh> cbUnit = (ComboBox<DonViTinh>) hbox.getChildren().get(1);
-                    TextField txtQuantity = (TextField) hbox.getChildren().get(2);
-                    TextField txtPrice = (TextField) hbox.getChildren().get(3);
-                    txtPrice.setEditable(false); // Khóa không cho sửa giá
-                    Thuoc thuoc = cb.getValue();
-                    DonViTinh dvt = cbUnit.getValue();
-                    int soLuong = 0;
-                    double donGia = 0;
-                    try { soLuong = Integer.parseInt(txtQuantity.getText().trim()); } catch(Exception ex) {}
-                    try { donGia = parseCurrency(txtPrice.getText().trim()); } catch(Exception ex) {}
-                    if (thuoc != null && dvt != null && soLuong > 0) {
-                        // Lấy danh sách các lô ChiTietThuoc còn tồn kho cho thuốc này
-                        List<ChiTietThuoc> listCTT = chiTietThuocDAO.getAllChiTietThuoc().stream()
-                            .filter(ctt -> ctt.getMaThuoc().getMaThuoc().equals(thuoc.getMaThuoc()) && ctt.getSoLuong() > 0)
-                            .sorted(java.util.Comparator.comparing(ctt -> ctt.getHanSuDung())) // Ưu tiên lô hết hạn trước
-                            .collect(Collectors.toList());
-                        int soLuongConLai = soLuong;
-                        for (ChiTietThuoc ctt : listCTT) {
-                            if (soLuongConLai <= 0) break;
-                            int soLuongXuat = Math.min(ctt.getSoLuong(), soLuongConLai);
-                            if (soLuongXuat <= 0) continue;
-                            ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), ctt, soLuongXuat, dvt, "Bán", soLuongXuat * donGia);
-                            chiTietHoaDonDAO.themChiTietHoaDon(cthd);
-                            // Trừ kho lô này (nếu có hàm updateTonKho thì gọi ở đây)
-                            chiTietThuocDAO.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuongXuat);
-                            soLuongConLai -= soLuongXuat;
-                        }
+
+
+            for (Map.Entry<String, Integer> entry : medicineQuantityMap.entrySet()) {
+                String maThuoc = entry.getKey();
+                int soLuong = entry.getValue();
+                double donGia = medicinePriceMap.get(maThuoc);
+                DonViTinh dvt = medicineUnitMap.get(maThuoc);
+
+                Thuoc thuoc = thuocDAO.getThuocTheoMa(maThuoc);
+                if (thuoc != null && dvt != null && soLuong > 0) {
+                    // Lấy danh sách các lô ChiTietThuoc còn tồn kho cho thuốc này
+                    List<ChiTietThuoc> listCTT = chiTietThuocDAO.getAllChiTietThuoc().stream()
+                        .filter(ctt -> ctt.getMaThuoc().getMaThuoc().equals(maThuoc) && ctt.getSoLuong() > 0)
+                        .sorted(java.util.Comparator.comparing(ctt -> ctt.getHanSuDung())) // Ưu tiên lô hết hạn trước
+                        .collect(Collectors.toList());
+                    int soLuongConLai = soLuong;
+                    for (ChiTietThuoc ctt : listCTT) {
+                        if (soLuongConLai <= 0) break;
+                        int soLuongXuat = Math.min(ctt.getSoLuong(), soLuongConLai);
+                        if (soLuongXuat <= 0) continue;
+                        ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), ctt, soLuongXuat, dvt, "Bán", soLuongXuat * donGia);
+                        chiTietHoaDonDAO.themChiTietHoaDon(cthd);
+                        // Trừ kho lô này
+                        chiTietThuocDAO.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuongXuat);
+                        soLuongConLai -= soLuongXuat;
                     }
                 }
             }
+
             // Đóng dialog (nếu cần, có thể show alert thành công ở đây)
             dialogPane.getScene().getWindow().hide();
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -504,21 +573,25 @@ public class ThemHoaDonFormController {
         return String.format("HD%03d", max + 1);
     }
 
-    // Xử lý khi nhấn nút tạo hóa đơn
+    // Xử lý khi nhấn nút tạo hóa đơn - Lấy hoặc tạo mã khách hàng dựa trên số điện thoại
     private String getOrCreateMaKhachHang() {
+        String soDienThoai = txtSoDienThoai.getText().trim();
         String tenKH = txtTenKhachHang.getText().trim();
-        if (tenKH.isEmpty()) return null;
+        if (soDienThoai.isEmpty() || tenKH.isEmpty()) return null;
+
         KhachHang_DAO khachHangDAO = new KhachHang_DAO();
-        List<KhachHang> allKH = khachHangDAO.getAllKhachHang();
-        for (KhachHang kh : allKH) {
-            if (kh.getTenKH().equalsIgnoreCase(tenKH)) {
-                return kh.getMaKH();
-            }
+
+        // Tìm khách hàng theo số điện thoại
+        KhachHang existingKH = khachHangDAO.getKhachHangTheoSoDienThoai(soDienThoai);
+        if (existingKH != null) {
+            // Nếu đã có khách hàng với số điện thoại này, trả về mã của họ
+            return existingKH.getMaKH();
         }
+
+        // Nếu chưa có, tạo khách hàng mới với số điện thoại và tên đã nhập
+        List<KhachHang> allKH = khachHangDAO.getAllKhachHang();
         String newMaKH = generateNewMaKhachHang(allKH);
-        // Sinh số điện thoại ngẫu nhiên, đảm bảo không trùng lặp
-        String uniquePhone = generateUniquePhoneNumber(allKH);
-        KhachHang newKH = new KhachHang(newMaKH, tenKH, uniquePhone, false);
+        KhachHang newKH = new KhachHang(newMaKH, tenKH, soDienThoai, false);
         khachHangDAO.insertKhachHang(newKH);
         return newMaKH;
     }
