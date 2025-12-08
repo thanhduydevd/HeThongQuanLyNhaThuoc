@@ -25,7 +25,7 @@ public class KhuyenMai {
     private boolean deleteAt;
 
     public KhuyenMai(String s, String ten) {
-        MaKM = "";
+        MaKM = s;
         TenKM = ten;
         NgayBatDau = LocalDate.now();
         NgayKetThuc = LocalDate.now();

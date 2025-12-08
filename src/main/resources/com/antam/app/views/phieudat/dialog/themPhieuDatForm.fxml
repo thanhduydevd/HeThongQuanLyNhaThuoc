@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -40,24 +41,30 @@
             <Pane layoutX="14.0" layoutY="14.0" prefHeight="525.0" prefWidth="762.0" AnchorPane.leftAnchor="14.0" />
             <VBox layoutX="10.0" layoutY="10.0" prefHeight="528.0" prefWidth="784.0" spacing="10.0" AnchorPane.leftAnchor="10.0">
                <children>
-                  <GridPane hgap="5.0" prefHeight="69.0" prefWidth="744.0">
+                  <GridPane hgap="5.0" prefHeight="112.0" prefWidth="784.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints />
+                        <RowConstraints maxHeight="24.4" minHeight="10.0" prefHeight="23.599996948242186" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="33.19999694824219" minHeight="10.0" prefHeight="23.600003051757817" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="23.999996948242185" minHeight="10.0" prefHeight="23.999996948242185" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="34.79999999999999" minHeight="10.0" prefHeight="20.000003051757815" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="14.400000000000006" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="9.599996948242193" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu đặt:" />
-                        <TextField fx:id="txtMa" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtTenKhach" maxHeight="-Infinity" prefHeight="40.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đặt:" GridPane.rowIndex="2" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu đặt:" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtMa" maxHeight="-Infinity" prefHeight="24.0" prefWidth="390.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtTenKhach" maxHeight="-Infinity" prefHeight="0.0" prefWidth="390.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtSoDienThoai" maxHeight="-Infinity" prefHeight="0.0" prefWidth="390.0" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
+                  <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đặt:" />
                   <VBox fx:id="vbThuoc" maxWidth="1.7976931348623157E308" prefHeight="58.0" prefWidth="744.0" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -68,25 +75,29 @@
                               <VBox prefHeight="43.0" prefWidth="194.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tên thuốc:" />
-                                    <ComboBox fx:id="cbTenThuoc" prefHeight="26.0" prefWidth="154.0" />
+                                    <ComboBox fx:id="cbTenThuoc" prefHeight="26.0" prefWidth="154.0">
+                                       <stylesheets>
+                                          <URL value="@../../../styles/dashboard_style.css" />
+                                          <URL value="@../../../styles/dashboard_style.css" />
+                                       </stylesheets></ComboBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="43.0" prefWidth="192.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị:" />
-                                    <ComboBox fx:id="cbDonVi" prefHeight="26.0" prefWidth="161.0" />
+                                    <ComboBox fx:id="cbDonVi" prefHeight="26.0" prefWidth="161.0" stylesheets="@../../../styles/dashboard_style.css" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="43.0" prefWidth="183.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng:" />
-                                    <Spinner fx:id="spSoLuong" prefHeight="26.0" prefWidth="150.0" />
+                                    <Spinner fx:id="spSoLuong" prefHeight="26.0" prefWidth="150.0" stylesheets="@../../../styles/dashboard_style.css" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="43.0" prefWidth="216.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá:" />
-                                    <TextField fx:id="txtDonGia" />
+                                    <TextField fx:id="txtDonGia" stylesheets="@../../../styles/dashboard_style.css" />
                                  </children>
                               </VBox>
                            </children>
@@ -96,7 +107,7 @@
                   <Button fx:id="btnThem" mnemonicParsing="false" styleClass="btn-gray" stylesheets="@../../../styles/dashboard_style.css" text="Thêm thuốc" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Áp dụng khuyến mãi:" wrappingWidth="118.93670463562012" />
                   <ComboBox fx:id="cbKhuyenMai" prefHeight="44.0" prefWidth="778.0" promptText="Chọn khuyến mãi" />
-                  <TableView fx:id="tbChonThuoc" prefHeight="200.0" prefWidth="785.0">
+                  <TableView fx:id="tbChonThuoc" stylesheets="@../../../styles/dashboard_style.css">
                      <columns>
                         <TableColumn fx:id="colTenThuoc" prefWidth="192.8000130057335" text="Tên thuốc" />
                         <TableColumn fx:id="colDonVi" prefWidth="168.79998779296875" text="Đơn vị" />

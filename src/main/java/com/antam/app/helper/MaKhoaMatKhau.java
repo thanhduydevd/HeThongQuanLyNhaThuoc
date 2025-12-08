@@ -9,8 +9,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MaKhoaMatKhau {
     /**
      * Tạo mã hóa cho mật khẩu, mỗi lần tạo là một mã hash khác nhau
-     * @param plainPassword (chuỗi mật khẩu cần mã)
-     * @param cost (độ phức tạp, mặc định là 10)
+     * @param plainPassword - chuỗi mật khẩu cần mã
+     * @param cost - độ phức tạp, mặc định là 10
      * @return String(chuỗi mật khẩu đã mã hóa)
      */
     public static String hashPassword(String plainPassword, int cost) {
@@ -19,8 +19,8 @@ public class MaKhoaMatKhau {
 
     /**
      * Giải mã và so sánh chuỗi mật khẩu đầu vào với mật khẩu đã hash
-     * @param plainPassword
-     * @param hashed
+     * @param plainPassword - chuỗi mật khẩu chưa mã hóa
+     * @param hashed - chuỗi mật khẩu đã mã hóa (hash)
      * @return true - chuỗi truyền vào trùng với mật khẩu đã hash trong dbs.
      *        false - chuỗi truyền vào không khớp với mật khẩu đã hash trong dbs.
      */

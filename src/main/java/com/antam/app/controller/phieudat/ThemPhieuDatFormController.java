@@ -8,6 +8,7 @@ package com.antam.app.controller.phieudat;
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.*;
 import com.antam.app.entity.*;
+import com.antam.app.helper.TuDongGoiY;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +31,7 @@ public class ThemPhieuDatFormController {
     @FXML
     private DialogPane dialogPane;
     @FXML
-    private TextField txtMa,txtTenKhach,txtDonGia;
+    private TextField txtMa,txtTenKhach,txtDonGia, txtSoDienThoai;
     @FXML
     private Button btnThem;
     @FXML
@@ -64,6 +65,10 @@ public class ThemPhieuDatFormController {
     KhuyenMai_DAO KhuyenMai_DAO = new KhuyenMai_DAO();
     ArrayList<KhuyenMai> dsKhuyenMai = (ArrayList<KhuyenMai>) KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
     DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
+    ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
+
+
+    private ObservableList<KhachHang> autoKhach = FXCollections.observableArrayList(dsKhach);
 
     public ThemPhieuDatFormController() {
     }
@@ -78,6 +83,7 @@ public class ThemPhieuDatFormController {
 
         //setup phụ
         txtDonGia.setEditable(false);
+        cbDonVi.setDisable(true);
 
         //load ds đơn vị tính.
         dsDonViTinh = donViTinh_dao.getTatCaDonViTinh();
@@ -98,7 +104,7 @@ public class ThemPhieuDatFormController {
         this.dialogPane.getButtonTypes().add(applyButton);
 
         // load ComboBox Khuyến mãi.
-        KhuyenMai nothing = new KhuyenMai("","Không áp dụng");
+        KhuyenMai nothing = new KhuyenMai("None","Không áp dụng");
         cbKhuyenMai.getItems().add(nothing);
         cbKhuyenMai.getItems().addAll(FXCollections.observableArrayList(dsKhuyenMai));
 
@@ -121,21 +127,72 @@ public class ThemPhieuDatFormController {
                 event.consume();
             }
         });
+
+        //thêm thuốc vào table
         btnThem.setOnAction(  e ->   {
-            addThuocVaoTable();
-            loadTongTien();
+            if (approveThuoc()){
+                addThuocVaoTable();
+                loadTongTien();
+            }
         });
 //
         cbKhuyenMai.setOnAction(e -> loadTongTien());
 
         //setup spinner số lượng
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1);
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1);
         spSoLuong.setValueFactory(valueFactory);
+        spSoLuong.setEditable(true);
 
         //sự kiện khi thay đổi comboBox thuốc
         cbTenThuoc.setOnAction(e -> {
             cbDonVi.getSelectionModel().select(cbTenThuoc.getSelectionModel().getSelectedItem().getMaDVTCoSo());
+            txtDonGia.setText(dinhDangTien(cbTenThuoc.getSelectionModel().getSelectedItem().getGiaBan()));
         });
+
+        //sự kiện autocomplete khách hàng
+      TuDongGoiY.goiYKhach(txtTenKhach, txtSoDienThoai, autoKhach);
+    }
+
+    /**
+     * Duyệt thông tin thuốc trước khi thêm vào bảng
+     * @return true - hợp lệ, false - không hợp lệ
+     */
+    private boolean approveThuoc() {
+
+            Thuoc selectedThuoc = cbTenThuoc.getSelectionModel().getSelectedItem();
+            //gọi integer để có thể sử dụng null trong điều kiện
+            Integer soLuongNhap = spSoLuong.getValue();
+
+            // Nếu người dùng chưa chọn thuốc hoặc chọn rỗng
+            if (selectedThuoc == null) {
+                showMess("Thiếu thông tin", "Vui lòng chọn thuốc.");
+                return false;
+            }
+            // Số lượng không hợp lệ
+            if (soLuongNhap == null || soLuongNhap <= 0) {
+                showMess("Số lượng sai", "Số lượng thuốc phải lớn hơn 0.");
+                return false;
+            }
+
+            // Lấy chi tiết thuốc trong kho
+            ArrayList<ChiTietThuoc> dsChiTiet =
+                    chiTietThuoc_dao.getAllCHiTietThuocTheoMaThuoc(selectedThuoc.getMaThuoc());
+            if (dsChiTiet.isEmpty()) {
+                showMess("Hết hàng", "Thuốc \"" + selectedThuoc.getTenThuoc() + "\" hiện không có trong kho.");
+                return false;
+            }
+
+            int tongSoLuongTrongKho = dsChiTiet.stream()
+                    .mapToInt(ChiTietThuoc::getSoLuong)
+                    .sum();
+            // So sánh tồn kho với số lượng nhập
+            if (soLuongNhap > tongSoLuongTrongKho) {
+                showMess("Không đủ số lượng",
+                        "Kho chỉ còn " + tongSoLuongTrongKho +
+                                " đơn vị của thuốc \"" + selectedThuoc.getTenThuoc() + "\".");
+                return false;
+            }
+            return true;
     }
 
     private void loadTable() {
@@ -147,6 +204,14 @@ public class ThemPhieuDatFormController {
                 spSoLuong.getValue(),
                 cbDonVi.getSelectionModel().getSelectedItem());
         txtDonGia.setText(dinhDangTien(ctPDT.getSoDangKy().getGiaBan()));
+        if (list.contains(ctPDT)){
+            int index = list.indexOf(ctPDT);
+            ChiTietPhieuDatThuoc existingCTPDT = list.get(index);
+            existingCTPDT.setSoLuong(existingCTPDT.getSoLuong() + ctPDT.getSoLuong());
+            list.set(index, existingCTPDT);
+            loadTable();
+            return;
+        }
         list.add(ctPDT);
         loadTable();
     }
