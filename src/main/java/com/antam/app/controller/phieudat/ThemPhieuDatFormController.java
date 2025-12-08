@@ -14,13 +14,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -35,7 +32,7 @@ public class ThemPhieuDatFormController {
     @FXML
     private Button btnThem;
     @FXML
-    private Text txtTotal;
+    private Text txtTotal,txtCanhBaoKM;
     @FXML
     private ComboBox<KhuyenMai> cbKhuyenMai;
     @FXML
@@ -66,6 +63,7 @@ public class ThemPhieuDatFormController {
     ArrayList<KhuyenMai> dsKhuyenMai = (ArrayList<KhuyenMai>) KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
     DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
     ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
+    HoaDon_DAO hoaDon_DAO = new HoaDon_DAO();
 
 
     private ObservableList<KhachHang> autoKhach = FXCollections.observableArrayList(dsKhach);
@@ -135,8 +133,31 @@ public class ThemPhieuDatFormController {
                 loadTongTien();
             }
         });
-//
-        cbKhuyenMai.setOnAction(e -> loadTongTien());
+
+        //sự kiện khi thay đổi comboBox khuyến mãi
+        cbKhuyenMai.setOnAction(e -> {
+            KhuyenMai km = cbKhuyenMai.getSelectionModel().getSelectedItem();
+            // Không áp dụng hoặc chọn null
+            if (km == null || km.getTenKM().equals("Không áp dụng")) {
+                txtCanhBaoKM.setText("");
+                loadTongTien();
+                return;
+            }
+            LocalDate today = LocalDate.now();
+            // Chưa đến ngày bắt đầu
+            if (km.getNgayBatDau().isAfter(today)) {
+                txtCanhBaoKM.setText("Khuyến mãi chưa bắt đầu");
+            }
+            // Đã hết hạn
+            else if (km.getNgayKetThuc().isBefore(today)) {
+                txtCanhBaoKM.setText("Khuyến mãi đã hết hạn");
+            }
+            // Hợp lệ
+            else {
+                txtCanhBaoKM.setText("");
+            }
+            loadTongTien();
+        });
 
         //setup spinner số lượng
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1);
@@ -195,10 +216,16 @@ public class ThemPhieuDatFormController {
             return true;
     }
 
+    /**
+     * Load lại bảng thuốc
+     */
     private void loadTable() {
         obsThuoc.setAll(list);
     }
 
+    /**
+     * Thêm thuốc vào bảng nếu đã tồn tại thì cộng dồn số lượng
+     */
     private void addThuocVaoTable() {
         ChiTietPhieuDatThuoc ctPDT = new ChiTietPhieuDatThuoc(cbTenThuoc.getSelectionModel().getSelectedItem(),
                 spSoLuong.getValue(),
@@ -271,6 +298,10 @@ public class ThemPhieuDatFormController {
         return true;
     }
 
+    /**
+     * Tạo mã phiếu đặt mới chưa tồn tại trong dbs
+     * @return String - mã phiếu đặt mới
+     */
     private String getHashPD() {
         String hash = PhieuDat_DAO.getMaxHash();
         if (hash == null){
@@ -281,32 +312,35 @@ public class ThemPhieuDatFormController {
         }
     }
 
+    /**
+     * Tính tổng tiền của phiếu đặt áp dụng khuyến mãi (nếu có)
+     * @return double - tổng tiền sau khi áp dụng khuyến mãi (nếu có)
+     */
     public double tinhTongTien(){
         double tongTien = 0.0;
-        for (Node node : vbThuoc.getChildren()) {
-            if (node instanceof HBox hBox) {
-
-                // Lấy từng VBox con trong HBox
-                VBox vboxThuoc = (VBox) hBox.getChildren().get(0);
-                VBox vboxDonVi = (VBox) hBox.getChildren().get(1);
-                VBox vboxSoLuong = (VBox) hBox.getChildren().get(2);
-                VBox vboxGia= (VBox) hBox.getChildren().get(3);
-
-                // Lấy control trong từng VBox
-                ComboBox<Thuoc> cbDanhSachThuoc = (ComboBox<Thuoc>) vboxThuoc.getChildren().get(1);
-                ComboBox<DonViTinh> cbDonViTinh = (ComboBox<DonViTinh>) vboxDonVi.getChildren().get(1);
-                Spinner<Integer> spSoLuong = (Spinner<Integer>) vboxSoLuong.getChildren().get(1);
-                TextField spGia = (TextField) vboxGia.getChildren().get(1);
-
-                // Tính tổng tiền
-                if (cbDanhSachThuoc.getSelectionModel().getSelectedItem() != null && cbDonViTinh.getSelectionModel().getSelectedItem() != null
-                        && spGia.getText() != null && spSoLuong.getValue() != null){
-                    double giaBan = Double.parseDouble(spGia.getText().trim().replace("đ","").replace(",",""));
-                    tongTien += giaBan * spSoLuong.getValue();
+        for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
+            tongTien += e.getSoLuong() * e.getSoDangKy().getGiaBan();
+        }
+        // Áp dụng khuyến mãi nếu có
+        if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null &&
+                !cbKhuyenMai.getSelectionModel().getSelectedItem().getTenKM().equals("Không áp dụng")) {
+            if (!txtCanhBaoKM.getText().isEmpty()) {
+                return tongTien;
+            }
+            KhuyenMai khuyenMai = cbKhuyenMai.getSelectionModel().getSelectedItem();
+            LoaiKhuyenMai loaiKM = khuyenMai.getLoaiKhuyenMai();
+            int soDaSuDung = hoaDon_DAO.soHoaDonDaCoKhuyenMaiVoiMa(khuyenMai.getMaKM());
+            if (soDaSuDung >= khuyenMai.getSoLuongToiDa()) {
+                return tongTien;
+            }else{
+                if(loaiKM.getMaLKM() == 1){
+                    tongTien = tongTien * (1 - khuyenMai.getSo()/100);
+                }else {
+                    tongTien = tongTien - khuyenMai.getSo();
                 }
             }
         }
-        return tongTien;
+        return tongTien > 0 ? tongTien : 0;
     }
 
     public void showMess(String tieuDe, String vanBan){
@@ -317,20 +351,40 @@ public class ThemPhieuDatFormController {
         alert.showAndWait();
     }
 
+    /**
+     * Cập nhật tổng tiền hiển thị trên giao diện
+     */
     private void loadTongTien(){
         double tongTien = tinhTongTien();
         txtTotal.setText("Tổng tiền: " + decimalFormat.format(tongTien));
     }
     private boolean checkDuLieu() {
+        if (txtTenKhach.getText().trim().isEmpty()) {
+            showMess("Thiếu thông tin", "Vui lòng nhập tên khách hàng.");
+            txtTenKhach.requestFocus();
+            return false;
+        }
+        if (tbChonThuoc.getItems().isEmpty()) {
+            showMess("Thiếu thông tin", "Vui lòng thêm thuốc vào phiếu đặt.");
+            cbTenThuoc.requestFocus();
+            return false;
+        }
         return true;
     }
 
+    /**
+     * hỗ trợ định dạng tiền
+     * @param tien
+     * @return String - tiền đã được định dạng
+     */
     public String dinhDangTien(double tien){
         DecimalFormat df = new DecimalFormat("#,###đ");
         return df.format(tien);
     }
 
-
+    /**
+     * Cài đặt các cột trong bảng
+     */
     private void setupTable(){
         colTenThuoc.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getSoDangKy().getTenThuoc()));
         colDonVi.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getSoDangKy().getMaDVTCoSo().getTenDVT()));
