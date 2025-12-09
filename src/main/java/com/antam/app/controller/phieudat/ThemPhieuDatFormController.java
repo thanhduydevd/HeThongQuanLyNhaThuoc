@@ -32,7 +32,7 @@ public class ThemPhieuDatFormController {
     @FXML
     private Button btnThem;
     @FXML
-    private Text txtTotal,txtCanhBaoKM;
+    private Text txtTotal,txtCanhBaoKM, txtCanhBaoSDT;
     @FXML
     private ComboBox<KhuyenMai> cbKhuyenMai;
     @FXML
@@ -64,6 +64,7 @@ public class ThemPhieuDatFormController {
     DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
     ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
     HoaDon_DAO hoaDon_DAO = new HoaDon_DAO();
+    ChiTietThuoc_DAO chiTietThuoc_DAO = new ChiTietThuoc_DAO();
 
 
     private ObservableList<KhachHang> autoKhach = FXCollections.observableArrayList(dsKhach);
@@ -126,6 +127,7 @@ public class ThemPhieuDatFormController {
             }
         });
 
+
         //thêm thuốc vào table
         btnThem.setOnAction(  e ->   {
             if (approveThuoc()){
@@ -166,12 +168,59 @@ public class ThemPhieuDatFormController {
 
         //sự kiện khi thay đổi comboBox thuốc
         cbTenThuoc.setOnAction(e -> {
-            cbDonVi.getSelectionModel().select(cbTenThuoc.getSelectionModel().getSelectedItem().getMaDVTCoSo());
+
+            if (cbTenThuoc.getSelectionModel().getSelectedItem() == null) {
+                return;
+            }
+
+            for (DonViTinh dvt : cbDonVi.getItems()) {
+                if (dvt.getMaDVT() == cbTenThuoc.getSelectionModel().getSelectedItem().getMaDVTCoSo().getMaDVT() ) {
+                    cbDonVi.getSelectionModel().select(dvt);
+                    break;
+                }
+            }
+
             txtDonGia.setText(dinhDangTien(cbTenThuoc.getSelectionModel().getSelectedItem().getGiaBan()));
         });
 
+        //sự kiện thay đổi số điện thoại
+        txtSoDienThoai.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.isBlank()) {
+                txtCanhBaoSDT.setText("");
+                return;
+            }
+
+            if (!newValue.matches("^0[35679]\\d{8}$")) {
+                txtCanhBaoSDT.setText("Số điện thoại không hợp lệ");
+            } else {
+                txtCanhBaoSDT.setText("");
+            }
+        });
+
+
         //sự kiện autocomplete khách hàng
       TuDongGoiY.goiYKhach(txtTenKhach, txtSoDienThoai, autoKhach);
+
+      //sự kiện xóa thuốc khỏi bảng
+        tbChonThuoc.setRowFactory( tv -> {
+            TableRow<ChiTietPhieuDatThuoc> row = new TableRow<>();
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem deleteItem = new MenuItem("Xóa thuốc khỏi bảng");
+            deleteItem.setOnAction( event -> {
+                ChiTietPhieuDatThuoc selectedItem = row.getItem();
+                list.remove(selectedItem);
+                loadTable();
+                loadTongTien();
+            });
+            contextMenu.getItems().add(deleteItem);
+            // Chỉ hiển thị menu khi có dữ liệu
+            row.contextMenuProperty().bind(
+                    javafx.beans.binding.Bindings.when(row.emptyProperty())
+                            .then((ContextMenu)null)
+                            .otherwise(contextMenu)
+            );
+            return row;
+        });
     }
 
     /**
@@ -207,11 +256,19 @@ public class ThemPhieuDatFormController {
                     .mapToInt(ChiTietThuoc::getSoLuong)
                     .sum();
             // So sánh tồn kho với số lượng nhập
-            if (soLuongNhap > tongSoLuongTrongKho) {
-                showMess("Không đủ số lượng",
-                        "Kho chỉ còn " + tongSoLuongTrongKho +
-                                " đơn vị của thuốc \"" + selectedThuoc.getTenThuoc() + "\".");
-                return false;
+
+        int soLuongdaChon = 0;
+        for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
+            if (ct.getSoDangKy().getMaThuoc().equals(selectedThuoc.getMaThuoc())) {
+                soLuongdaChon += ct.getSoLuong();
+            }
+        }
+
+        if ( (soLuongNhap + soLuongdaChon) > tongSoLuongTrongKho) {
+            showMess("Không đủ số lượng",
+                    "đơn vị của thuốc " + selectedThuoc.getTenThuoc() +
+                         " Kho chỉ còn \"" + (tongSoLuongTrongKho -soLuongdaChon)+ "\".");
+            return false;
             }
             return true;
     }
@@ -241,62 +298,114 @@ public class ThemPhieuDatFormController {
         }
         list.add(ctPDT);
         loadTable();
+        loadTongTien();
     }
 
     private void themPhieuDat() {
+        // Kiểm tra nhân viên
         String hashPD = getHashPD();
-        NhanVien tenNguoiDat = PhienNguoiDung.getMaNV();
-        if (tenNguoiDat == null) {
-            showMess("Lỗi người dùng", "Không tìm thấy thông tin người đặt");
-            txtTenKhach.requestFocus();
+        NhanVien nguoiDat = PhienNguoiDung.getMaNV();
+
+        if (nguoiDat == null) {
+            showMess("Lỗi người dùng", "Không tìm thấy thông tin người đặt.");
             return;
         }
-        KhachHang khachMoi = null;
-        if (checkKhachHang()) {
-            khachMoi = new KhachHang();
-            khachMoi.setTenKH(txtTenKhach.getText().trim());
-            khachHangDAO.insertKhachHang(khachMoi);
-        }else{
-            for (KhachHang khachHang : dsKhach) {
-                if (khachHang.getTenKH().equalsIgnoreCase(txtTenKhach.getText().trim())) {
-                    khachMoi = khachHang;
-                }
+
+        // Lấy thông tin khách nhập vào
+        String ten = txtTenKhach.getText().trim();
+        String sdt = txtSoDienThoai.getText().trim();
+        if (ten.isEmpty() || sdt.isEmpty()) {
+            showMess("Lỗi khách hàng", "Vui lòng nhập đầy đủ tên và số điện thoại khách hàng.");
+            return;
+        }
+
+        // ===== XÁC ĐỊNH KHÁCH HÀNG =====
+
+        KhachHang khach;
+
+        if (isKhachHangMoi()) {
+            //khách mới
+            khach = new KhachHang(getMaKhachMoi());
+            khach.setTenKH(ten);
+            khach.setSoDienThoai(sdt);
+
+            khachHangDAO.insertKhachHang(khach);
+
+        } else {
+            //khách cũ: tìm theo SĐT
+            khach = dsKhach.stream()
+                    .filter(k -> k.getSoDienThoai().equals(sdt))
+                    .findFirst()
+                    .orElse(null);
+
+            if (khach == null) {
+                showMess("Lỗi khách hàng", "Không tìm thấy thông tin khách hàng cũ.");
+                return;
             }
         }
+
+        // ===== KIỂM TRA BẢNG THUỐC =====
+        if (tbChonThuoc.getItems().isEmpty()) {
+            showMess("Lỗi dữ liệu", "Vui lòng chọn ít nhất một loại thuốc.");
+            return;
+        }
+
+        // ===== XỬ LÝ KHUYẾN MÃI =====
+        KhuyenMai km = cbKhuyenMai.getSelectionModel().getSelectedItem();
+        if (km != null && km.getTenKM().equals("Không áp dụng")) {
+            km = null;
+        }
+
+        // ===== TÍNH TỔNG TIỀN =====
         double tongTien = tinhTongTien();
-        PhieuDatThuoc i = new PhieuDatThuoc(hashPD, LocalDate.now(),
+
+        // ===== TẠO PHIẾU ĐẶT =====
+        PhieuDatThuoc phieu = new PhieuDatThuoc(
+                hashPD,
+                LocalDate.now(),
                 false,
-                tenNguoiDat,
-                khachMoi,
-                cbKhuyenMai.getSelectionModel().getSelectedItem().getTenKM().equals("Không áp dụng") ? null : cbKhuyenMai.getSelectionModel().getSelectedItem(),
-                tongTien);
-        PhieuDat_DAO.themPhieuDatThuocVaoDBS(i);
+                nguoiDat,
+                khach,
+                km,
+                tongTien
+        );
 
-        //tạo chi tiết phiếu đặt
+        PhieuDat_DAO.themPhieuDatThuocVaoDBS(phieu);
 
-        for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
-            ChiTietPhieuDat_DAO.themChiTietPhieuDatVaoDBS(new ChiTietPhieuDatThuoc(
-                    i,
-                    e.getSoDangKy(),
-                    e.getSoLuong(),
-                    e.getDonViTinh()
-            ));
+        // ===== TẠO CHI TIẾT =====
+        for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
+            ChiTietPhieuDat_DAO.themChiTietPhieuDatVaoDBS(
+                    new ChiTietPhieuDatThuoc(phieu, ct.getSoDangKy(), ct.getSoLuong(), ct.getDonViTinh())
+            );
         }
     }
 
     /**
-     * Kiểm tra khách hàng đã tồn tại chưa
-     * @return true - chưa tồn tại, false - đã tồn tại
+     * Tạo mã khách hàng mới với đinh dạng KHxxxxxxxxx (x là số bất kì, có 9 số)
+     * @return
      */
-    private boolean checkKhachHang(){
+    private String getMaKhachMoi() {
+        int newNum = khachHangDAO. getMaxHash() +1;
+        return String.format("KH%09d", newNum);
+    }
 
-        for (KhachHang khachHang : dsKhach) {
-            if (khachHang.getTenKH().equalsIgnoreCase(txtTenKhach.getText().trim())) {
+
+    /**
+     * Kiểm tra khách hàng đã tồn tại chưa
+     * @return true - khách mới. false - khách đã tồn tại.
+     */
+    private boolean isKhachHangMoi() {
+        String sdt = txtSoDienThoai.getText().trim();
+        if (sdt == null || sdt.isEmpty()) return true;
+
+        for (KhachHang kh : dsKhach) {
+            if (kh.getSoDienThoai().equals(sdt)) {
                 return false;
             }
         }
         return true;
     }
+
 
     /**
      * Tạo mã phiếu đặt mới chưa tồn tại trong dbs
@@ -330,8 +439,9 @@ public class ThemPhieuDatFormController {
             KhuyenMai khuyenMai = cbKhuyenMai.getSelectionModel().getSelectedItem();
             LoaiKhuyenMai loaiKM = khuyenMai.getLoaiKhuyenMai();
             int soDaSuDung = hoaDon_DAO.soHoaDonDaCoKhuyenMaiVoiMa(khuyenMai.getMaKM());
+//            System.out.println("Số hóa đơn: "+soDaSuDung);
             if (soDaSuDung >= khuyenMai.getSoLuongToiDa()) {
-                return tongTien;
+                return tongTien > 0? tongTien : 0;
             }else{
                 if(loaiKM.getMaLKM() == 1){
                     tongTien = tongTien * (1 - khuyenMai.getSo()/100);
@@ -340,6 +450,7 @@ public class ThemPhieuDatFormController {
                 }
             }
         }
+
         return tongTien > 0 ? tongTien : 0;
     }
 
@@ -364,9 +475,23 @@ public class ThemPhieuDatFormController {
             txtTenKhach.requestFocus();
             return false;
         }
+        if (txtSoDienThoai.getText().trim().isEmpty()){
+            showMess("Thiếu thông tin số điện thọai khách hàng", "Vui lòng nhập số điện thoại khách hàng.");
+            txtSoDienThoai.requestFocus();;
+            return false;
+        }
+        if (!txtSoDienThoai.getText().matches("^0[35679]\\d{8}$")){
+            showMess("Thông tin số điện thọai khách hàng không hợp lệ", "Số điện thoại khách hàng phải có 10 số và bắt đầu với 03, 05, 06, 07, 09.");
+            txtSoDienThoai.requestFocus();;
+            return false;
+        }
         if (tbChonThuoc.getItems().isEmpty()) {
             showMess("Thiếu thông tin", "Vui lòng thêm thuốc vào phiếu đặt.");
             cbTenThuoc.requestFocus();
+            return false;
+        }
+        if (txtTotal.getText().equals("Tổng tiền: 0 đ")) {
+            showMess("Tổng tiền bằng 0", "Giá trị tổng tiền không hợp lệ.");
             return false;
         }
         return true;

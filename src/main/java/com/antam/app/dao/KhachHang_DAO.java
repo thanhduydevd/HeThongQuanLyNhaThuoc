@@ -335,4 +335,20 @@ public class KhachHang_DAO {
         }
         return 0;
     }
+
+    public int getMaxHash() {
+        int hash = 0;
+        Connection connection = ConnectDB.getConnection();
+        String sql = "select top 1 MaKH from KhachHang order by MaKH desc";
+        try {
+            PreparedStatement state = connection.prepareStatement(sql);
+            ResultSet result = state.executeQuery();
+            if (result.next()){
+                hash = Integer.parseInt(result.getString(1).replace("KH",""));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return hash;
+    }
 }

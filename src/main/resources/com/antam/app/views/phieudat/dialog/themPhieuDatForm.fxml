@@ -39,9 +39,9 @@
       <AnchorPane prefHeight="557.0" prefWidth="800.0">
          <children>
             <Pane layoutX="14.0" layoutY="14.0" prefHeight="525.0" prefWidth="762.0" AnchorPane.leftAnchor="14.0" />
-            <VBox layoutX="31.200000000000003" layoutY="10.0" prefHeight="548.0" prefWidth="784.0" spacing="10.0" AnchorPane.leftAnchor="16.0">
+            <VBox layoutX="36.8" layoutY="10.0" prefHeight="587.0" prefWidth="784.0" spacing="10.0" AnchorPane.leftAnchor="26.0">
                <children>
-                  <GridPane hgap="5.0" prefHeight="372.0" prefWidth="784.0" stylesheets="@../../../styles/dashboard_style.css">
+                  <GridPane hgap="5.0" prefHeight="502.0" prefWidth="784.0" stylesheets="@../../../styles/dashboard_style.css">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -59,20 +59,24 @@
                         <TextField fx:id="txtTenKhach" maxHeight="-Infinity" prefHeight="30.0" prefWidth="389.0" styleClass="text-field" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên khách hàng:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="txtSoDienThoai" maxHeight="-Infinity" prefHeight="73.0" prefWidth="398.0" stylesheets="@../../../styles/dashboard_style.css" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" />
+                              <Text fx:id="txtCanhBaoSDT" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />
+                           </children>
+                        </HBox>
                      </children>
                   </GridPane>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="200.0">
+                        <HBox prefHeight="6.0" prefWidth="784.0">
                            <children>
                               <Text fill="#374151" strokeType="OUTSIDE" strokeWidth="0.0" text="Thuốc đặt:" />
-                              <Text fx:id="txtCanhBaoKM" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox fx:id="vbThuoc" maxWidth="1.7976931348623157E308" prefHeight="58.0" prefWidth="744.0" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
+                  <VBox fx:id="vbThuoc" maxWidth="1.7976931348623157E308" prefHeight="366.0" prefWidth="784.0" spacing="5.0" style="-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
@@ -120,19 +124,20 @@
                               <Text fx:id="txtCanhBaoKM" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="118.93670463562012" />
                            </children>
                         </HBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                        <ComboBox fx:id="cbKhuyenMai" prefHeight="64.0" prefWidth="778.0" promptText="Chọn khuyến mãi" stylesheets="@../../../styles/dashboard_style.css" />
                      </children>
                   </VBox>
-                  <ComboBox fx:id="cbKhuyenMai" prefHeight="64.0" prefWidth="778.0" promptText="Chọn khuyến mãi" stylesheets="@../../../styles/dashboard_style.css" />
-                  <TableView fx:id="tbChonThuoc" stylesheets="@../../../styles/dashboard_style.css">
+                  <TableView fx:id="tbChonThuoc" prefHeight="610.0" prefWidth="784.0" stylesheets="@../../../styles/dashboard_style.css">
                      <columns>
-                        <TableColumn fx:id="colTenThuoc" prefWidth="192.8000130057335" text="Tên thuốc" />
-                        <TableColumn fx:id="colDonVi" prefWidth="168.79998779296875" text="Đơn vị" />
-                        <TableColumn fx:id="colSoLuong" prefWidth="110.4000244140625" text="Số lượng" />
-                        <TableColumn fx:id="colDonGia" prefWidth="166.39996337890625" text="Đơn giá" />
-                        <TableColumn fx:id="colThanhTien" prefWidth="143.2000732421875" text="Thành tiền" />
+                        <TableColumn fx:id="colTenThuoc" prefWidth="199.9999361038208" text="Tên thuốc" />
+                        <TableColumn fx:id="colDonVi" prefWidth="127.20008850097656" text="Đơn vị" />
+                        <TableColumn fx:id="colSoLuong" prefWidth="145.60003662109375" text="Số lượng" />
+                        <TableColumn fx:id="colDonGia" prefWidth="152.79998779296875" text="Đơn giá" />
+                        <TableColumn fx:id="colThanhTien" prefWidth="139.20001220703125" text="Thành tiền" />
                      </columns>
                   </TableView>
-                  <GridPane hgap="5.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8px;">
+                  <GridPane hgap="5.0" prefHeight="100.0" prefWidth="784.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8px;">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
