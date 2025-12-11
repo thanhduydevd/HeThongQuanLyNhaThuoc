@@ -24,12 +24,12 @@ public class ConnectDB {
         return instance;
     }
     public Connection connect() throws SQLException {
-        String url = "jdbc:sqlserver://34.171.249.19:1433;databasename=QuanLyNhaThuoc";
-        String user = "sqlserver";
-        String password = "0867424460";
-//        String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
-//        String user = "sa";
-//        String password = "admin";
+//        String url = "jdbc:sqlserver://34.171.249.19:1433;databasename=QuanLyNhaThuoc";
+//        String user = "sqlserver";
+//        String password = "0867424460";
+        String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
+        String user = "Duong";
+        String password = "Qlinh2702";
         con = DriverManager.getConnection(url, user, password);
         return con;
     }

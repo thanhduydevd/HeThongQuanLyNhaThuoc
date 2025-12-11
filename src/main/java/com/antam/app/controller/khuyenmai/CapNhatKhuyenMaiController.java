@@ -33,7 +33,7 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
     private ComboBox<String> cbLoaiKhuyenMai, cbTrangThai;
     private DatePicker dpTuNgay, dpDenNgay;
     private TextField txtTiemKiemKhuyenMai;
-    private Button btnTimKiem;
+    private Button btnTimKiem, btnclear;
     private TableView<KhuyenMai> tableKhuyenMai;
     
     private TableColumn<KhuyenMai, String> colMaKhuyenMai, colTenKhuyenMai, colLoaiKhuyenMai, colSo, colSoLuongToiDa, colTinhTrang;
@@ -90,11 +90,27 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
         dpTuNgay = new DatePicker();
         dpDenNgay = new DatePicker();
 
+        // --- Button Xóa rỗng ---
+        btnclear = new Button("Xoá rỗng");
+        btnclear.setPrefSize(93, 40);
+        btnclear.getStyleClass().add("btn-xoarong");
+        btnclear.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon ref = new FontAwesomeIcon();
+        ref.setGlyphName("REFRESH");
+        ref.setFill(Color.WHITE);
+        btnclear.setGraphic(ref);
+
+        VBox boxXoa = new VBox(5);
+        boxXoa.getChildren().addAll(new Text(""), btnclear);
+
+
         filterPane.getChildren().addAll(
                 createBox("Loại khuyến mãi:", cbLoaiKhuyenMai),
                 createBox("Trạng thái:", cbTrangThai),
                 createBox("Từ ngày:", dpTuNgay),
-                createBox("Đến ngày:", dpDenNgay)
+                createBox("Đến ngày:", dpDenNgay),
+                boxXoa
         );
 
         // ========================= TÌM KIẾM =========================
@@ -207,6 +223,8 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
         dpTuNgay.setOnAction(e -> fiterAndSearch());
         dpDenNgay.setOnAction(e -> fiterAndSearch());
         txtTiemKiemKhuyenMai.setOnKeyReleased(e -> fiterAndSearch());
+        // su kien xoa rong
+        btnclear.setOnAction(e -> clearFilters());
     }
 
     private VBox createBox(String title, Control field) {
@@ -286,6 +304,14 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
         khuyenMaiList.clear();
         khuyenMaiList.addAll(filteredList);
         tableKhuyenMai.setItems(khuyenMaiList);
+    }
+    public void clearFilters() {
+        cbLoaiKhuyenMai.getSelectionModel().selectFirst();
+        cbTrangThai.getSelectionModel().selectFirst();
+        dpTuNgay.setValue(null);
+        dpDenNgay.setValue(null);
+        txtTiemKiemKhuyenMai.clear();
+        updateTableKhuyenMai();
     }
     public void updateTableKhuyenMai(){
         khuyenMaiList.clear();

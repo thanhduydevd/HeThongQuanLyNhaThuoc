@@ -246,21 +246,26 @@ public class ThemThuocController extends ScrollPane{
         // su kien table view
         tableThuoc.setRowFactory(tv -> {
             TableRow<Thuoc> row = new TableRow<>();
+
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     Thuoc selectedThuoc = row.getItem();
+
                     XemChiTietThuocFormController xemDialog = new XemChiTietThuocFormController();
                     xemDialog.setThuoc(selectedThuoc);
+                    xemDialog.showData();
+
                     Dialog<Void> dialog = new Dialog<>();
                     dialog.setDialogPane(xemDialog);
                     dialog.setTitle("Chi tiết thuốc");
                     dialog.initModality(Modality.APPLICATION_MODAL);
-
                     dialog.showAndWait();
                 }
             });
+
             return row;
         });
+
 
         btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
     }
