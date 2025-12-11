@@ -177,22 +177,45 @@ public class ChiTietHoaDon_DAO {
      * @return true nếu thêm thành công, false nếu thêm thất bại
      */
     public boolean themChiTietHoaDon(ChiTietHoaDon cthd){
-        String sql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+        // Kiểm tra xem đã tồn tại chi tiết hóa đơn với MaHD và MaCTT này chưa
+        String checkSql = "SELECT SoLuong, ThanhTien FROM ChiTietHoaDon WHERE MaHD = ? AND MaCTT = ?";
+        String updateSql = "UPDATE ChiTietHoaDon SET SoLuong = SoLuong + ?, ThanhTien = ThanhTien + ? WHERE MaHD = ? AND MaCTT = ?";
+        String insertSql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+
         try{
             Connection con = ConnectDB.getConnection();
             if (con == null || con.isClosed()) {
                 ConnectDB.getInstance().connect();
                 con = ConnectDB.getConnection();
             }
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, cthd.getMaHD().getMaHD());
-            statement.setInt(2, cthd.getMaCTT().getMaCTT());
-            statement.setInt(3, cthd.getSoLuong());
-            statement.setInt(4, cthd.getMaDVT().getMaDVT());
-            statement.setString(5, cthd.getTinhTrang());
-            statement.setDouble(6, cthd.getThanhTien());
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+
+            // Kiểm tra xem đã tồn tại chưa
+            PreparedStatement checkStmt = con.prepareStatement(checkSql);
+            checkStmt.setString(1, cthd.getMaHD().getMaHD());
+            checkStmt.setInt(2, cthd.getMaCTT().getMaCTT());
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // Đã tồn tại -> UPDATE cộng thêm số lượng và thành tiền
+                PreparedStatement updateStmt = con.prepareStatement(updateSql);
+                updateStmt.setInt(1, cthd.getSoLuong());
+                updateStmt.setDouble(2, cthd.getThanhTien());
+                updateStmt.setString(3, cthd.getMaHD().getMaHD());
+                updateStmt.setInt(4, cthd.getMaCTT().getMaCTT());
+                int rowsAffected = updateStmt.executeUpdate();
+                return rowsAffected > 0;
+            } else {
+                // Chưa tồn tại -> INSERT mới
+                PreparedStatement insertStmt = con.prepareStatement(insertSql);
+                insertStmt.setString(1, cthd.getMaHD().getMaHD());
+                insertStmt.setInt(2, cthd.getMaCTT().getMaCTT());
+                insertStmt.setInt(3, cthd.getSoLuong());
+                insertStmt.setInt(4, cthd.getMaDVT().getMaDVT());
+                insertStmt.setString(5, cthd.getTinhTrang());
+                insertStmt.setDouble(6, cthd.getThanhTien());
+                int rowsAffected = insertStmt.executeUpdate();
+                return rowsAffected > 0;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
