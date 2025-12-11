@@ -18,32 +18,148 @@ import javafx.scene.text.Text;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-public class ThemKhuyenMaiFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class ThemKhuyenMaiFormController extends DialogPane{
+
     private TextField txtMaKhuyenMai, txtTenKhuyenMai;
-    @FXML
     private ComboBox<LoaiKhuyenMai> cbLoaiKhuyenMai;
-    @FXML
     private Spinner<Integer> spSo, spSoLuongToiDa;
-    @FXML
     private DatePicker dpNgayBacDau, dpNgayKetThuc;
-    @FXML
+    
     private Text txtThongBao;
     private KhuyenMai_DAO khuyenMai_dao = new KhuyenMai_DAO();
     private LoaiKhuyenMai_DAO loaiKhuyenMai_dao = new LoaiKhuyenMai_DAO();
 
     public ThemKhuyenMaiFormController() {
-    }
+        this.setPrefSize(800, 600);
+        FlowPane header = new FlowPane();
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
 
-    public void initialize() {
+        Text title = new Text("Thêm khuyến mãi mới");
+        title.setFill(javafx.scene.paint.Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
+
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        // ======================= CONTENT ===========================
+        AnchorPane anchor = new AnchorPane();
+        VBox main = new VBox(10);
+
+        AnchorPane.setLeftAnchor(main, 0.0);
+        AnchorPane.setRightAnchor(main, 0.0);
+
+        // ======================= GRIDPANE ===========================
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        for (int i = 0; i < 8; i++) {
+            RowConstraints row = new RowConstraints(40);
+            row.setVgrow(Priority.SOMETIMES);
+            grid.getRowConstraints().add(row);
+        }
+
+        // ======================= COMPONENTS ===========================
+        Text lblMa = new Text("Mã khuyến mãi:");
+        lblMa.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        txtMaKhuyenMai = new TextField();
+        txtMaKhuyenMai.getStyleClass().add("text-field");
+        txtMaKhuyenMai.setPrefHeight(40);
+
+        Text lblTen = new Text("Tên khuyến mãi:");
+        lblTen.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        txtTenKhuyenMai = new TextField();
+        txtTenKhuyenMai.setPrefHeight(40);
+        txtTenKhuyenMai.getStyleClass().add("text-field");
+
+        Text lblLoai = new Text("Loại khuyến mãi:");
+        lblLoai.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        cbLoaiKhuyenMai = new ComboBox<>();
+        cbLoaiKhuyenMai.setPrefHeight(40);
+
+        Text lblSo = new Text("Số (Giá trị):");
+        lblSo.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        spSo = new Spinner<>();
+        spSo.setEditable(true);
+        spSo.setPrefHeight(40);
+
+        Text lblNgayBD = new Text("Ngày bắt đầu:");
+        lblNgayBD.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        dpNgayBacDau = new DatePicker();
+        dpNgayBacDau.setPrefHeight(40);
+
+        Text lblNgayKT = new Text("Ngày kết thúc:");
+        lblNgayKT.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        dpNgayKetThuc = new DatePicker();
+        dpNgayKetThuc.setPrefHeight(40);
+
+        Text lblSoLuong = new Text("Số lượng tối đa:");
+        lblSoLuong.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        spSoLuongToiDa = new Spinner<>();
+        spSoLuongToiDa.setEditable(true);
+        spSoLuongToiDa.setPrefHeight(40);
+
+        txtThongBao = new Text();
+        txtThongBao.setFill(javafx.scene.paint.Color.RED);
+
+        // ======================= ADD TO GRID ===========================
+        grid.add(lblMa, 0, 0);
+        grid.add(txtMaKhuyenMai, 0, 1);
+
+        grid.add(lblTen, 1, 0);
+        grid.add(txtTenKhuyenMai, 1, 1);
+
+        grid.add(lblLoai, 0, 2);
+        grid.add(cbLoaiKhuyenMai, 0, 3);
+
+        grid.add(lblSo, 1, 2);
+        grid.add(spSo, 1, 3);
+
+        grid.add(lblNgayBD, 0, 4);
+        grid.add(dpNgayBacDau, 0, 5);
+
+        grid.add(lblNgayKT, 1, 4);
+        grid.add(dpNgayKetThuc, 1, 5);
+
+        grid.add(lblSoLuong, 0, 6);
+        grid.add(spSoLuongToiDa, 0, 7);
+
+        grid.add(txtThongBao, 1, 7);
+
+        main.getChildren().add(grid);
+        anchor.getChildren().add(main);
+
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        this.setContent(anchor);
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
-        Button applyBtn = (Button) this.dialogPane.lookupButton(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
+        Button applyBtn = (Button) this.lookupButton(applyButton);
 
         try {
             Connection con = ConnectDB.getInstance().getConnection();

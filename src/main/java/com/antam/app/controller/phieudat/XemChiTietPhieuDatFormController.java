@@ -25,33 +25,152 @@ import java.util.ArrayList;
 
 import static com.antam.app.controller.phieudat.TimPhieuDatController.selectedPhieuDatThuoc;
 
-public class XemChiTietPhieuDatFormController {
-    @FXML
-    DialogPane dialogPane;
-    @FXML
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class XemChiTietPhieuDatFormController extends DialogPane{
     private Text txtMa,txtNgay,txtSDT,txtStatus,txtTongTien,txtKM;
-    @FXML
+    
     private TableColumn<ChiTietPhieuDatThuoc,Integer> colSTT;
-    @FXML
+    
     private TableColumn<ChiTietPhieuDatThuoc,String> colTenThuoc,colThanhTien,colDonGia;
-    @FXML
+    
     private TableColumn<ChiTietPhieuDatThuoc,Integer> colSoLuong;
-    @FXML
+    
     private TableView<ChiTietPhieuDatThuoc> tbThuoc;
 
     private PhieuDatThuoc select = selectedPhieuDatThuoc;
     private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = PhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
     public XemChiTietPhieuDatFormController() {
-    }
+        this.setPrefSize(800, 662);
+        FlowPane headerPane = new FlowPane();
+        headerPane.setAlignment(Pos.CENTER);
+        headerPane.setStyle("-fx-background-color: #1e3a8a;");
 
-    public void initialize() {
+        Text headerText = new Text("Chi tiết phiếu đặt");
+        headerText.setFill(Color.WHITE);
+        headerText.setFont(Font.font("System", FontWeight.BOLD, 15));
+        FlowPane.setMargin(headerText, new Insets(10, 0, 10, 0));
+
+        headerPane.getChildren().add(headerText);
+        this.setHeader(headerPane);
+
+
+        /* ================ MAIN CONTENT ================ */
+        VBox mainVBox = new VBox(10);
+        mainVBox.setPadding(new Insets(10));
+
+
+        /* ============= BLUE INFO BOX ============= */
+        VBox infoBox = new VBox(5);
+        infoBox.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        infoBox.setPadding(new Insets(10, 100, 10, 10));
+
+        txtMa = createWhiteText("Mã phiếu đặt: --", 20, true);
+        txtNgay = createWhiteText("Ngày đặt: --", 13, false);
+        txtSDT = createWhiteText("Tên khách hàng: --", 13, false);
+        txtStatus = createWhiteText("Trạng thái: --", 13, false);
+
+        infoBox.getChildren().addAll(txtMa, txtNgay, txtSDT, txtStatus);
+
+
+        /* ============= LABEL ============= */
+        Text labelThuoc = new Text("Danh sách thuốc đặt:");
+        labelThuoc.setFont(Font.font(14));
+
+
+        /* ============= TABLE ============= */
+        tbThuoc = new TableView<>();
+        tbThuoc.setPrefHeight(350);
+
+        VBox.setVgrow(tbThuoc, Priority.ALWAYS); // fix table co lại
+
+        colSTT = new TableColumn<>("STT");
+        colSTT.setPrefWidth(70);
+
+        colTenThuoc = new TableColumn<>("Tên thuốc");
+        colTenThuoc.setPrefWidth(260);
+
+        colSoLuong = new TableColumn<>("Số lượng");
+        colSoLuong.setPrefWidth(140);
+
+        colDonGia = new TableColumn<>("Đơn giá");
+        colDonGia.setPrefWidth(130);
+
+        colThanhTien = new TableColumn<>("Thành tiền");
+        colThanhTien.setPrefWidth(140);
+
+        tbThuoc.getColumns().addAll(colSTT, colTenThuoc, colSoLuong, colDonGia, colThanhTien);
+
+
+        /* ============= TỔNG TIỀN GRID ============= */
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+        grid.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        grid.setHgap(5);
+        grid.setVgap(8);
+
+        ColumnConstraints c1 = new ColumnConstraints();
+        c1.setHgrow(Priority.ALWAYS);
+        ColumnConstraints c2 = new ColumnConstraints();
+        c2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c1, c2);
+
+        // Row 1 - KM
+        Text kmLabel = createGrayText("Khuyến mãi:", 13, false);
+        GridPane.setRowIndex(kmLabel, 1);
+
+        txtKM = createGrayText("", 13, false);
+        GridPane.setColumnIndex(txtKM, 1);
+        GridPane.setRowIndex(txtKM, 1);
+
+        // Row 2 - Tổng tiền
+        Text sumLabel = createGrayText("Tổng cộng:", 18, true);
+        GridPane.setRowIndex(sumLabel, 2);
+
+        txtTongTien = createGrayText("", 18, true);
+        GridPane.setColumnIndex(txtTongTien, 1);
+        GridPane.setRowIndex(txtTongTien, 2);
+
+        grid.getChildren().addAll(kmLabel, txtKM, sumLabel, txtTongTien);
+
+
+        /* ============ ADD TO MAIN UI ============ */
+        mainVBox.getChildren().addAll(infoBox, labelThuoc, tbThuoc, grid);
+
+        // Quan trọng: dùng setContent thay vì add children
+        this.setContent(mainVBox);
+
+        // Style
+        this.getStylesheets().add(
+                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
+        );
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
-        this.dialogPane.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(cancelButton);
 
         //gọi các phương thức xử lí
         setupTable();
         loadBangChiTiet();
         loadContent();
+    }
+
+    private Text createWhiteText(String msg, int size, boolean bold) {
+        Text t = new Text(msg);
+        t.setFill(Color.WHITE);
+        t.setFont(Font.font("System", bold ? FontWeight.BOLD : FontWeight.NORMAL, size));
+        return t;
+    }
+
+    private Text createGrayText(String msg, int size, boolean bold) {
+        Text t = new Text(msg);
+        t.setFill(Color.web("#374151"));
+        t.setFont(Font.font("System", bold ? FontWeight.BOLD : FontWeight.NORMAL, size));
+        return t;
     }
 
     private void loadContent() {

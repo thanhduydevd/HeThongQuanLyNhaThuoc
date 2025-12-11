@@ -14,8 +14,9 @@ import com.antam.app.entity.DangDieuChe;
 import com.antam.app.entity.DonViTinh;
 import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.text.Text;
@@ -28,44 +29,160 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
-public class ThemThuocFormController {
+public class ThemThuocFormController extends DialogPane{
     private DangDieuChe_DAO ddc_dao;
     private DonViTinh_DAO dvt_dao;
     private Thuoc_DAO thuoc_dao;
     private Ke_DAO ke_dao;
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+
     private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddHamLuong;
-    @FXML
+
     private Text txtAddGiaByDV, notification_addThuoc;
-    @FXML
+
     private Spinner<Double> spAddGiaGoc, spAddGiaBan, spAddThue;
-    @FXML
+
     private ComboBox<DonViTinh> cbAddDVCS;
-    @FXML
+
     private ComboBox<DangDieuChe> cbAddDangDieuChe;
-    @FXML
+
     private ComboBox<Ke> cbAddKe;
 
 
     public ThemThuocFormController() {
-    }
+        this.setPrefSize(800, 600);
 
-    public void initialize() {
+        FlowPane header = new FlowPane();
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+        Text title = new Text("Thêm thuốc mới");
+        title.setFill(javafx.scene.paint.Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10,0,10,0));
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        // ===== Content =====
+        AnchorPane root = new AnchorPane();
+        VBox container = new VBox(10);
+        container.setPadding(new Insets(10));
+        AnchorPane.setLeftAnchor(container, 0.0);
+        AnchorPane.setRightAnchor(container, 0.0);
+
+        // ===== GridPane chính =====
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        // Labels và Controls
+        Text labelMa = new Text("Mã thuốc:");
+        txtAddMaThuoc = new TextField();
+        txtAddMaThuoc.setPrefHeight(40);
+
+        Text labelTen = new Text("Tên thuốc:");
+        txtAddTenThuoc = new TextField();
+        txtAddTenThuoc.setPrefHeight(40);
+
+        Text labelGiaGoc = new Text("Giá gốc:");
+        spAddGiaGoc = new Spinner<>();
+        spAddGiaGoc.setMaxWidth(Double.MAX_VALUE);
+        spAddGiaGoc.setEditable(true);
+        spAddGiaGoc.setPrefHeight(40);
+
+        Text labelGiaBan = new Text("Giá bán:");
+        spAddGiaBan = new Spinner<>();
+        spAddGiaBan.setMaxWidth(Double.MAX_VALUE);
+        spAddGiaBan.setEditable(true);
+        spAddGiaBan.setPrefHeight(40);
+
+        Text labelThue = new Text("Thuế (%):");
+        spAddThue = new Spinner<>();
+        spAddThue.setMaxWidth(Double.MAX_VALUE);
+        spAddThue.setEditable(true);
+        spAddThue.setPrefHeight(40);
+
+        Text labelDangDieuChe = new Text("Dạng điều chế:");
+        cbAddDangDieuChe = new ComboBox<>();
+        cbAddDangDieuChe.setMaxWidth(Double.MAX_VALUE);
+        cbAddDangDieuChe.setPrefHeight(40);
+
+        Text labelKe = new Text("Kệ thuốc:");
+        cbAddKe = new ComboBox<>();
+        cbAddKe.setMaxWidth(Double.MAX_VALUE);
+        cbAddKe.setPrefHeight(40);
+
+        Text labelHamLuong = new Text("Hàm lượng:");
+        txtAddHamLuong = new TextField();
+        txtAddHamLuong.setPrefHeight(40);
+
+        Text labelDonViTinh = new Text("Đơn vị tính:");
+        cbAddDVCS = new ComboBox<>();
+        cbAddDVCS.setMaxWidth(Double.MAX_VALUE);
+        cbAddDVCS.setPrefHeight(40);
+
+        // ===== Gán vào GridPane =====
+        grid.add(labelMa, 0, 0);
+        grid.add(txtAddMaThuoc, 0, 1);
+
+        grid.add(labelTen, 1, 0);
+        grid.add(txtAddTenThuoc, 1, 1);
+
+        grid.add(labelGiaGoc, 0, 2);
+        grid.add(spAddGiaGoc, 0, 3);
+
+        grid.add(labelGiaBan, 1, 2);
+        grid.add(spAddGiaBan, 1, 3);
+
+        grid.add(labelThue, 0, 4);
+        grid.add(spAddThue, 0, 5);
+
+        grid.add(labelDangDieuChe, 1, 4);
+        grid.add(cbAddDangDieuChe, 1, 5);
+
+        grid.add(labelKe, 0, 6);
+        grid.add(cbAddKe, 0, 7);
+
+        grid.add(labelHamLuong, 1, 6);
+        grid.add(txtAddHamLuong, 1, 7);
+
+        grid.add(labelDonViTinh, 0, 8);
+        grid.add(cbAddDVCS, 0, 9);
+
+        // ===== Notification =====
+        notification_addThuoc = new Text();
+        notification_addThuoc.setFill(javafx.scene.paint.Color.RED);
+
+        // ===== Add tất cả vào container =====
+        container.getChildren().addAll(grid, notification_addThuoc);
+        root.getChildren().add(container);
+        this.setContent(root);
+
+        // ===== Stylesheet =====
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        /** Sự kiện **/
         // them button vao dialog
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
 
         // ket noi database
         try { Connection con = ConnectDB.getInstance().connect(); }
         catch (SQLException e) { throw new RuntimeException(e); }
 
         // su kien button luu
-        Button applyBtn = (Button) dialogPane.lookupButton(applyButton);
+        Button applyBtn = (Button) this.lookupButton(applyButton);
 
         applyBtn.addEventFilter(ActionEvent.ACTION, event -> {
             boolean isValid = validate();

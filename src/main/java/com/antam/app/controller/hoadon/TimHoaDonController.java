@@ -9,19 +9,21 @@ import com.antam.app.dao.HoaDon_DAO;
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.HoaDon;
 import com.antam.app.entity.NhanVien;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
@@ -34,40 +36,23 @@ import java.util.ArrayList;
  * - Cho phép tạo, đổi, trả hóa đơn qua các nút chức năng.
  * - Khi double-click vào 1 dòng hóa đơn sẽ mở dialog chi tiết hóa đơn.
  */
-public class TimHoaDonController {
-    // TableView và các cột hiển thị danh sách hóa đơn
-    @FXML
-    private TableView<HoaDon> table_invoice; // Bảng danh sách hóa đơn
-    @FXML
-    private TableColumn<HoaDon, String> colMaHD; // Cột mã hóa đơn
-    @FXML
-    private TableColumn<HoaDon, String> colNgayTao; // Cột ngày tạo
-    @FXML
-    private TableColumn<HoaDon, String> colKhachHang; // Cột mã khách hàng
-    @FXML
-    private TableColumn<HoaDon, String> colNhanVien; // Cột mã nhân viên
-    @FXML
-    private TableColumn<HoaDon, String> colKhuyenMai; // Cột mã khuyến mãi
-    @FXML
-    private TableColumn<HoaDon, Double> colTongTien; // Cột tổng tiền
-    @FXML
-    private TableColumn<HoaDon, String> colTrangThai; // Cột trạng thái (đã huỷ/hoạt động)
-    @FXML
-    private javafx.scene.control.TextField txtSearchInvoice; // Ô nhập mã hóa đơn cần tìm
-    @FXML
-    private Button btnSearchInvoice; // Nút tìm kiếm hóa đơn theo mã
-    @FXML
-    private Button btnResetInvoice; // Nút đặt lại bộ lọc
-    @FXML
-    private ComboBox<NhanVien> cbEmployee; // ComboBox chọn nhân viên
-    @FXML
-    private ComboBox<String> cbStatus; // ComboBox chọn trạng thái
-    @FXML
-    private ComboBox<String> cbPrice; // ComboBox chọn khoảng giá
-    @FXML
-    private DatePicker cbFirstDate; // DatePicker chọn ngày bắt đầu
-    @FXML
-    private DatePicker cbEndDate;   // DatePicker chọn ngày kết thúc
+public class TimHoaDonController extends ScrollPane{
+    private TableView<HoaDon> table_invoice;
+    private TableColumn<HoaDon, String> colMaHD;
+    private TableColumn<HoaDon, String> colNgayTao;
+    private TableColumn<HoaDon, String> colKhachHang;
+    private TableColumn<HoaDon, String> colNhanVien;
+    private TableColumn<HoaDon, String> colKhuyenMai;
+    private TableColumn<HoaDon, Double> colTongTien;
+    private TableColumn<HoaDon, String> colTrangThai;
+    private javafx.scene.control.TextField txtSearchInvoice;
+    private Button btnSearchInvoice;
+    private Button btnResetInvoice;
+    private ComboBox<NhanVien> cbEmployee;
+    private ComboBox<String> cbStatus;
+    private ComboBox<String> cbPrice;
+    private DatePicker cbFirstDate;
+    private DatePicker cbEndDate;
 
     // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
     private static final DecimalFormat VND_FORMAT;
@@ -79,15 +64,103 @@ public class TimHoaDonController {
     }
 
     public TimHoaDonController() {
-    }
+        /** Giao diện **/
+        this.setFitToHeight(true);
+        this.setFitToWidth(true);
+        this.setPrefSize(900, 730);
+        AnchorPane.setTopAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 0.0);
+        AnchorPane.setRightAnchor(this, 0.0);
 
-    /**
-     * Khởi tạo controller, gán sự kiện cho các nút và TableView.
-     * - Thiết lập cell value factory cho các cột TableView.
-     * - Load dữ liệu hóa đơn từ DB lên bảng.
-     * - Gán sự kiện double-click vào dòng để xem chi tiết hóa đơn.
-     */
-    public void initialize() {
+        VBox rootPane = new VBox(30);
+        rootPane.setStyle("-fx-background-color: #f8fafc;");
+        rootPane.setPadding(new Insets(20));
+
+        HBox titleBox = new HBox(5);
+        Text title = new Text("Tìm hoá đơn");
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System", 30));
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        titleBox.getChildren().addAll(title, spacer);
+
+        FlowPane filters = new FlowPane(5, 5);
+        filters.getStyleClass().add("box-pane");
+        filters.setPadding(new Insets(10));
+        filters.setEffect(new DropShadow(19.5, 3, 2, Color.rgb(211, 211, 211)));
+
+        cbEmployee = new ComboBox<>();
+        cbStatus = new ComboBox<>();
+        cbFirstDate = new DatePicker();
+        cbEndDate = new DatePicker();
+        cbPrice = new ComboBox<>();
+
+        btnResetInvoice = new Button("Xoá rỗng");
+        btnResetInvoice.getStyleClass().add("btn-xoarong");
+        btnResetInvoice.setPrefSize(93, 40);
+        FontAwesomeIcon refreshIcon = new FontAwesomeIcon();
+        refreshIcon.setIcon(FontAwesomeIcons.REFRESH);
+        refreshIcon.setFill(Color.WHITE);
+        btnResetInvoice.setGraphic(refreshIcon);
+
+        filters.getChildren().addAll(
+                createVBox("Nhân viên:", cbEmployee),
+                createVBox("Trạng thái:", cbStatus),
+                createVBox("Từ ngày:", cbFirstDate),
+                createVBox("Đến ngày:", cbEndDate),
+                createVBox("Khoảng giá:", cbPrice),
+                createVBox("", btnResetInvoice)
+        );
+
+        HBox searchBox = new HBox(10);
+        txtSearchInvoice = new TextField();
+        txtSearchInvoice.setPromptText("Tìm kiếm mã hoá đơn");
+        txtSearchInvoice.setPrefSize(300, 40);
+        txtSearchInvoice.setStyle("-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;");
+
+        btnSearchInvoice = new Button();
+        btnSearchInvoice.setPrefSize(50, 40);
+        btnSearchInvoice.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        FontAwesomeIcon searchIcon = new FontAwesomeIcon(); searchIcon.setGlyphName("SEARCH"); searchIcon.setFill(Color.WHITE);
+        btnSearchInvoice.setGraphic(searchIcon);
+
+        searchBox.getChildren().addAll(txtSearchInvoice, btnSearchInvoice);
+
+        VBox tableBox = new VBox(5);
+        table_invoice = new TableView<>();
+
+        colMaHD = new TableColumn<>("Mã hoá đơn");
+        colNgayTao = new TableColumn<>("Ngày tạo");
+        colKhachHang = new TableColumn<>("Khách hàng");
+        colNhanVien = new TableColumn<>("Nhân viên");
+        colKhuyenMai = new TableColumn<>("Khuyến mãi");
+        colTongTien = new TableColumn<>("Tổng tiền");
+        colTrangThai = new TableColumn<>("Trạng thái");
+
+        table_invoice.getColumns().addAll(colMaHD, colNgayTao, colKhachHang, colNhanVien, colKhuyenMai, colTongTien, colTrangThai);
+        table_invoice.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table_invoice.setPrefHeight(500);
+
+        Button guide = new Button("Nhấn 2 lần chuột trái vào bảng để xem chi tiết");
+        guide.getStyleClass().add("pane-huongdan");
+        guide.setMaxWidth(Double.MAX_VALUE);
+        guide.setPadding(new Insets(10));
+        FontAwesomeIcon infoIcon = new FontAwesomeIcon(); infoIcon.setGlyphName("INFO"); infoIcon.setFill(Color.web("#2563eb"));
+        guide.setGraphic(infoIcon);
+
+        tableBox.getChildren().addAll(table_invoice, guide);
+
+        rootPane.getChildren().addAll(titleBox, filters, searchBox, tableBox);
+        this.getStylesheets().addAll(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        this.setContent(rootPane);
+
+        /** Sự kiện
+         * Khởi tạo controller, gán sự kiện cho các nút và TableView.
+         * - Thiết lập cell value factory cho các cột TableView.
+         * - Load dữ liệu hóa đơn từ DB lên bảng.
+         * - Gán sự kiện double-click vào dòng để xem chi tiết hóa đơn.
+        **/
         // Thiết lập cách lấy dữ liệu cho từng cột TableView
         colMaHD.setCellValueFactory(new PropertyValueFactory<>("MaHD"));
         colNgayTao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
@@ -156,11 +229,11 @@ public class TimHoaDonController {
         cbStatus.setValue("Tất cả");
         // --- Khởi tạo ComboBox khoảng giá ---
         ObservableList<String> dsKhoangGia = FXCollections.observableArrayList(
-            "Tất cả",
-            "Dưới 500.000",
-            "500.000 - 1.000.000",
-            "1.000.000 - 2.000.000",
-            "Trên 2.000.000"
+                "Tất cả",
+                "Dưới 500.000",
+                "500.000 - 1.000.000",
+                "1.000.000 - 2.000.000",
+                "Trên 2.000.000"
         );
         cbPrice.setItems(dsKhoangGia);
         cbPrice.setValue("Tất cả");
@@ -259,32 +332,6 @@ public class TimHoaDonController {
         if (cbFirstDate != null) cbFirstDate.valueProperty().addListener((obs, oldDate, newDate) -> filterInvoices.run());
         if (cbEndDate != null) cbEndDate.valueProperty().addListener((obs, oldDate, newDate) -> filterInvoices.run());
 
-        // Gán sự kiện double-click vào dòng để mở dialog xem chi tiết hóa đơn
-        table_invoice.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && table_invoice.getSelectionModel().getSelectedItem() != null) {
-                HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/antam/app/views/hoadon/dialog/xemChiTietHoaDonForm.fxml"));
-                    Parent root = loader.load();
-                    Object controllerObj = loader.getController();
-                    if (controllerObj == null) {
-                        System.err.println("[DEBUG] Controller is null after loading FXML! Check fx:controller and FXML path.");
-                    } else {
-                        // Truyền hóa đơn được chọn sang dialog chi tiết
-                        XemChiTietHoaDonFormController controller = (XemChiTietHoaDonFormController) controllerObj;
-                        controller.setInvoice(selectedHoaDon);
-                    }
-                    // Hiển thị dialog chi tiết hóa đơn
-                    Stage dialogStage = new Stage();
-                    dialogStage.initModality(Modality.APPLICATION_MODAL);
-                    dialogStage.setTitle("Chi tiết hóa đơn");
-                    dialogStage.setScene(new Scene(root));
-                    dialogStage.showAndWait();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         // Lắng nghe thay đổi nội dung ô tìm kiếm để search realtime
         txtSearchInvoice.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
@@ -325,27 +372,30 @@ public class TimHoaDonController {
             // Nếu double click và có dòng được chọn thì mở dialog chi tiết hóa đơn
             if (event.getClickCount() == 2 && table_invoice.getSelectionModel().getSelectedItem() != null) {
                 HoaDon selectedHoaDon = table_invoice.getSelectionModel().getSelectedItem();
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/antam/app/views/hoadon/dialog/xemChiTietHoaDonForm.fxml"));
-                    Parent root = loader.load();
-                    Object controllerObj = loader.getController();
-                    if (controllerObj == null) {
-                        System.err.println("[DEBUG] Controller is null after loading FXML! Check fx:controller and FXML path.");
-                    } else {
-                        // Truyền hóa đơn được chọn sang dialog chi tiết
-                        XemChiTietHoaDonFormController controller = (XemChiTietHoaDonFormController) controllerObj;
-                        controller.setInvoice(selectedHoaDon);
-                    }
-                    // Hiển thị dialog chi tiết hóa đơn
-                    Stage dialogStage = new Stage();
-                    dialogStage.initModality(Modality.APPLICATION_MODAL);
-                    dialogStage.setTitle("Chi tiết hóa đơn");
-                    dialogStage.setScene(new Scene(root));
-                    dialogStage.showAndWait();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                XemChiTietHoaDonFormController xemDialog = new XemChiTietHoaDonFormController();
+                xemDialog.setInvoice(selectedHoaDon);
+
+                Dialog<Void> dialog = new Dialog<>();
+                dialog.setDialogPane(xemDialog);
+                dialog.setTitle("Chi tiết hóa đơn");
+                dialog.initModality(Modality.APPLICATION_MODAL);
+
+                dialog.showAndWait();
             }
         });
+    }
+
+    private VBox createVBox(String label, Control field) {
+        VBox v = new VBox(5);
+        if (label != null) {
+            Text t = new Text(label);
+            t.setFill(Color.web("#374151"));
+            t.setFont(Font.font(13));
+            v.getChildren().add(t);
+        }
+        field.setPrefSize(200, 40);
+        v.getChildren().add(field);
+        return v;
     }
 }

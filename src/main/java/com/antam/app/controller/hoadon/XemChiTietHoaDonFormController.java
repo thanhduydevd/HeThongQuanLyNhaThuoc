@@ -7,54 +7,36 @@ import com.antam.app.entity.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class XemChiTietHoaDonFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class XemChiTietHoaDonFormController extends DialogPane{
+
     private Text txtInvoiceId;
-    @FXML
     private Text txtDate;
-    @FXML
     private Text txtCustomer;
-    @FXML
     private Text txtEmployee;
-    @FXML
     private Text txtSubTotal;
-    @FXML
     private Text txtVAT;
-    @FXML
     private Text txtTotal;
-    @FXML
     private Text txtPromotion;
-    @FXML
     private Text txtReturnTotal;
-    @FXML
     private TableView<ChiTietHoaDon> tableListsThuoc;
-    @FXML
-    private TableColumn<ChiTietHoaDon, Integer> sttCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, String> tenThuocCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, Integer> soLuongCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, Double> donGiaCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, Double> thanhTienCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, String> trangThaiCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, String> dvtCol;
-    @FXML
-    private TableColumn<ChiTietHoaDon, Double> thueCol;
+    private TableColumn<ChiTietHoaDon, Integer> sttCol = new TableColumn<>("STT");
+    private TableColumn<ChiTietHoaDon, String> tenThuocCol = new TableColumn<>("Tên thuốc");
+    private TableColumn<ChiTietHoaDon, Integer> soLuongCol = new TableColumn<>("Số lượng");
+    private TableColumn<ChiTietHoaDon, Double> donGiaCol = new TableColumn<>("Đơn giá");
+    private TableColumn<ChiTietHoaDon, Double> thanhTienCol = new TableColumn<>("Thành tiền");
+    private TableColumn<ChiTietHoaDon, String> trangThaiCol = new TableColumn<>("Trạng thái");
+    private TableColumn<ChiTietHoaDon, String> dvtCol = new TableColumn<>("Đơn vị tính");
+    private TableColumn<ChiTietHoaDon, Double> thueCol = new TableColumn<>("Thuế");
 
     // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
     private static final DecimalFormat VND_FORMAT;
@@ -65,18 +47,100 @@ public class XemChiTietHoaDonFormController {
         VND_FORMAT = new DecimalFormat("#,##0", symbols);
     }
 
-    @FXML
-    public void initialize() {
+    public XemChiTietHoaDonFormController(){
+        /** Giao diện **/
+        // Thêm nút Huỷ và Xác nhận trả thuốc
+        ButtonType cancelButton = new ButtonType("Đóng", ButtonBar.ButtonData.CANCEL_CLOSE);
+        this.getButtonTypes().add(cancelButton);
+
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+
+        Text headerText = new Text("Chi tiết hóa đơn");
+        headerText.setFill(javafx.scene.paint.Color.WHITE);
+        headerText.setFont(Font.font("System Bold", 15));
+
+        FlowPane.setMargin(headerText, new Insets(10, 0, 10, 0));
+        header.getChildren().add(headerText);
+
+        this.setHeader(header);
+
+        AnchorPane root = new AnchorPane();
+        VBox mainBox = new VBox(10);
+        AnchorPane.setLeftAnchor(mainBox, 0.0);
+        AnchorPane.setRightAnchor(mainBox, 0.0);
+
+        VBox infoBox = new VBox();
+        infoBox.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        infoBox.setPadding(new Insets(10, 100, 10, 10));
+
+        txtInvoiceId = createText("Hóa đơn: HD001", 20, true);
+        txtDate = createText("Ngày: 9/12/2024", 13, false);
+        txtCustomer = createText("Khách hàng: Nguyễn Văn A", 13, false);
+        txtEmployee = createText("Nhân viên: Nguyễn Văn An", 13, false);
+
+        infoBox.getChildren().addAll(txtInvoiceId, txtDate, txtCustomer, txtEmployee);
+
+        mainBox.getChildren().add(infoBox);
+
+        Text listLabel = new Text("Danh sách thuốc:");
+        mainBox.getChildren().add(listLabel);
+
+        tableListsThuoc = new TableView<>();
+        tableListsThuoc.setPrefWidth(200);
+        tableListsThuoc.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tableListsThuoc.getColumns().addAll(
+                sttCol, tenThuocCol, soLuongCol, donGiaCol, thanhTienCol, dvtCol, thueCol
+        );
+
+        mainBox.getChildren().add(tableListsThuoc);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+        grid.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        grid.setPadding(new Insets(10));
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        for (int i = 0; i < 5; i++) {
+            grid.getRowConstraints().add(new RowConstraints());
+        }
+
+        addRow(grid, 0, "Tạm tính:", txtSubTotal = createText("200.000đ"));
+        addRow(grid, 1, "Thuế GTGT (theo từng loại thuốc):", txtVAT = createText("12.500 ₫"));
+        addRow(grid, 2, "Tiền hàng trả:", txtReturnTotal = createText("0đ"));
+        addRowBold(grid, 3, "Tổng tiền:", txtTotal = createText("500.000đ", 18, true));
+        addRow(grid, 4, "", txtPromotion = createText("KM001"));
+
+        mainBox.getChildren().add(grid);
+
+        mainBox.setPadding(new Insets(10));
+
+        root.getChildren().add(mainBox);
+        String css = getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm();
+        this.getStylesheets().addAll(css);
+        this.setContent(root);
+        this.setStyle("-fx-background-color: white;");
+        this.setPrefWidth(800);
+        /** Sự kiện **/
         tenThuocCol.setCellValueFactory(cellData ->
-            new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getMaCTT().getMaThuoc().getTenThuoc()
-            )
+                new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getMaCTT().getMaThuoc().getTenThuoc()
+                )
         );
         soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
         donGiaCol.setCellValueFactory(cellData ->
-            new javafx.beans.property.SimpleDoubleProperty(
-                cellData.getValue().getMaCTT().getMaThuoc().getGiaBan()
-            ).asObject()
+                new javafx.beans.property.SimpleDoubleProperty(
+                        cellData.getValue().getMaCTT().getMaThuoc().getGiaBan()
+                ).asObject()
         );
         donGiaCol.setCellFactory(col -> new javafx.scene.control.TableCell<ChiTietHoaDon, Double>() {
             @Override
@@ -110,7 +174,7 @@ public class XemChiTietHoaDonFormController {
         });
         trangThaiCol.setCellValueFactory(new PropertyValueFactory<>("tinhTrang"));
         dvtCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(
-            cellData.getValue().getMaDVT().getTenDVT()));
+                cellData.getValue().getMaDVT().getTenDVT()));
         // Thuế GTGT
         thueCol.setCellValueFactory(cellData -> {
             double thue = 0;
@@ -142,6 +206,39 @@ public class XemChiTietHoaDonFormController {
                 }
             }
         });
+    }
+
+    private Text createText(String text) {
+        return createText(text, 13, false);
+    }
+
+    private Text createText(String text, int size, boolean bold) {
+        Text t = new Text(text);
+        t.setFill(javafx.scene.paint.Color.WHITE);
+        t.setFont(bold ? Font.font("System Bold", size) : Font.font(size));
+        return t;
+    }
+
+    private void addRow(GridPane grid, int row, String label, Text value) {
+        Text lbl = new Text(label);
+        lbl.setFill(javafx.scene.paint.Color.web("#374151"));
+        lbl.setFont(Font.font(13));
+
+        value.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        grid.add(lbl, 0, row);
+        grid.add(value, 1, row);
+    }
+
+    private void addRowBold(GridPane grid, int row, String label, Text value) {
+        Text lbl = new Text(label);
+        lbl.setFill(javafx.scene.paint.Color.web("#374151"));
+        lbl.setFont(Font.font("System Bold", 18));
+
+        value.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        grid.add(lbl, 0, row);
+        grid.add(value, 1, row);
     }
 
     public void setInvoice(HoaDon hoaDon) {

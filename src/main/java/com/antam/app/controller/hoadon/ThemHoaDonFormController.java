@@ -9,10 +9,17 @@ import com.antam.app.dao.*;
 import com.antam.app.entity.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
@@ -20,36 +27,20 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ThemHoaDonFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class ThemHoaDonFormController extends DialogPane{
     private TextField txtMaHoaDon;
-    @FXML
     private TextField txtTenKhachHang;
-    @FXML
     private ComboBox<Thuoc> cbMedicine;
-    @FXML
     private ComboBox<DonViTinh> cb_unit;
-    @FXML
     private TextField txt_price;
-    @FXML
     private TextField txtQuantity;
-    @FXML
     private Text txtTamTinh;
-    @FXML
     private Text txtThue;
-    @FXML
     private Text txtTongTien;
-    @FXML
     private VBox medicineRowsVBox;
-    @FXML
     private Button btnThemThuoc;
-    @FXML
     private ComboBox<KhuyenMai> cb_promotion;
-    @FXML
     private Text txtThongTinKhuyenMai;
-    @FXML
     private Text txtWarning;
 
     // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
@@ -62,13 +53,149 @@ public class ThemHoaDonFormController {
     }
 
     public ThemHoaDonFormController() {
-    }
+        FlowPane header = new FlowPane();
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
 
-    public void initialize() {
+        Text title = new Text("Tạo hóa đơn mới");
+        title.setFill(Color.WHITE);
+        title.setFont(Font.font("System", FontWeight.BOLD, 15));
+
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
+        header.getChildren().add(title);
+
+        this.setHeader(header);
+
+        /* ---------------- CONTENT ROOT ---------------- */
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+
+        /* ---------------- GRID 1: Mã + Tên KH ---------------- */
+        GridPane grid1 = new GridPane();
+        grid1.setHgap(5);
+
+        ColumnConstraints colA = new ColumnConstraints();
+        colA.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints colB = new ColumnConstraints();
+        colB.setHgrow(Priority.SOMETIMES);
+        grid1.getColumnConstraints().addAll(colA, colB);
+
+        Text lblMa = new Text("Mã hóa đơn:");
+        lblMa.setFill(Color.web("#374151"));
+
+        txtMaHoaDon = new TextField();
+        txtMaHoaDon.setPrefHeight(40);
+
+        Text lblTen = new Text("Tên khách hàng:");
+        lblTen.setFill(Color.web("#374151"));
+        GridPane.setColumnIndex(lblTen, 1);
+
+        txtTenKhachHang = new TextField();
+        txtTenKhachHang.setPrefHeight(40);
+        GridPane.setColumnIndex(txtTenKhachHang, 1);
+        GridPane.setRowIndex(txtTenKhachHang, 1);
+
+        GridPane.setRowIndex(txtMaHoaDon, 1);
+
+        grid1.getChildren().addAll(lblMa, txtMaHoaDon, lblTen, txtTenKhachHang);
+
+        /* ---------------- HEADER ROW FOR MEDICINES ---------------- */
+        HBox headerRow = new HBox(10);
+        headerRow.setStyle("-fx-background-color: #f1f5f9; -fx-border-color: #e5e7eb; -fx-border-radius: 6 6 0 0; -fx-border-width: 2 2 0 2;");
+        headerRow.setPadding(new Insets(5, 10, 5, 10));
+
+        headerRow.getChildren().addAll(
+                createHeaderText("Thuốc:", 120),
+                createHeaderText("Đơn vị:", 120),
+                createHeaderText("Số lượng:", 120),
+                createHeaderText("Đơn giá:", 100),
+                createHeaderText("Thao tác:", 0)
+        );
+
+        /* ---------------- MEDICINE ROWS CONTAINER ---------------- */
+        medicineRowsVBox = new VBox();
+        medicineRowsVBox.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 0 0 6 6; -fx-border-width: 0 2 2 2;");
+        medicineRowsVBox.setPadding(new Insets(10));
+
+        medicineRowsVBox.getChildren().add(buildMedicineRow());
+
+        btnThemThuoc = new Button("Thêm thuốc");
+        btnThemThuoc.getStyleClass().add("btn-gray");
+
+        /* ---------------- KHUYEN MAI ---------------- */
+        ColumnConstraints colC = new ColumnConstraints();
+        colC.setHgrow(Priority.SOMETIMES);
+        GridPane grid2 = new GridPane();
+        grid2.getColumnConstraints().addAll(colC);
+        grid2.setHgap(5);
+
+        Text lblKM = new Text("Áp dụng khuyến mãi:");
+        lblKM.setFill(Color.web("#374151"));
+
+        cb_promotion = new ComboBox<>();
+        cb_promotion.setPrefHeight(40);
+        GridPane.setRowIndex(cb_promotion, 1);
+
+        grid2.getChildren().addAll(lblKM, cb_promotion);
+
+        /* ---------------- WARNINGS ---------------- */
+        txtWarning = new Text("");
+        txtWarning.setFill(Color.RED);
+        txtWarning.setVisible(false);
+        txtWarning.setStyle("-fx-font-size: 12px;");
+
+        /* ---------------- TỔNG TIỀN ---------------- */
+        GridPane grid3 = new GridPane();
+        grid3.setHgap(5);
+        grid3.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8;");
+        grid3.setPadding(new Insets(10));
+
+        Text lblTamTinh = new Text("Tạm tính:");
+        Text lblThue = new Text("Thuế:");
+        Text lblTong = new Text("Tổng tiền:");
+        lblTong.setFont(Font.font("System", FontWeight.BOLD, 18));
+
+        txtTamTinh = new Text();
+        txtThue = new Text();
+
+        txtTongTien = new Text();
+        txtTongTien.setFont(Font.font("System", FontWeight.BOLD, 18));
+
+        txtThongTinKhuyenMai = new Text();
+        txtThongTinKhuyenMai.setFill(Color.web("#1e40af"));
+
+        grid3.add(lblTamTinh, 0, 0);
+        grid3.add(txtTamTinh, 1, 0);
+        grid3.add(lblThue, 0, 1);
+        grid3.add(txtThue, 1, 1);
+        grid3.add(lblTong, 0, 2);
+        grid3.add(txtTongTien, 1, 2);
+        grid3.add(txtThongTinKhuyenMai, 1, 3);
+
+        /* ---------------- ADD ALL TO ROOT ---------------- */
+        root.getChildren().addAll(
+                grid1,
+                headerRow,
+                medicineRowsVBox,
+                btnThemThuoc,
+                grid2,
+                txtWarning,
+                grid3
+        );
+
+        scrollPane.setContent(root);
+        String css = getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm();
+        this.getStylesheets().addAll(css);
+        this.setContent(scrollPane);
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Tạo hoá đơn", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
 
         // Tự động sinh mã hoá đơn mới
         txtMaHoaDon.setText(generateNewMaHoaDon());
@@ -149,14 +276,14 @@ public class ThemHoaDonFormController {
         cb_promotion.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 txtThongTinKhuyenMai.setText(
-                    String.format("%s (Từ %s đến %s)\nLoại: %s, Giá trị: %s%s",
-                        newVal.getTenKM(),
-                        newVal.getNgayBatDau(),
-                        newVal.getNgayKetThuc(),
-                        newVal.getLoaiKhuyenMai().getTenLKM(),
-                        newVal.getSo(),
-                        newVal.getLoaiKhuyenMai().getTenLKM().toLowerCase().contains("%") ? "%" : ""
-                    )
+                        String.format("%s (Từ %s đến %s)\nLoại: %s, Giá trị: %s%s",
+                                newVal.getTenKM(),
+                                newVal.getNgayBatDau(),
+                                newVal.getNgayKetThuc(),
+                                newVal.getLoaiKhuyenMai().getTenLKM(),
+                                newVal.getSo(),
+                                newVal.getLoaiKhuyenMai().getTenLKM().toLowerCase().contains("%") ? "%" : ""
+                        )
                 );
             } else {
                 txtThongTinKhuyenMai.setText("");
@@ -165,7 +292,7 @@ public class ThemHoaDonFormController {
         });
 
         // Xử lý khi nhấn nút tạo hoá đơn
-        Button btnTaoHoaDon = (Button) dialogPane.lookupButton(applyButton);
+        Button btnTaoHoaDon = (Button) this.lookupButton(applyButton);
         // Validate dữ liệu trước khi tạo hoá đơn
         btnTaoHoaDon.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
             // Reset warning
@@ -320,9 +447,9 @@ public class ThemHoaDonFormController {
                     if (thuoc != null && dvt != null && soLuong > 0) {
                         // Lấy danh sách các lô ChiTietThuoc còn tồn kho cho thuốc này
                         List<ChiTietThuoc> listCTT = chiTietThuocDAO.getAllChiTietThuoc().stream()
-                            .filter(ctt -> ctt.getMaThuoc().getMaThuoc().equals(thuoc.getMaThuoc()) && ctt.getSoLuong() > 0)
-                            .sorted(java.util.Comparator.comparing(ctt -> ctt.getHanSuDung())) // Ưu tiên lô hết hạn trước
-                            .collect(Collectors.toList());
+                                .filter(ctt -> ctt.getMaThuoc().getMaThuoc().equals(thuoc.getMaThuoc()) && ctt.getSoLuong() > 0)
+                                .sorted(java.util.Comparator.comparing(ctt -> ctt.getHanSuDung())) // Ưu tiên lô hết hạn trước
+                                .collect(Collectors.toList());
                         int soLuongConLai = soLuong;
                         for (ChiTietThuoc ctt : listCTT) {
                             if (soLuongConLai <= 0) break;
@@ -338,14 +465,49 @@ public class ThemHoaDonFormController {
                 }
             }
             // Đóng dialog (nếu cần, có thể show alert thành công ở đây)
-            dialogPane.getScene().getWindow().hide();
+            this.getScene().getWindow().hide();
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Tạo hoá đơn thành công");
             successAlert.setHeaderText(null);
             successAlert.setContentText("Hoá đơn đã được tạo thành công!");
             successAlert.showAndWait();
         });
+
     }
+
+    private Text createHeaderText(String text, double rightMargin) {
+        Text t = new Text(text);
+        t.setFill(Color.web("#374151"));
+        t.setFont(Font.font("System", FontWeight.BOLD, 12));
+        HBox.setMargin(t, new Insets(0, rightMargin, 0, 0));
+        return t;
+    }
+
+    private HBox buildMedicineRow() {
+        HBox row = new HBox(10);
+        row.setPadding(new Insets(10));
+        row.setStyle("-fx-background-color: #f8fafc;");
+
+        cbMedicine = new ComboBox<>();
+        cbMedicine.setPrefWidth(150);
+
+        cb_unit = new ComboBox<>();
+        cb_unit.setPrefWidth(150);
+
+        txtQuantity = new TextField();
+        txtQuantity.setPromptText("Số lượng");
+
+        txt_price = new TextField();
+        txt_price.setPromptText("Đơn giá");
+
+        Button btnRemove = new Button();
+        btnRemove.setStyle("-fx-background-color: #ef4444; -fx-background-radius: 50%;");
+        btnRemove.setGraphic(new Text("X"));
+
+        row.getChildren().addAll(cbMedicine, cb_unit, txtQuantity, txt_price, btnRemove);
+        return row;
+    }
+
 
     // Thêm một hàng thuốc mới vào VBox chứa các hàng thuốc
     private void addMedicineRow() {

@@ -6,14 +6,18 @@
 package com.antam.app.controller.trangchinh;
 
 import com.antam.app.dao.ThongKeTrangChinh_DAO;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.chart.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.geometry.Insets;
@@ -35,26 +39,185 @@ import java.util.ResourceBundle;
  * @date: 14/10/25
  * @version: 1.0
  */
-public class ThongKeTrangChinhController implements Initializable {
+public class ThongKeTrangChinhController extends ScrollPane{
 
     // ==================== CÁC THÀNH PHẦN GIAO DIỆN ====================
-    @FXML private Text txtTongSoThuoc;
-    @FXML private Text txtSoNhanVien;
-    @FXML private Text txtSoHoaDonHomNay;
-    @FXML private Text txtSoKhuyenMai;
-    @FXML private LineChart<String, Number> chartDoanhThu;        // Biểu đồ đường doanh thu
-    @FXML private BarChart<String, Number> chartTopSanPham;       // Biểu đồ cột sản phẩm
-    @FXML private VBox vboxThuocSapHetHan;                        // Danh sách thuốc sắp hết hạn
-    @FXML private VBox vboxThuocTonKhoThap;                       // Danh sách thuốc tồn kho thấp
+    private Text txtTongSoThuoc = new Text();
+    private Text txtSoNhanVien = new Text();
+    private Text txtSoHoaDonHomNay = new Text();
+    private Text txtSoKhuyenMai = new Text();
+    private LineChart<String, Number> chartDoanhThu;        // Biểu đồ đường doanh thu
+    private BarChart<String, Number> chartTopSanPham;       // Biểu đồ cột sản phẩm
+    private VBox vboxThuocSapHetHan = new VBox();           // Danh sách thuốc sắp hết hạn
+    private VBox vboxThuocTonKhoThap = new VBox();          // Danh sách thuốc tồn kho thấp
 
     // ==================== CÁC BIẾN CẤU HÌNH ====================
     private ThongKeTrangChinh_DAO thongKeDAO;
     private final DecimalFormat formatter = new DecimalFormat("#,###");
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+
+    public ThongKeTrangChinhController() {
         thongKeDAO = new ThongKeTrangChinh_DAO();
+        /** Giao diện **/
+        this.setFitToHeight(true);
+        this.setFitToWidth(true);
+        this.setPrefSize(900, 730);
+        AnchorPane.setTopAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 0.0);
+        AnchorPane.setRightAnchor(this, 0.0);
+
+        VBox root = new VBox(30);
+        root.setStyle("-fx-background-color: #f8fafc;");
+        root.setPadding(new Insets(20));
+
+        Text title = new Text("Tổng quan hệ thống");
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System Bold", 30));
+
+        FlowPane paneTopCards = new FlowPane(30, 20);
+        paneTopCards.setAlignment(Pos.CENTER);
+
+        paneTopCards.getChildren().addAll(
+                createCard(FontAwesomeIcons.MEDKIT, txtTongSoThuoc = new Text("0"), "Tổng số thuốc"),
+                createCard(FontAwesomeIcons.USERS, txtSoNhanVien = new Text("0"), "Nhân viên"),
+                createCard(FontAwesomeIcons.FILE, txtSoHoaDonHomNay = new Text("0"), "Hoá đơn hôm nay"),
+                createCard(FontAwesomeIcons.GIFT, txtSoKhuyenMai = new Text("0"), "Khuyến mãi áp dụng")
+        );
+
+        FlowPane chartsPane = new FlowPane(20, 20);
+        chartsPane.setAlignment(Pos.CENTER);
+        chartsPane.setRowValignment(VPos.TOP);
+
+        chartsPane.getChildren().addAll(
+                createLineChartBox(),
+                createBarChartBox()
+        );
+
+        FlowPane extraPane = new FlowPane(20, 20);
+        extraPane.setAlignment(Pos.CENTER);
+        extraPane.setRowValignment(VPos.TOP);
+
+        vboxThuocSapHetHan = createDataBox("Thuốc sắp hết hạn");
+        vboxThuocTonKhoThap = createDataBox("Thuốc còn tồn kho thấp");
+
+        extraPane.getChildren().addAll(vboxThuocSapHetHan, vboxThuocTonKhoThap);
+
+        root.getChildren().addAll(title, paneTopCards, chartsPane, extraPane);
+        this.setContent(root);
+
+        /** Sự kiện **/
         loadDashboardData();
+    }
+
+    private StackPane createCard(FontAwesomeIcons icon, Text valueText, String label) {
+        StackPane card = new StackPane();
+        card.setPrefSize(250, 121);
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 20px;");
+
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.rgb(212, 212, 212));
+        shadow.setOffsetX(2);
+        shadow.setOffsetY(3);
+        shadow.setRadius(8);
+        card.setEffect(shadow);
+
+        HBox box = new HBox(10);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(0, 20, 0, 20));
+
+        Button btn = new Button();
+        btn.setPrefSize(60, 60);
+        btn.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 15px;");
+
+        FontAwesomeIcon glyph = new FontAwesomeIcon();
+        glyph.setIcon(icon);
+        glyph.setFill(Color.WHITE);
+        glyph.setSize("2em");
+        btn.setGraphic(glyph);
+
+        VBox v = new VBox();
+        v.setPrefHeight(60);
+        v.setAlignment(Pos.CENTER_LEFT);
+        valueText.setFill(Color.web("#1e3a8a"));
+        valueText.setFont(Font.font("System Bold", 32));
+
+        Text lbl = new Text(label);
+        lbl.setFill(Color.web("#64748b"));
+
+        v.getChildren().addAll(valueText, lbl);
+
+        box.getChildren().addAll(btn, v);
+        card.getChildren().add(box);
+        return card;
+    }
+
+    private VBox createLineChartBox() {
+        VBox box = createChartBox("Doanh thu 7 ngày gần nhất");
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        chartDoanhThu = new LineChart<>(xAxis, yAxis);
+        chartDoanhThu.setPrefHeight(300);
+
+        box.getChildren().add(chartDoanhThu);
+        return box;
+    }
+
+    private VBox createBarChartBox() {
+        VBox box = createChartBox("Top sản phẩm bán chạy");
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        chartTopSanPham = new BarChart<>(xAxis, yAxis);
+        chartTopSanPham.setPrefHeight(300);
+
+        box.getChildren().add(chartTopSanPham);
+        return box;
+    }
+
+    private VBox createChartBox(String titleText) {
+        VBox box = new VBox(10);
+        box.setPrefWidth(500);
+        box.setStyle("-fx-background-color: white; -fx-background-radius: 10px;");
+        box.setPadding(new Insets(10));
+
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.rgb(218, 218, 218));
+        shadow.setRadius(12);
+        shadow.setOffsetX(3);
+        shadow.setOffsetY(2);
+        box.setEffect(shadow);
+
+        Text title = new Text(titleText);
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System Bold", 20));
+
+        box.getChildren().add(title);
+        return box;
+    }
+
+    private VBox createDataBox(String titleText) {
+        VBox box = new VBox(10);
+        box.setPrefWidth(500);
+        box.setStyle("-fx-background-color: white; -fx-background-radius: 10px;");
+        box.setPadding(new Insets(10));
+
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.rgb(218, 218, 218));
+        shadow.setRadius(12);
+        shadow.setOffsetX(3);
+        shadow.setOffsetY(2);
+        box.setEffect(shadow);
+
+        Text title = new Text(titleText);
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System Bold", 20));
+
+        box.getChildren().add(title);
+        return box;
     }
 
     /**

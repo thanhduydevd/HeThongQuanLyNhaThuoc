@@ -7,14 +7,18 @@ package com.antam.app.controller.khachhang;
 
 import com.antam.app.dao.KhachHang_DAO;
 import com.antam.app.entity.KhachHang;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
-
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /*
  * @description Controller for updating customer information
@@ -22,21 +26,12 @@ import java.util.ResourceBundle;
  * @date: 28/10/25
  * @version: 1.0
  */
-public class SuaKhachHangFormController implements Initializable {
+public class SuaKhachHangFormController extends DialogPane {
 
-    @FXML
     private TextField txtMaKhachHang;
-
-    @FXML
     private TextField txtTenKhachHang;
-
-    @FXML
     private TextField txtSoDienThoai;
-
-    @FXML
     private Button btnLuu;
-
-    @FXML
     private Button btnHuy;
 
     private KhachHang khachHang;
@@ -49,8 +44,73 @@ public class SuaKhachHangFormController implements Initializable {
 
     private OnSaveListener onSaveListener;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public SuaKhachHangFormController(){
+        this.setPrefSize(800, 600);
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+        Text headerText = new Text("Cập Nhật Khách Hàng");
+        headerText.setFont(Font.font("System Bold", 15));
+        headerText.setFill(javafx.scene.paint.Color.WHITE);
+        header.setPadding(new Insets(10,0,10,0));
+        header.getChildren().add(headerText);
+        this.setHeader(header);
+
+        // Content container
+        VBox root = new VBox(20);
+        root.setStyle("-fx-background-color: white;");
+        root.setPadding(new Insets(20));
+
+        // Mã khách hàng (không cho sửa)
+        VBox vbMaKH = new VBox(5);
+        Label lblMaKH = new Label("Mã khách hàng:");
+        lblMaKH.setFont(Font.font("System Bold", 13));
+        txtMaKhachHang = new TextField();
+        txtMaKhachHang.setPromptText("Mã khách hàng");
+        txtMaKhachHang.setDisable(true);
+        txtMaKhachHang.setStyle("-fx-background-color: #f3f4f6; -fx-border-color: #e5e7eb; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+        txtMaKhachHang.setFont(Font.font(13));
+        vbMaKH.getChildren().addAll(lblMaKH, txtMaKhachHang);
+
+        // Tên khách hàng
+        VBox vbTenKH = new VBox(5);
+        Label lblTenKH = new Label("Tên khách hàng: *");
+        lblTenKH.setFont(Font.font("System Bold", 13));
+        txtTenKhachHang = new TextField();
+        txtTenKhachHang.setPromptText("Nhập tên khách hàng");
+        txtTenKhachHang.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+        txtTenKhachHang.setFont(Font.font(13));
+        vbTenKH.getChildren().addAll(lblTenKH, txtTenKhachHang);
+
+        // Số điện thoại
+        VBox vbSDT = new VBox(5);
+        Label lblSDT = new Label("Số điện thoại: *");
+        lblSDT.setFont(Font.font("System Bold", 13));
+        txtSoDienThoai = new TextField();
+        txtSoDienThoai.setPromptText("Nhập số điện thoại");
+        txtSoDienThoai.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+        txtSoDienThoai.setFont(Font.font(13));
+        vbSDT.getChildren().addAll(lblSDT, txtSoDienThoai);
+
+        // Buttons
+        FlowPane btnBox = new FlowPane();
+        btnBox.setAlignment(javafx.geometry.Pos.CENTER);
+        btnBox.setHgap(10);
+        btnLuu = new Button("Lưu");
+        btnLuu.setPrefSize(100,35);
+        btnLuu.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px; -fx-text-fill: white;");
+        btnLuu.setFont(Font.font("System Bold", 13));
+
+        btnHuy = new Button("Hủy");
+        btnHuy.setPrefSize(100,35);
+        btnHuy.setStyle("-fx-background-color: #64748b; -fx-background-radius: 5px; -fx-text-fill: white;");
+        btnHuy.setFont(Font.font("System Bold", 13));
+
+        btnBox.getChildren().addAll(btnLuu, btnHuy);
+
+        root.getChildren().addAll(vbMaKH, vbTenKH, vbSDT, btnBox);
+        this.setContent(root);
+        /** Sự kiện **/
         // Khởi tạo DAO
         khachHangDAO = new KhachHang_DAO();
 

@@ -18,12 +18,11 @@ module com.antam.app {
     opens com.antam.app.controller.phieunhap to javafx.fxml;
     opens com.antam.app.controller.trangchinh to javafx.fxml;
     opens com.antam.app.controller.dangnhap to javafx.fxml;
-    opens com.antam.app.controller.menu to javafx.fxml;
+    opens com.antam.app.controller.khungchinh to javafx.fxml;
     opens com.antam.app.controller.khachhang to javafx.fxml;
-    opens com.antam.app.controller.dialog to javafx.fxml;
     opens com.antam.app.gui to javafx.fxml;
     opens com.antam.app.controller.nhanvien to javafx.fxml;
-    opens com.antam.app.controller.caidatTK to javafx.fxml;
+    opens com.antam.app.controller.caidattaikhoan to javafx.fxml;
 
     // cho JavaFX TableView/PropertyValueFactory đọc getter của entity
     opens com.antam.app.entity to javafx.base;
@@ -40,6 +39,6 @@ module com.antam.app {
     exports com.antam.app.controller.phieunhap;
     exports com.antam.app.controller.dangnhap;
     exports com.antam.app.controller.trangchinh;
-    exports com.antam.app.controller.menu;
+    exports com.antam.app.controller.khungchinh;
     exports com.antam.app.gui;
 }

@@ -11,7 +11,11 @@ import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.sql.Connection;
@@ -21,32 +25,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CapNhatThuocFormController {
+public class CapNhatThuocFormController extends DialogPane{
     private Thuoc thuoc;
-
-    @FXML
-    private DialogPane dialogPane;
-
-    @FXML
     private TextField txtDUMaThuoc, txtDUTenThuoc, txtDUHamLuong;
-
-    @FXML
-    private Text txtDUGiaByDV, notification_DUThuoc;
-
-
-    @FXML
+    private Text txtDUGiaByDV = new Text();
+    private Text notification_DUThuoc;
     private Spinner<Double> spDUGiaGoc, spDUGiaBan, spDUThue;
-
-
-    @FXML
     private ComboBox<DonViTinh> cbDUDVCS;
-
-    @FXML
     private ComboBox<DangDieuChe> cbDUDangDieuChe;
-
-    @FXML
     private ComboBox<Ke> cbDUKe;
-
     private DangDieuChe_DAO ddc_dao = new DangDieuChe_DAO();
     private DonViTinh_DAO dvt_dao = new DonViTinh_DAO();
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
@@ -74,9 +61,123 @@ public class CapNhatThuocFormController {
         txtDUGiaByDV.setText(dvt_dao.getDVTTheoMa(t.getMaDVTCoSo().getMaDVT()).getTenDVT());
     }
 
+    public CapNhatThuocFormController(){
+        this.setPrefSize(800, 600);
 
-    @FXML
-    public void initialize() {
+        FlowPane header = new FlowPane();
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+        Text title = new Text("Thêm thuốc mới");
+        title.setFill(javafx.scene.paint.Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10,0,10,0));
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        // ===== Content =====
+        AnchorPane root = new AnchorPane();
+        VBox container = new VBox(10);
+        container.setPadding(new Insets(10));
+        AnchorPane.setLeftAnchor(container, 0.0);
+        AnchorPane.setRightAnchor(container, 0.0);
+
+        // ===== GridPane chính =====
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        // Labels và Controls
+        Text labelMa = new Text("Mã thuốc:");
+        txtDUMaThuoc = new TextField();
+        txtDUMaThuoc.setPrefHeight(40);
+
+        Text labelTen = new Text("Tên thuốc:");
+        txtDUTenThuoc = new TextField();
+        txtDUTenThuoc.setPrefHeight(40);
+
+        Text labelGiaGoc = new Text("Giá gốc:");
+        spDUGiaGoc = new Spinner<>();
+        spDUGiaGoc.setMaxWidth(Double.MAX_VALUE);
+        spDUGiaGoc.setEditable(true);
+        spDUGiaGoc.setPrefHeight(40);
+
+        Text labelGiaBan = new Text("Giá bán:");
+        spDUGiaBan = new Spinner<>();
+        spDUGiaBan.setMaxWidth(Double.MAX_VALUE);
+        spDUGiaBan.setEditable(true);
+        spDUGiaBan.setPrefHeight(40);
+
+        Text labelThue = new Text("Thuế (%):");
+        spDUThue = new Spinner<>();
+        spDUThue.setMaxWidth(Double.MAX_VALUE);
+        spDUThue.setEditable(true);
+        spDUThue.setPrefHeight(40);
+
+        Text labelDangDieuChe = new Text("Dạng điều chế:");
+        cbDUDangDieuChe = new ComboBox<>();
+        cbDUDangDieuChe.setMaxWidth(Double.MAX_VALUE);
+        cbDUDangDieuChe.setPrefHeight(40);
+
+        Text labelKe = new Text("Kệ thuốc:");
+        cbDUKe = new ComboBox<>();
+        cbDUKe.setMaxWidth(Double.MAX_VALUE);
+        cbDUKe.setPrefHeight(40);
+
+        Text labelHamLuong = new Text("Hàm lượng:");
+        txtDUHamLuong = new TextField();
+        txtDUHamLuong.setPrefHeight(40);
+
+        Text labelDonViTinh = new Text("Đơn vị tính:");
+        cbDUDVCS = new ComboBox<>();
+        cbDUDVCS.setMaxWidth(Double.MAX_VALUE);
+        cbDUDVCS.setPrefHeight(40);
+
+        // ===== Gán vào GridPane =====
+        grid.add(labelMa, 0, 0);
+        grid.add(txtDUMaThuoc, 0, 1);
+
+        grid.add(labelTen, 1, 0);
+        grid.add(txtDUTenThuoc, 1, 1);
+
+        grid.add(labelGiaGoc, 0, 2);
+        grid.add(spDUGiaGoc, 0, 3);
+
+        grid.add(labelGiaBan, 1, 2);
+        grid.add(spDUGiaBan, 1, 3);
+
+        grid.add(labelThue, 0, 4);
+        grid.add(spDUThue, 0, 5);
+
+        grid.add(labelDangDieuChe, 1, 4);
+        grid.add(cbDUDangDieuChe, 1, 5);
+
+        grid.add(labelKe, 0, 6);
+        grid.add(cbDUKe, 0, 7);
+
+        grid.add(labelHamLuong, 1, 6);
+        grid.add(txtDUHamLuong, 1, 7);
+
+        grid.add(labelDonViTinh, 0, 8);
+        grid.add(cbDUDVCS, 0, 9);
+
+        // ===== Notification =====
+        notification_DUThuoc = new Text();
+        notification_DUThuoc.setFill(javafx.scene.paint.Color.RED);
+
+        // ===== Add tất cả vào container =====
+        container.getChildren().addAll(grid, notification_DUThuoc);
+        root.getChildren().add(container);
+        this.setContent(root);
+
+        // ===== Stylesheet =====
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        /** Sự kiện **/
         // ket noi csdl
         try {
             Connection con = ConnectDB.getInstance().connect();
@@ -88,9 +189,9 @@ public class CapNhatThuocFormController {
         ButtonType applyButtonUpdate = new ButtonType("Sửa", ButtonBar.ButtonData.APPLY);
         ButtonType applyButtonDelete = new ButtonType("Xóa", ButtonBar.ButtonData.APPLY);
         // them button vao dialog
-        dialogPane.getButtonTypes().addAll(applyButtonUpdate, applyButtonDelete, closeButton);
+        this.getButtonTypes().addAll(applyButtonUpdate, applyButtonDelete, closeButton);
         // su kien button sua
-        Button applyBtnUpdate = (Button) dialogPane.lookupButton(applyButtonUpdate);
+        Button applyBtnUpdate = (Button) this.lookupButton(applyButtonUpdate);
         applyBtnUpdate.addEventFilter(ActionEvent.ACTION, event -> {
             boolean isValid = validate();
 
@@ -114,7 +215,7 @@ public class CapNhatThuocFormController {
 
         });
         // su kien button xoa
-        Button applyBtnDelete = (Button) dialogPane.lookupButton(applyButtonDelete);
+        Button applyBtnDelete = (Button) this.lookupButton(applyButtonDelete);
         applyBtnDelete.addEventFilter(ActionEvent.ACTION, event -> {
             boolean isValid = showConfirmDeleteDialog(getThuoc().getTenThuoc());
 
@@ -170,6 +271,7 @@ public class CapNhatThuocFormController {
             txtDUGiaByDV.setText(cbDUDVCS.getValue().getTenDVT());
         });
     }
+
     // hien thi hop thoai xac nhan xoa
     public boolean showConfirmDeleteDialog(String tenThuoc) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

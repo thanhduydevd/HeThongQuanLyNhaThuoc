@@ -1,9 +1,3 @@
-/*
- * @ (#) ChiTietThuocController.java   1.0 10/6/2025
- *
- * Copyright (c) 2025 IUH. All rights reserved.
- */
-
 package com.antam.app.controller.thuoc;
 
 import com.antam.app.connect.ConnectDB;
@@ -14,32 +8,32 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-/*
- * @description
- * @author: Duong Nguyen
- * @date: 10/6/2025
- * version: 1.0
- */
-public class XemChiTietThuocFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class XemChiTietThuocFormController extends DialogPane {
+
     private Text txtMaThuoc_CTT, txtTenThuoc_CTT;
-    @FXML
     private TableView<ChiTietThuoc> tableChiTietThuoc;
-    @FXML
-    private TableColumn<ChiTietThuoc, String> colMaPN_CTT, colSoLuong_CTT, colNSX_CTT, colNHH_CTT;
-    @FXML
-    private TableColumn<ChiTietThuoc, Integer> colSTT_CTT;
+
+    private TableColumn<ChiTietThuoc, Integer> colSTT_CTT = new TableColumn<>("STT");
+    private TableColumn<ChiTietThuoc, String> colMaPN_CTT = new TableColumn<>("Mã phiếu nhập");
+    private TableColumn<ChiTietThuoc, String> colSoLuong_CTT = new TableColumn<>("Số lượng");
+    private TableColumn<ChiTietThuoc, String> colNSX_CTT = new TableColumn<>("Ngày sản xuất");
+    private TableColumn<ChiTietThuoc, String> colNHH_CTT = new TableColumn<>("Ngày hết hạn");
+
     private ObservableList<ChiTietThuoc> listChiTietThuoc = FXCollections.observableArrayList();
 
     private Thuoc thuoc;
@@ -49,38 +43,110 @@ public class XemChiTietThuocFormController {
         this.thuoc = thuoc;
     }
 
-    public Thuoc getThuoc(){
+    public Thuoc getThuoc() {
         return thuoc;
     }
 
-    public void showData(){
+    /** Load dữ liệu */
+    public void showData() {
         txtMaThuoc_CTT.setText("Mã Thuốc: " + thuoc.getMaThuoc());
         txtTenThuoc_CTT.setText("Tên Thuốc: " + thuoc.getTenThuoc());
 
-
         ArrayList<ChiTietThuoc> list = chiTietThuoc_dao.getAllCHiTietThuocTheoMaThuoc(thuoc.getMaThuoc());
+        listChiTietThuoc.clear();
         listChiTietThuoc.addAll(list);
         tableChiTietThuoc.setItems(listChiTietThuoc);
     }
 
+    /** Constructor UI thuần Java */
+    public XemChiTietThuocFormController() {
+        this.setPrefSize(800,600);
 
-    public void initialize() {
-        ButtonType cancelButton = new ButtonType("Huỷ", ButtonBar.ButtonData.CANCEL_CLOSE);
-        this.dialogPane.getButtonTypes().add(cancelButton);
+        /* ================= HEADER ================ */
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
 
-        // Kết nối DB
-        try { Connection con = ConnectDB.getInstance().connect(); }
-        catch (SQLException e) { throw new RuntimeException(e); }
+        Text title = new Text("Chi tiết Thuốc");
+        title.setFill(Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
 
-        colSTT_CTT.setCellValueFactory(cellData ->
-                new ReadOnlyObjectWrapper<>(tableChiTietThuoc.getItems().indexOf(cellData.getValue()) + 1)
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        /* ================ CONTENT ================ */
+
+        AnchorPane root = new AnchorPane();
+        VBox container = new VBox(10);
+        container.setPadding(new Insets(10));
+
+        AnchorPane.setLeftAnchor(container, 0.0);
+        AnchorPane.setRightAnchor(container, 0.0);
+
+        /* ========== THÔNG TIN THUỐC ========== */
+
+        VBox infoBox = new VBox();
+        infoBox.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        infoBox.setPadding(new Insets(10, 100, 10, 10));
+
+        txtMaThuoc_CTT = new Text("Mã Thuốc:");
+        txtMaThuoc_CTT.setFill(Color.WHITE);
+        txtMaThuoc_CTT.setFont(Font.font("System Bold", 20));
+
+        txtTenThuoc_CTT = new Text("Tên Thuốc:");
+        txtTenThuoc_CTT.setFill(Color.WHITE);
+        txtTenThuoc_CTT.setFont(Font.font(19));
+
+        infoBox.getChildren().addAll(txtMaThuoc_CTT, txtTenThuoc_CTT);
+
+        /* ========== LABEL DANH SÁCH ========== */
+
+        Text label = new Text("Danh sách chi tiết thuốc:");
+
+        /* ========== TABLEVIEW ========== */
+
+        tableChiTietThuoc = new TableView<>();
+        tableChiTietThuoc.setPrefWidth(200);
+
+        // Gộp cột
+        tableChiTietThuoc.getColumns().addAll(
+                colSTT_CTT, colMaPN_CTT, colSoLuong_CTT, colNSX_CTT, colNHH_CTT
         );
-        colMaPN_CTT.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getMaPN().getMaPhieuNhap())
+
+        tableChiTietThuoc.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        /* ========== ADD ALL ========== */
+        container.getChildren().addAll(infoBox, label, tableChiTietThuoc);
+        root.getChildren().add(container);
+        this.setContent(root);
+
+        // Load CSS
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+
+        // Button Hủy (đóng dialog)
+        ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
+        this.getButtonTypes().add(cancelButton);
+
+        /* ========== KẾT NỐI DB ========== */
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        /* ========== BIND CỘT ========== */
+
+        colSTT_CTT.setCellValueFactory(
+                c -> new ReadOnlyObjectWrapper<>(tableChiTietThuoc.getItems().indexOf(c.getValue()) + 1)
         );
-        colSoLuong_CTT.setCellValueFactory(new PropertyValueFactory("soLuong"));
-        colNSX_CTT.setCellValueFactory(new PropertyValueFactory("ngaySanXuat"));
-        colNHH_CTT.setCellValueFactory(new PropertyValueFactory("hanSuDung"));
+
+        colMaPN_CTT.setCellValueFactory(
+                c -> new SimpleStringProperty(c.getValue().getMaPN().getMaPhieuNhap())
+        );
+
+        colSoLuong_CTT.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
+        colNSX_CTT.setCellValueFactory(new PropertyValueFactory<>("ngaySanXuat"));
+        colNHH_CTT.setCellValueFactory(new PropertyValueFactory<>("hanSuDung"));
     }
-
 }

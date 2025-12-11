@@ -8,49 +8,162 @@ package com.antam.app.controller.khuyenmai;
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.KhuyenMai_DAO;
 import com.antam.app.entity.KhuyenMai;
-import com.antam.app.gui.GiaoDienCuaSo;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
-public class ThemKhuyenMaiController {
-    @FXML
+public class ThemKhuyenMaiController extends ScrollPane{
+    
     private Button btnAddPromotion;
-    @FXML
     private ComboBox<String> cbLoaiKhuyenMai, cbTrangThai;
-    @FXML
     private DatePicker dpTuNgay, dpDenNgay;
-    @FXML
     private TextField txtTiemKiemKhuyenMai;
-    @FXML
     private Button btnTimKiem;
-    @FXML
     private TableView<KhuyenMai> tableKhuyenMai;
-    @FXML
+    
     private TableColumn<KhuyenMai, String> colMaKhuyenMai, colTenKhuyenMai, colLoaiKhuyenMai, colSo, colSoLuongToiDa, colTinhTrang;
     private ObservableList<KhuyenMai> khuyenMaiList = FXCollections.observableArrayList();
     private ArrayList<KhuyenMai> arrayKhuyenMai = new ArrayList<>();
     private KhuyenMai_DAO khuyenMai_dao = new KhuyenMai_DAO();
     public ThemKhuyenMaiController() {
-    }
+        /** Giao diện **/
+        this.setFitToHeight(true);
+        this.setFitToWidth(true);
+        this.setPrefSize(900, 730);
+        AnchorPane.setTopAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 0.0);
+        AnchorPane.setRightAnchor(this, 0.0);
 
-    public void initialize() {
+        VBox root = new VBox(30);
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: #f8fafc;");
+
+        // ================== Title + Button ==================
+        HBox titleBox = new HBox(5);
+        titleBox.setAlignment(Pos.CENTER_LEFT);
+
+        Text title = new Text("Thêm khuyến mãi");
+        title.setFont(Font.font("System", 30));
+        title.setFill(Color.web("#1e3a8a"));
+
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        btnAddPromotion = new Button("Thêm khuyến mãi");
+        btnAddPromotion.setPrefSize(160, 50);
+        btnAddPromotion.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        btnAddPromotion.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon addIcon = new FontAwesomeIcon();
+        addIcon.setIcon(FontAwesomeIcons.PLUS);
+        addIcon.setFill(Color.WHITE);
+        btnAddPromotion.setGraphic(addIcon);
+
+        titleBox.getChildren().addAll(title, spacer, btnAddPromotion);
+
+        // ================== FlowPane Form ==================
+        FlowPane flow = new FlowPane(5, 5);
+        flow.getStyleClass().add("box-pane");
+        flow.setPadding(new Insets(10));
+        flow.setEffect(new DropShadow(19, 3, 2, Color.rgb(211, 211, 211)));
+
+        // Loại khuyến mãi
+        cbLoaiKhuyenMai = new ComboBox<>();
+        cbLoaiKhuyenMai.setPrefSize(200, 40);
+        VBox boxLoai = createLabeledBox("Loại khuyến mãi:", cbLoaiKhuyenMai);
+
+        // Trạng thái
+        cbTrangThai = new ComboBox<>();
+        cbTrangThai.setPrefSize(200, 40);
+        VBox boxTrangThai = createLabeledBox("Trạng thái:", cbTrangThai);
+
+        // Từ ngày
+        dpTuNgay = new DatePicker();
+        dpTuNgay.setPrefSize(200, 40);
+        VBox boxTuNgay = createLabeledBox("Từ ngày:", dpTuNgay);
+
+        // Đến ngày
+        dpDenNgay = new DatePicker();
+        dpDenNgay.setPrefSize(200, 40);
+        VBox boxDenNgay = createLabeledBox("Đến ngày:", dpDenNgay);
+
+        // Add vào FlowPane
+        flow.getChildren().addAll(boxLoai, boxTrangThai, boxTuNgay, boxDenNgay);
+
+        // ================== Search ==================
+        HBox searchBox = new HBox(10);
+        searchBox.setAlignment(Pos.CENTER_LEFT);
+
+        txtTiemKiemKhuyenMai = new TextField();
+        txtTiemKiemKhuyenMai.setPrefSize(300, 40);
+        txtTiemKiemKhuyenMai.setPromptText("Tìm kiếm khuyến mãi...");
+        txtTiemKiemKhuyenMai.setStyle("-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8px;");
+
+        btnTimKiem = new Button();
+        btnTimKiem.setPrefSize(50, 40);
+        btnTimKiem.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        btnTimKiem.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon searchIcon = new FontAwesomeIcon();
+        searchIcon.setGlyphName("SEARCH");
+        searchIcon.setFill(Color.WHITE);
+        btnTimKiem.setGraphic(searchIcon);
+
+        searchBox.getChildren().addAll(txtTiemKiemKhuyenMai, btnTimKiem);
+
+        // ================== Table ==================
+        tableKhuyenMai = new TableView<>();
+        tableKhuyenMai.setPrefHeight(800);
+
+        colMaKhuyenMai = new TableColumn<>("Mã khuyến mãi");
+        colTenKhuyenMai = new TableColumn<>("Tên khuyến mãi");
+        colLoaiKhuyenMai = new TableColumn<>("Loại");
+        colSo = new TableColumn<>("Số (Giá trị)");
+        colSoLuongToiDa = new TableColumn<>("Số lượng tối đa");
+        colTinhTrang = new TableColumn<>("Trạng thái");
+
+        tableKhuyenMai.getColumns().addAll(
+                colMaKhuyenMai, colTenKhuyenMai, colLoaiKhuyenMai,
+                colSo, colSoLuongToiDa, colTinhTrang
+        );
+        tableKhuyenMai.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Add tất cả vào root
+        root.getChildren().addAll(titleBox, flow, searchBox, tableKhuyenMai);
+
+        this.setContent(root);
+        /** Kết thúc giao diện **/
         try {
             Connection con = ConnectDB.getInstance().connect();
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-         // nut them khuyen mai
+        // nut them khuyen mai
         this.btnAddPromotion.setOnAction((e) -> {
-            new GiaoDienCuaSo("themkhuyenmai").showAndWait();
+            ThemKhuyenMaiFormController themDialog = new ThemKhuyenMaiFormController();
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setDialogPane(themDialog);
+            dialog.setTitle("Thêm khuyến mãi");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.showAndWait();
             this.updateTableKhuyenMai();
         });
 
@@ -98,18 +211,23 @@ public class ThemKhuyenMaiController {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     KhuyenMai selectKM  = row.getItem();
                     // Mở dialog
-                    GiaoDienCuaSo dialog = new GiaoDienCuaSo("capnhatkhuyenmai");
-                    // Lấy controller và set Thuoc vào
-                    CapNhatKhuyenMaiFormController controller = dialog.getController();
-                    controller.setKhuyenMai(selectKM);
-                    controller.showdata(selectKM);
-                    // Show dialog
-                    dialog.showAndWait();
+
                     updateTableKhuyenMai();
                 }
             });
             return row;
         });
+    }
+
+    private VBox createLabeledBox(String label, Control field) {
+        VBox box = new VBox(5);
+
+        Text lbl = new Text(label);
+        lbl.setFill(Color.web("#374151"));
+        lbl.setFont(Font.font(13));
+
+        box.getChildren().addAll(lbl, field);
+        return box;
     }
 
     public void addCombobox() {

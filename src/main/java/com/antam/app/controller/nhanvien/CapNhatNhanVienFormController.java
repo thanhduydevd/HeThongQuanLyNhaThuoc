@@ -8,34 +8,136 @@ package com.antam.app.controller.nhanvien;/*
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.layout.FlowPane;
 
 import static com.antam.app.controller.nhanvien.CapNhatNhanVienController.nhanVienSelected;
 
-public class CapNhatNhanVienFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class CapNhatNhanVienFormController extends DialogPane{
+
     private TextField txtMaNV, txtHoTen, txtSDT, txtEmail,txtDiaChi, txtTaiKhoan;
-    @FXML
     private ComboBox<String> cbChucVu;
-    @FXML
     private Spinner<Double> luong;
 
     NhanVien select = nhanVienSelected;
     public CapNhatNhanVienFormController() {
-    }
+        this.setPrefSize(800, 600);
+        Text headerText = new Text("Cập nhật nhân viên");
+        headerText.setFont(Font.font("System Bold", 15));
+        headerText.setFill(javafx.scene.paint.Color.WHITE);
+        FlowPane header = new FlowPane(headerText);
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+        this.setHeader(header);
 
-    public void initialize() {
+        // Content
+        AnchorPane anchorPane = new AnchorPane();
+        VBox rootVBox = new VBox(10);
+        rootVBox.setPadding(new Insets(0));
+        AnchorPane.setLeftAnchor(rootVBox, 0.0);
+        AnchorPane.setRightAnchor(rootVBox, 0.0);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+
+        // Column constraints
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(javafx.scene.layout.Priority.SOMETIMES);
+        col1.setMinWidth(10);
+        col1.setPrefWidth(100);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(javafx.scene.layout.Priority.SOMETIMES);
+        col2.setMinWidth(10);
+        col2.setPrefWidth(100);
+
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        // Row constraints
+        for (int i = 0; i < 10; i++) {
+            RowConstraints row = new RowConstraints();
+            row.setMinHeight(10);
+            row.setPrefHeight(i % 2 == 0 ? 30 : 40);
+            row.setVgrow(javafx.scene.layout.Priority.SOMETIMES);
+            grid.getRowConstraints().add(row);
+        }
+
+        int rowIndex = 1;
+
+        // Mã NV
+        grid.add(new Text("Mã nhân viên:"), 0, 0);
+        txtMaNV = new TextField();
+        txtMaNV.setPrefHeight(40);
+        grid.add(txtMaNV, 0, rowIndex);
+
+        // Họ tên
+        grid.add(new Text("Họ tên:"), 1, 0);
+        txtHoTen = new TextField();
+        txtHoTen.setPrefHeight(40);
+        grid.add(txtHoTen, 1, rowIndex++);
+
+        // Số điện thoại
+        grid.add(new Text("Số điện thoại:"), 0, rowIndex++);
+        txtSDT = new TextField();
+        txtSDT.setPrefHeight(40);
+        grid.add(txtSDT, 0, rowIndex);
+
+        // Email
+        grid.add(new Text("Email:"), 1, rowIndex - 1);
+        txtEmail = new TextField();
+        txtEmail.setPrefHeight(40);
+        grid.add(txtEmail, 1, rowIndex++);
+
+        // Địa chỉ
+        grid.add(new Text("Địa chỉ:"), 0, rowIndex++);
+        txtDiaChi = new TextField();
+        txtDiaChi.setPrefHeight(40);
+        grid.add(txtDiaChi, 0, rowIndex);
+
+        // Chức vụ
+        grid.add(new Text("Chức vụ:"), 1, rowIndex - 1);
+        cbChucVu = new ComboBox<>();
+        cbChucVu.setPrefHeight(40);
+        grid.add(cbChucVu, 1, rowIndex++);
+
+        // Lương cơ bản
+        grid.add(new Text("Lương cơ bản:"), 0, rowIndex++);
+        luong = new Spinner<>(0.0, Double.MAX_VALUE, 0.0, 100.0);
+        luong.setEditable(true);
+        luong.setPrefHeight(40);
+        grid.add(luong, 0, rowIndex);
+
+        // Tài khoản
+        grid.add(new Text("Tài khoản"), 1, rowIndex - 1);
+        txtTaiKhoan = new TextField();
+        txtTaiKhoan.setPrefHeight(40);
+        grid.add(txtTaiKhoan, 1, rowIndex++);
+
+        rootVBox.getChildren().add(grid);
+        anchorPane.getChildren().add(rootVBox);
+        this.setContent(anchorPane);
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType updateButton = new ButtonType("Cập nhật", ButtonBar.ButtonData.APPLY);
         ButtonType deleteButton = new ButtonType("Xóa", ButtonBar.ButtonData.NO);
 
-        dialogPane.getButtonTypes().addAll(cancelButton, updateButton, deleteButton);
+        this.getButtonTypes().addAll(cancelButton, updateButton, deleteButton);
 
-        Button btnSua = (Button) dialogPane.lookupButton(updateButton);
-        Button btnHuy = (Button) dialogPane.lookupButton(cancelButton);
-        Button btnXoa = (Button) dialogPane.lookupButton(deleteButton);
+        Button btnSua = (Button) this.lookupButton(updateButton);
+        Button btnHuy = (Button) this.lookupButton(cancelButton);
+        Button btnXoa = (Button) this.lookupButton(deleteButton);
 
         txtMaNV.setEditable(false);
         luong.setEditable(true);
@@ -53,26 +155,26 @@ public class CapNhatNhanVienFormController {
         // Cập nhật nhân viên
         btnSua.setOnAction(e -> {
 //            try {
-                if (txtHoTen.getText().isBlank() || txtSDT.getText().isBlank() || txtEmail.getText().isBlank()) {
-                    showMess("Vui lòng nhập đầy đủ thông tin!");
-                    return;
-                }
+            if (txtHoTen.getText().isBlank() || txtSDT.getText().isBlank() || txtEmail.getText().isBlank()) {
+                showMess("Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
 
-                String hoTen = txtHoTen.getText();
-                String soDienThoai = txtSDT.getText();
-                String email = txtEmail.getText();
-                String diaChi = txtDiaChi.getText();
-                String taiKhoan = txtTaiKhoan.getText();
-                boolean quanLy = "Nhân viên quản lí".equals(cbChucVu.getValue());
-                double luongCoBan = luong.getValue();
+            String hoTen = txtHoTen.getText();
+            String soDienThoai = txtSDT.getText();
+            String email = txtEmail.getText();
+            String diaChi = txtDiaChi.getText();
+            String taiKhoan = txtTaiKhoan.getText();
+            boolean quanLy = "Nhân viên quản lí".equals(cbChucVu.getValue());
+            double luongCoBan = luong.getValue();
 
-                NhanVien nvUpdate = new NhanVien(
-                        select.getMaNV(), hoTen, soDienThoai, email,
-                        diaChi, luongCoBan, taiKhoan, select.getMatKhau(), quanLy
-                );
-                System.out.println(nvUpdate);
-                boolean result = NhanVien_DAO.updateNhanVienTrongDBS(nvUpdate);
-                showMess(result ? "Cập nhật nhân viên thành công!" : "Cập nhật nhân viên thất bại!");
+            NhanVien nvUpdate = new NhanVien(
+                    select.getMaNV(), hoTen, soDienThoai, email,
+                    diaChi, luongCoBan, taiKhoan, select.getMatKhau(), quanLy
+            );
+            System.out.println(nvUpdate);
+            boolean result = NhanVien_DAO.updateNhanVienTrongDBS(nvUpdate);
+            showMess(result ? "Cập nhật nhân viên thành công!" : "Cập nhật nhân viên thất bại!");
 //            } catch (Exception ex) {
 //                showMess("Lỗi: " + ex.getMessage());
 //            }
@@ -104,6 +206,7 @@ public class CapNhatNhanVienFormController {
                 txtSDT.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
         });
     }
+
 
     private void loadData() {
         txtMaNV.setText(select.getMaNV());

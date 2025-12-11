@@ -25,22 +25,18 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 
-public class ThemPhieuNhapFormController {
-    @FXML
-    private DialogPane dialogPane;
+public class ThemPhieuNhapFormController extends DialogPane{
 
-    @FXML
     private TextField tfMaPhieuNhap, tfNhaCungCap, tfDiaChi, tfLyDo;
-
-    @FXML
     private Button btnThemThuoc;
-
-    @FXML
     private VBox vbDanhSachThuocNhap;
-
-    @FXML
     private Text txtTongTien;
 
     private Thuoc_DAO thuoc_DAO = new Thuoc_DAO();
@@ -53,10 +49,157 @@ public class ThemPhieuNhapFormController {
     private ArrayList<DonViTinh> dsDonViTinh;
 
     public ThemPhieuNhapFormController() {
+        this.setPrefSize(800, 600);
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
 
-    }
+        Text title = new Text("Nhập kho");
+        title.setFill(javafx.scene.paint.Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
 
-    public void initialize() {
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        // =========================
+        // 2. CONTENT ROOT
+        // =========================
+        AnchorPane root = new AnchorPane();
+        this.setContent(root);
+
+        VBox container = new VBox(10);
+        AnchorPane.setLeftAnchor(container, 0.0);
+        AnchorPane.setRightAnchor(container, 0.0);
+
+        root.getChildren().add(container);
+
+        // =========================
+        // 3. SCROLLPANE
+        // =========================
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(400);
+        scrollPane.setPadding(new Insets(5));
+        container.getChildren().add(scrollPane);
+
+        VBox scrollContent = new VBox(10);
+        scrollPane.setContent(scrollContent);
+
+        // =========================
+        // 4. GRIDPANE NHẬP THÔNG TIN
+        // =========================
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+
+        ColumnConstraints c1 = new ColumnConstraints();
+        c1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints c2 = new ColumnConstraints();
+        c2.setHgrow(Priority.SOMETIMES);
+
+        grid.getColumnConstraints().addAll(c1, c2);
+
+        // ==== ROW 0 ====
+        Text lblMa = new Text("Mã phiếu nhập:");
+        lblMa.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        Text lblNCC = new Text("Nhà cung cấp:");
+        lblNCC.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setColumnIndex(lblNCC, 1);
+
+        grid.add(lblMa, 0, 0);
+        grid.add(lblNCC, 1, 0);
+
+        // ==== ROW 1 ====
+        tfMaPhieuNhap = new TextField();
+        tfMaPhieuNhap.setPrefHeight(40);
+        tfMaPhieuNhap.setPromptText("Nhập mã phiếu nhập");
+        tfMaPhieuNhap.getStyleClass().add("text-field");
+
+        tfNhaCungCap = new TextField();
+        tfNhaCungCap.setPrefHeight(40);
+        tfNhaCungCap.setPromptText("Nhập nhà cung cấp");
+        tfNhaCungCap.getStyleClass().add("text-field");
+
+        GridPane.setRowIndex(tfMaPhieuNhap, 1);
+        GridPane.setColumnIndex(tfNhaCungCap, 1);
+        GridPane.setRowIndex(tfNhaCungCap, 1);
+
+        grid.getChildren().addAll(tfMaPhieuNhap, tfNhaCungCap);
+
+        // ==== ROW 2 ====
+        Text lblDiaChi = new Text("Địa chỉ:");
+        lblDiaChi.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setRowIndex(lblDiaChi, 2);
+
+        Text lblLyDo = new Text("Lý do nhập");
+        lblLyDo.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setRowIndex(lblLyDo, 2);
+        GridPane.setColumnIndex(lblLyDo, 1);
+
+        grid.getChildren().addAll(lblDiaChi, lblLyDo);
+
+        // ==== ROW 3 ====
+        tfDiaChi = new TextField();
+        tfDiaChi.setPrefHeight(40);
+        tfDiaChi.setPromptText("Nhập địa chỉ");
+        tfDiaChi.getStyleClass().add("text-field");
+        GridPane.setRowIndex(tfDiaChi, 3);
+
+        tfLyDo = new TextField();
+        tfLyDo.setPrefHeight(40);
+        tfLyDo.setPromptText("Nhập lý do");
+        tfLyDo.getStyleClass().add("text-field");
+        GridPane.setColumnIndex(tfLyDo, 1);
+        GridPane.setRowIndex(tfLyDo, 3);
+
+        grid.getChildren().addAll(tfDiaChi, tfLyDo);
+
+        // ==== ROW 4 ====
+        Text lblThuocNhap = new Text("Thuốc nhập:");
+        lblThuocNhap.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setRowIndex(lblThuocNhap, 4);
+
+        grid.getChildren().add(lblThuocNhap);
+
+        scrollContent.getChildren().add(grid);
+
+        // =========================
+        // 5. Danh sách thuốc nhập
+        // =========================
+        vbDanhSachThuocNhap = new VBox(10);
+        vbDanhSachThuocNhap.setMaxWidth(Double.MAX_VALUE);
+        vbDanhSachThuocNhap.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        vbDanhSachThuocNhap.setPadding(new Insets(10));
+
+        scrollContent.getChildren().add(vbDanhSachThuocNhap);
+
+        // =========================
+        // 6. Button Thêm Thuốc
+        // =========================
+        btnThemThuoc = new Button("Thêm thuốc");
+        btnThemThuoc.getStyleClass().add("btn-gray");
+
+        scrollContent.getChildren().add(btnThemThuoc);
+
+        // =========================
+        // 7. TỔNG TIỀN
+        // =========================
+        VBox boxTongTien = new VBox();
+        boxTongTien.setAlignment(javafx.geometry.Pos.CENTER);
+        boxTongTien.setPrefWidth(100);
+        boxTongTien.setStyle("-fx-background-color: #f8fafc; -fx-border-color: #2563eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        boxTongTien.setPadding(new Insets(10));
+
+        txtTongTien = new Text("Tổng tiền: 0 ₫");
+        txtTongTien.setFill(javafx.scene.paint.Color.web("#1e3a8a"));
+        txtTongTien.setFont(Font.font("System Bold", 22));
+
+        boxTongTien.getChildren().add(txtTongTien);
+        container.getChildren().add(boxTongTien);
+
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        /** Su kiện **/
         //Kết nối
         try {
             Connection con = ConnectDB.getInstance().connect();
@@ -73,10 +216,10 @@ public class ThemPhieuNhapFormController {
 
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
 
-        Button btnAppy = (Button) this.dialogPane.lookupButton(applyButton);
+        Button btnAppy = (Button) this.lookupButton(applyButton);
         btnAppy.addEventFilter(ActionEvent.ACTION, event -> {
             if (!checkTruongDuLieu() || !checkChiTietPhieuNhap()){
                 event.consume();
@@ -139,9 +282,6 @@ public class ThemPhieuNhapFormController {
 
         //Danh sách thuốc
         ComboBox<Thuoc> cbDanhSachThuocNhap = new ComboBox<>();
-        cbDanhSachThuocNhap.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         cbDanhSachThuocNhap.setPrefWidth(150);
         cbDanhSachThuocNhap.setPromptText("Chọn thuốc");
         for (Thuoc thuoc : dsThuoc){
@@ -152,9 +292,6 @@ public class ThemPhieuNhapFormController {
 
         //Đơn vị tính
         ComboBox<DonViTinh> cbDonViTinh = new ComboBox<>();
-        cbDonViTinh.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         cbDonViTinh.setPrefWidth(150);
         cbDonViTinh.setPromptText("Chọn đơn vị tính");
 
@@ -170,9 +307,6 @@ public class ThemPhieuNhapFormController {
 
         //Ngày sản xuất
         DatePicker dpNgaySanXuat = new DatePicker();
-        dpNgaySanXuat.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         dpNgaySanXuat.setPrefWidth(150);
         dpNgaySanXuat.setPromptText("Chọn ngày sản xuất");
         VBox vbNgaySanXuat = new VBox();
@@ -180,9 +314,6 @@ public class ThemPhieuNhapFormController {
 
         //Hạn sử dụng
         DatePicker dpHanSuDung = new DatePicker();
-        dpHanSuDung.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         dpHanSuDung.setPrefWidth(150);
         dpHanSuDung.setPromptText("Chọn hạn sử dụng");
         VBox vbHanSuDung = new VBox();
@@ -190,9 +321,6 @@ public class ThemPhieuNhapFormController {
 
         //Số lượng
         Spinner<Integer> spSoLuong = new Spinner<>();
-        spSoLuong.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         /* Số lượng ít nhất là 1 và nhiều nhất là 50.000 */
         spSoLuong.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50000, 1, 1));
         spSoLuong.setPrefWidth(100);
@@ -206,9 +334,6 @@ public class ThemPhieuNhapFormController {
 
         //Giá nhập
         Spinner<Double> spGiaNhap = new Spinner<>();
-        spGiaNhap.getStylesheets().add(
-                getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm()
-        );
         /* Định dạng tiền Việt Nam (Ít nhất 1.000đ nhiều nhất 999.999.999đ, hiển thị trước 10.000đ và bước nhảy 5.000đ) */
         SpinnerValueFactory.DoubleSpinnerValueFactory valueFactory =
                 new SpinnerValueFactory.DoubleSpinnerValueFactory(1_000, 999_999_999, 10_000, 5_000);

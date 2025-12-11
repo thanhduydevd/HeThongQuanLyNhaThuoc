@@ -23,22 +23,21 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
-public class DoiThuocFormController {
-    @FXML
-    private DialogPane dialogPane;
+public class DoiThuocFormController extends DialogPane{
 
-    @FXML
     private VBox vhDSCTHD, vhDSCTHDM;
-    @FXML
     private TextField txtMaHoaDonDoi, txtKhachHangDoi;
-    @FXML
     private Text txtTongTienDoi, txtTongTienTra, txtTongTienMua, txtThongBaoDoi;
-    @FXML
     private Button btnThemMoiThuoc;
-    @FXML
     private ComboBox<String> cbLyDoDoi;
 
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
@@ -82,17 +81,222 @@ public class DoiThuocFormController {
         txtTongTienDoi.setText("0 đ");
     }
 
-    public void initialize() {
+    public DoiThuocFormController(){
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+
+        Text title = new Text("Đổi thuốc");
+        title.setFill(javafx.scene.paint.Color.WHITE);
+        title.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
+
+        header.getChildren().add(title);
+        this.setHeader(header);
+
+        // ============================
+        // CONTENT ROOT
+        // ============================
+        AnchorPane root = new AnchorPane();
+        root.setPrefSize(800, 600);
+
+        VBox mainVBox = new VBox(10);
+        AnchorPane.setLeftAnchor(mainVBox, 0.0);
+        AnchorPane.setRightAnchor(mainVBox, 0.0);
+
+        // ============================
+        // SCROLL CONTENT
+        // ============================
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(480);
+
+        VBox contentVBox = new VBox(10);
+
+        // ============================
+        // GRID 1
+        // ============================
+        GridPane grid1 = new GridPane();
+        grid1.setHgap(5);
+
+        ColumnConstraints c1 = new ColumnConstraints();
+        c1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints c2 = new ColumnConstraints();
+        c2.setHgrow(Priority.SOMETIMES);
+        grid1.getColumnConstraints().addAll(c1, c2);
+
+        RowConstraints r1 = new RowConstraints();
+        r1.setPrefHeight(30);
+        RowConstraints r2 = new RowConstraints();
+        r2.setPrefHeight(40);
+        RowConstraints r3 = new RowConstraints();
+        r3.setPrefHeight(30);
+        RowConstraints r4 = new RowConstraints();
+        r4.setPrefHeight(30);
+        grid1.getRowConstraints().addAll(r1, r2, r3, r4);
+
+        Text lblMaHD = new Text("Mã hóa đơn gốc:");
+        lblMaHD.setFill(javafx.scene.paint.Color.web("#374151"));
+
+        txtMaHoaDonDoi = new TextField();
+        txtMaHoaDonDoi.setPrefHeight(40);
+        txtMaHoaDonDoi.getStyleClass().add("text-field");
+        txtMaHoaDonDoi.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        GridPane.setRowIndex(txtMaHoaDonDoi, 1);
+
+        txtKhachHangDoi = new TextField();
+        txtKhachHangDoi.setPrefHeight(40);
+        txtKhachHangDoi.getStyleClass().add("text-field");
+        txtKhachHangDoi.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        GridPane.setRowIndex(txtKhachHangDoi, 1);
+        GridPane.setColumnIndex(txtKhachHangDoi, 1);
+
+        Text lblKH = new Text("Khách hàng:");
+        lblKH.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setColumnIndex(lblKH, 1);
+
+        Text lblLyDo = new Text("Lý do đổi:");
+        lblLyDo.setFill(javafx.scene.paint.Color.web("#374151"));
+        GridPane.setRowIndex(lblLyDo, 2);
+
+        cbLyDoDoi = new ComboBox<>();
+        cbLyDoDoi.setPrefWidth(150);
+        cbLyDoDoi.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        GridPane.setRowIndex(cbLyDoDoi, 3);
+
+        grid1.getChildren().addAll(lblMaHD, txtMaHoaDonDoi, txtKhachHangDoi, lblKH, lblLyDo, cbLyDoDoi);
+
+        // ============================
+        // LIST CTHD GỐC
+        // ============================
+        vhDSCTHD = new VBox(5);
+        vhDSCTHD.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        vhDSCTHD.setPadding(new Insets(10));
+
+        // ============================
+        // GRID TỔNG TRẢ
+        // ============================
+        GridPane gridTongTra = new GridPane();
+        gridTongTra.setHgap(5);
+        gridTongTra.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        gridTongTra.setPadding(new Insets(10));
+
+        ColumnConstraints t1 = new ColumnConstraints();
+        t1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints t2 = new ColumnConstraints();
+        t2.setHgrow(Priority.SOMETIMES);
+        gridTongTra.getColumnConstraints().addAll(t1, t2);
+
+        txtTongTienTra = new Text("500.000đ");
+        txtTongTienTra.setFill(javafx.scene.paint.Color.web("#374151"));
+        txtTongTienTra.setFont(Font.font("System Bold", 13));
+        GridPane.setColumnIndex(txtTongTienTra, 1);
+
+        Text lblTongTra = new Text("Tổng tiền trả:");
+        lblTongTra.setFill(javafx.scene.paint.Color.web("#374151"));
+        lblTongTra.setFont(Font.font("System Bold", 13));
+
+        gridTongTra.getChildren().addAll(lblTongTra, txtTongTienTra);
+
+        // ============================
+        // LABEL “Thuốc mới”
+        // ============================
+        Text lblThuocMoi = new Text("Thuốc mới:");
+
+        // ============================
+        // LIST CTHDM MỚI
+        // ============================
+        vhDSCTHDM = new VBox(5);
+        vhDSCTHDM.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        vhDSCTHDM.setPadding(new Insets(10));
+
+        // ============================
+        // BUTTON THÊM THUỐC MỚI
+        // ============================
+        btnThemMoiThuoc = new Button("Thêm thuốc mới");
+        btnThemMoiThuoc.setStyle("-fx-background-color: #6b7280; -fx-font-size: 14px; -fx-font-weight: BOLD;");
+        btnThemMoiThuoc.setTextFill(javafx.scene.paint.Color.WHITE);
+        btnThemMoiThuoc.setPadding(new Insets(5, 10, 5, 10));
+
+        // ============================
+        // ADD to contentVBox
+        // ============================
+        contentVBox.getChildren().addAll(
+                grid1,
+                vhDSCTHD,
+                gridTongTra,
+                lblThuocMoi,
+                vhDSCTHDM,
+                btnThemMoiThuoc
+        );
+
+        scrollPane.setContent(contentVBox);
+
+        // ============================
+        // GRID TỔNG MUA (BOTTOM)
+        // ============================
+        GridPane gridTongMua = new GridPane();
+        gridTongMua.setHgap(5);
+        gridTongMua.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        gridTongMua.setPadding(new Insets(10));
+
+        ColumnConstraints m1 = new ColumnConstraints();
+        m1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints m2 = new ColumnConstraints();
+        m2.setHgrow(Priority.SOMETIMES);
+        gridTongMua.getColumnConstraints().addAll(m1, m2);
+
+        Text lblTongMua = new Text("Tổng tiền mua:");
+        lblTongMua.setFill(javafx.scene.paint.Color.web("#374151"));
+        lblTongMua.setFont(Font.font("System Bold", 13));
+
+        txtTongTienMua = new Text("1.000.000đ");
+        txtTongTienMua.setFill(javafx.scene.paint.Color.web("#374151"));
+        txtTongTienMua.setFont(Font.font("System Bold", 13));
+        GridPane.setColumnIndex(txtTongTienMua, 1);
+
+        gridTongMua.getChildren().addAll(lblTongMua, txtTongTienMua);
+
+        // ============================
+        // KẾT QUẢ CUỐI
+        // ============================
+        VBox summaryBox = new VBox();
+        summaryBox.setAlignment(javafx.geometry.Pos.CENTER);
+        summaryBox.setStyle("-fx-background-color: #f8fafc; -fx-border-color: #2563eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        summaryBox.setPadding(new Insets(10));
+
+        txtTongTienDoi = new Text("Tổng kết: 0 ₫");
+        txtTongTienDoi.setFill(javafx.scene.paint.Color.web("#1e3a8a"));
+        txtTongTienDoi.setFont(Font.font("System Bold", 22));
+
+        txtThongBaoDoi = new Text("Không phát sinh thêm tiền");
+        txtThongBaoDoi.setFill(javafx.scene.paint.Color.web("#6b6b6b"));
+        txtThongBaoDoi.setFont(Font.font("System Italic", 13));
+
+        summaryBox.getChildren().addAll(txtTongTienDoi, txtThongBaoDoi);
+
+        // ============================
+        // ADD ALL INTO mainVBox
+        // ============================
+        mainVBox.getChildren().addAll(
+                scrollPane,
+                gridTongMua,
+                summaryBox
+        );
+
+        root.getChildren().add(mainVBox);
+        this.setContent(root);
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Xác nhận đổi thuốc", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
 
         // Kết nối DB
         try { Connection con = ConnectDB.getInstance().connect(); }
         catch (SQLException e) { throw new RuntimeException(e); }
 
-        Button btnApply = (Button) this.dialogPane.lookupButton(applyButton);
+        Button btnApply = (Button) this.lookupButton(applyButton);
         btnApply.addEventFilter(ActionEvent.ACTION, event -> {
             String lyDo = cbLyDoDoi.getValue();
             if (lyDo == null || lyDo.trim().isEmpty()) {

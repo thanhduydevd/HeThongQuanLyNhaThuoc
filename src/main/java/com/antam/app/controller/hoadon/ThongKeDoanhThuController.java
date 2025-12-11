@@ -7,8 +7,8 @@ import com.antam.app.entity.ThongKeDoanhThu;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -28,34 +28,46 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class ThongKeDoanhThuController implements Initializable {
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.geometry.Pos;
+import javafx.scene.chart.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
 
-    @FXML private Button btnXuatBaoCao;
-    @FXML private ComboBox<String> cmbThoiGian;
-    @FXML private ComboBox<String> cmbNhanVien;
 
-    @FXML private Text txtDoanhThuKy;
-    @FXML private Text txtSoDonHang;
-    @FXML private Text txtDonHangTB;
-    @FXML private Text txtSoKhachHang;
+public class ThongKeDoanhThuController extends ScrollPane {
 
-    @FXML private Button btnDoanhThuChange;
-    @FXML private Button btnDonHangChange;
-    @FXML private Button btnDonHangTBChange;
-    @FXML private Button btnKhachHangChange;
+     private Button btnXuatBaoCao;
+     private ComboBox<String> cmbThoiGian;
+     private ComboBox<String> cmbNhanVien;
 
-    @FXML private LineChart<String, Number> chartDoanhThu;
-    @FXML private BarChart<String, Number> chartTopSanPham;
+     private Text txtDoanhThuKy;
+     private Text txtSoDonHang;
+     private Text txtDonHangTB;
+     private Text txtSoKhachHang;
 
-    @FXML private TableView<ThongKeDoanhThu> tableChiTiet;
-    @FXML private TableColumn<ThongKeDoanhThu, LocalDate> colNgay;
-    @FXML private TableColumn<ThongKeDoanhThu, Integer> colSoDonHang;
-    @FXML private TableColumn<ThongKeDoanhThu, Double> colDoanhThu;
-    @FXML private TableColumn<ThongKeDoanhThu, Double> colDonHangTB;
-    @FXML private TableColumn<ThongKeDoanhThu, Integer> colKhachHangMoi;
-    @FXML private TableColumn<ThongKeDoanhThu, String> colNhanVienBan;
+     private Button btnDoanhThuChange;
+     private Button btnDonHangChange;
+     private Button btnDonHangTBChange;
+     private Button btnKhachHangChange;
 
-    @FXML private Button btnRefresh;
+     private LineChart<String, Number> chartDoanhThu;
+     private BarChart<String, Number> chartTopSanPham;
+
+     private TableView<ThongKeDoanhThu> tableChiTiet;
+     private TableColumn<ThongKeDoanhThu, LocalDate> colNgay;
+     private TableColumn<ThongKeDoanhThu, Integer> colSoDonHang;
+     private TableColumn<ThongKeDoanhThu, Double> colDoanhThu;
+     private TableColumn<ThongKeDoanhThu, Double> colDonHangTB;
+     private TableColumn<ThongKeDoanhThu, Integer> colKhachHangMoi;
+     private TableColumn<ThongKeDoanhThu, String> colNhanVienBan;
+
+     private Button btnRefresh;
 
     private ThongKeDoanhThu_DAO thongKeDAO;
     private ThongKeTrangChinh_DAO thongKeTrangChinhDAO;
@@ -65,14 +77,189 @@ public class ThongKeDoanhThuController implements Initializable {
     private DecimalFormat formatter = new DecimalFormat("#,###");
     private DecimalFormat percentFormatter = new DecimalFormat("#0.0");
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public ThongKeDoanhThuController(){
+        this.setFitToHeight(true);
+        this.setFitToWidth(true);
+        this.setPrefSize(900, 730);
+        AnchorPane.setTopAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 0.0);
+        AnchorPane.setRightAnchor(this, 0.0);
+
+        VBox root = new VBox(30);
+        root.setStyle("-fx-background-color: #f8fafc;");
+        setContent(root);
+
+        // ---------------------- HEADER ----------------------
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Text title = new Text("Thống kê doanh thu");
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System Bold", 30));
+
+        Region space = new Region();
+        HBox.setHgrow(space, Priority.ALWAYS);
+
+        btnXuatBaoCao = new Button("Xuất báo cáo");
+        btnXuatBaoCao.setPrefSize(120, 50);
+        btnXuatBaoCao.getStyleClass().add("btn-gray");
+        btnXuatBaoCao.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon iconDownload = new FontAwesomeIcon();
+        iconDownload.setGlyphName("CLOUD_DOWNLOAD");
+        iconDownload.setFill(Color.WHITE);
+        btnXuatBaoCao.setGraphic(iconDownload);
+
+        header.getChildren().addAll(title, space, btnXuatBaoCao);
+
+        // ---------------------- FILTER PANE ----------------------
+        FlowPane filterPane = new FlowPane(5, 5);
+        filterPane.setPadding(new Insets(10));
+        filterPane.getStyleClass().add("box-pane");
+        filterPane.setEffect(new DropShadow(20, Color.rgb(211, 211, 211)));
+
+        // TIME COMBOBOX
+        VBox vbTime = new VBox(5);
+        Text txtTime = new Text("Thời gian:");
+        txtTime.setFill(Color.web("#374151"));
+        cmbThoiGian = new ComboBox<>();
+        cmbThoiGian.setPrefSize(200, 40);
+        cmbThoiGian.getStyleClass().add("combo-box");
+
+        vbTime.getChildren().addAll(txtTime, cmbThoiGian);
+
+        // EMPLOYEE COMBOBOX
+        VBox vbNV = new VBox(5);
+        Text txtNV = new Text("Nhân viên:");
+        txtNV.setFill(Color.web("#374151"));
+        cmbNhanVien = new ComboBox<>();
+        cmbNhanVien.setPrefSize(200, 40);
+        cmbNhanVien.getStyleClass().add("combo-box");
+
+        vbNV.getChildren().addAll(txtNV, cmbNhanVien);
+
+        filterPane.getChildren().addAll(vbTime, vbNV);
+
+        // ---------------------- STAT CARDS ----------------------
+        FlowPane cards = new FlowPane(30, 20);
+        cards.setAlignment(Pos.CENTER);
+
+        // Card 1 – DOANH THU KY
+        StackPane card1 = createCard(
+                "#059669",
+                "MONEY",
+                txtDoanhThuKy = new Text("0"),
+                new Text("Doanh thu kỳ"),
+                btnDoanhThuChange = new Button("0%")
+        );
+        // Card 2 – DON HANG
+        StackPane card2 = createCard(
+                "#2563eb",
+                "FILE",
+                txtSoDonHang = new Text("0"),
+                new Text("Đơn hàng"),
+                btnDonHangChange = new Button("0%")
+        );
+        // Card 3 – DON HANG TB
+        StackPane card3 = createCard(
+                "#8b5cf6",
+                "CALCULATOR",
+                txtDonHangTB = new Text("0"),
+                new Text("Đơn hàng TB"),
+                btnDonHangTBChange = new Button("0%")
+        );
+        // Card 4 – KHÁCH HÀNG
+        StackPane card4 = createCard(
+                "#f59e0b",
+                "USERS",
+                txtSoKhachHang = new Text("0"),
+                new Text("Khách hàng"),
+                btnKhachHangChange = new Button("0%")
+        );
+
+        cards.getChildren().addAll(card1, card2, card3, card4);
+
+        // ---------------------- CHARTS ----------------------
+        FlowPane charts = new FlowPane(20, 20);
+        charts.setAlignment(Pos.TOP_CENTER);
+
+        // LINE CHART
+        CategoryAxis x1 = new CategoryAxis();
+        NumberAxis y1 = new NumberAxis();
+        chartDoanhThu = new LineChart<>(x1, y1);
+
+        VBox vbChart1 = wrapChart("Doanh thu theo thời gian", chartDoanhThu);
+
+        // BAR CHART
+        CategoryAxis x2 = new CategoryAxis();
+        NumberAxis y2 = new NumberAxis();
+        chartTopSanPham = new BarChart<>(x2, y2);
+
+        VBox vbChart2 = wrapChart("Top sản phẩm bán chạy", chartTopSanPham);
+        charts.getChildren().addAll(vbChart1, vbChart2);
+
+        // ---------------------- TABLE ----------------------
+        AnchorPane tablePane = new AnchorPane();
+        tablePane.getStyleClass().add("box-pane");
+
+        VBox vbTable = new VBox(5);
+        vbTable.setPadding(new Insets(5));
+
+        HBox tbHeader = new HBox();
+        Text tbTitle = new Text("Chi tiết doanh thu");
+        tbTitle.setFont(Font.font("System Bold", 20));
+        tbTitle.setFill(Color.web("#1e3a8a"));
+
+        Region tbSpace = new Region();
+        HBox.setHgrow(tbSpace, Priority.ALWAYS);
+
+        btnRefresh = new Button();
+        btnRefresh.setPrefSize(50, 40);
+        btnRefresh.setStyle("-fx-background-color: #6b7280; -fx-border-radius: 8px;");
+
+        FontAwesomeIcon refreshIcon = new FontAwesomeIcon();
+        refreshIcon.setGlyphName("REFRESH");
+        refreshIcon.setFill(Color.WHITE);
+        btnRefresh.setGraphic(refreshIcon);
+
+        tbHeader.getChildren().addAll(tbTitle, tbSpace, btnRefresh);
+
+        // TableView
+        tableChiTiet = new TableView<>();
+        tableChiTiet.setPrefHeight(500);
+
+        colNgay = new TableColumn<>("Ngày");
+        colSoDonHang = new TableColumn<>("Số đơn hàng");
+        colDoanhThu = new TableColumn<>("Doanh thu");
+        colDonHangTB = new TableColumn<>("Đơn hàng TB");
+        colKhachHangMoi = new TableColumn<>("Khách hàng mới");
+        colNhanVienBan = new TableColumn<>("Nhân viên bán");
+
+        tableChiTiet.getColumns().addAll(
+                colNgay, colSoDonHang, colDoanhThu,
+                colDonHangTB, colKhachHangMoi, colNhanVienBan
+        );
+
+        vbTable.getChildren().addAll(tbHeader, tableChiTiet);
+
+        AnchorPane.setLeftAnchor(vbTable, 0.0);
+        AnchorPane.setRightAnchor(vbTable, 0.0);
+        tablePane.getChildren().add(vbTable);
+
+        // ---------------- ADD ALL ----------------
+        root.setPadding(new Insets(20));
+        root.getChildren().addAll(header, filterPane, cards, charts, tablePane);
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        this.getChildren().add(root);
+
+        /** Sự kiện **/
         thongKeDAO = new ThongKeDoanhThu_DAO();
         thongKeTrangChinhDAO = new ThongKeTrangChinh_DAO();
 
         // Khởi tạo ComboBox thời gian
         cmbThoiGian.setItems(FXCollections.observableArrayList(
-            "Hôm nay", "7 ngày qua", "30 ngày qua", "Tháng này", "Tháng trước", "Năm nay"
+                "Hôm nay", "7 ngày qua", "30 ngày qua", "Tháng này", "Tháng trước", "Năm nay"
         ));
         cmbThoiGian.setValue("7 ngày qua");
 
@@ -87,6 +274,65 @@ public class ThongKeDoanhThuController implements Initializable {
 
         // Load dữ liệu
         loadData();
+        btnRefresh.setOnAction(e->refreshData());
+        btnXuatBaoCao.setOnAction(e->xuatBaoCao());
+
+    }
+
+    private StackPane createCard(String color, String icon, Text bigText, Text label, Button changeBtn) {
+
+        StackPane card = new StackPane();
+        card.setPrefSize(250, 121);
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 20px;");
+        card.setEffect(new DropShadow(10, Color.rgb(212, 212, 212)));
+
+        HBox box = new HBox(10);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(0, 20, 0, 20));
+
+        Button iconBtn = new Button();
+        iconBtn.setPrefSize(60, 60);
+        iconBtn.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 15px;");
+
+        FontAwesomeIcon iconNode = new FontAwesomeIcon();
+        iconNode.setGlyphName(icon);
+        iconNode.setFill(Color.WHITE);
+        iconNode.setSize("2em");
+        iconBtn.setGraphic(iconNode);
+
+        VBox texts = new VBox();
+        texts.setPrefHeight(60);
+        texts.setAlignment(Pos.CENTER_LEFT);
+        bigText.setFont(Font.font("System Bold", 32));
+        bigText.setFill(Color.web("#1e3a8a"));
+
+        label.setFill(Color.web("#64748b"));
+        changeBtn.setStyle("-fx-background-radius: 50px;");
+
+        texts.getChildren().addAll(bigText, label, changeBtn);
+
+        box.getChildren().addAll(iconBtn, texts);
+        card.getChildren().add(box);
+
+        return card;
+    }
+
+    // ---------------------------------------------------------
+    //  HELPER: tạo chart wrapper box-pane
+    // ---------------------------------------------------------
+    private VBox wrapChart(String titleStr, Node chart) {
+        VBox box = new VBox(10);
+        box.setPrefWidth(500);
+        box.setPadding(new Insets(10));
+        box.getStyleClass().add("box-pane");
+        box.setEffect(new DropShadow(12, Color.rgb(218, 218, 218)));
+
+        Text title = new Text(titleStr);
+        title.setFont(Font.font("System Bold", 20));
+        title.setFill(Color.web("#1e3a8a"));
+
+        box.getChildren().addAll(title, chart);
+        return box;
     }
 
     private void setupTableView() {
@@ -179,13 +425,13 @@ public class ThongKeDoanhThuController implements Initializable {
         }
     }
 
-    @FXML
+    
     private void locTheoThoiGian(ActionEvent event) {
         calculateDefaultTimeRange();
         loadData();
     }
 
-    @FXML
+    
     private void locTheoNhanVien(ActionEvent event) {
         String selected = cmbNhanVien.getValue();
         if (selected != null && !selected.equals("Tất cả")) {
@@ -196,8 +442,8 @@ public class ThongKeDoanhThuController implements Initializable {
         loadData();
     }
 
-    @FXML
-    private void refreshData(ActionEvent event) {
+    
+    private void refreshData() {
         loadData();
     }
 
@@ -515,9 +761,9 @@ public class ThongKeDoanhThuController implements Initializable {
         tableChiTiet.setItems(data);
     }
 
-    @FXML
+    
 //    Xuất báo cáo thống kê doanh thu ra file CSV
-    private void xuatBaoCao(ActionEvent event) {
+    private void xuatBaoCao() {
         try {
             // Tạo FileChooser để chọn nơi lưu file
             FileChooser fileChooser = new FileChooser();

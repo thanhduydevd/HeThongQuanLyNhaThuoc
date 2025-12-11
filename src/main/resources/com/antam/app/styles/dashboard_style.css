@@ -38,6 +38,10 @@
     -fx-border-color: #e5e7eb;
     -fx-border-width: 0px 0px 1px 0px;
     -fx-border-radius: 8px;
+    -fx-pref-height: 54px;
+    -fx-font-weight: BOLD;
+    -fx-font-size: 15px;
+    -fx-padding: 0 0 0 30px;
 }
 
 .sidebar-item:hover{
@@ -47,8 +51,11 @@
 
 .sidebar-sub-item{
     -fx-background-color: none;
+    -fx-pref-height: 54px;
     -fx-text-fill: #333;
     -fx-alignment: center-left;
+    -fx-padding: 0 0 0 50px;
+    -fx-font-size: 15px;
 }
 
 .sidebar-sub-item{
@@ -422,13 +429,15 @@
     -fx-background-radius: 5px;
     -fx-pref-height: 40px;
     -fx-pref-width: 95px;
+    -fx-text-fill: white;
 }
 
 /* Pane hướng dẫn */
 .pane-huongdan{
     -fx-background-color: #fff;
-    -fx-border-color:  #2563eb;
+    -fx-border-color: #2563eb;
     -fx-border-radius: 6px;
+    -fx-text-fill: #2563eb;
 }
 
 /* Button xoá */
@@ -437,4 +446,30 @@
     -fx-background-radius: 5px;
     -fx-pref-height: 40px;
     -fx-pref-width: 95px;
+}
+
+/* Button sửa */
+.btn-sua{
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 95px;
+}
+
+/* Button thêm */
+.btn-them{
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 118px;
+    -fx-text-fill: WHITE;
+}
+
+/* Button cập nhật*/
+.btn-capnhat{
+    -fx-background-color: #535353;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 118px;
+    -fx-text-fill: WHITE;
 }

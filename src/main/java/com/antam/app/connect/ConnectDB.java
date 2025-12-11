@@ -29,7 +29,7 @@ public class ConnectDB {
 //        String password = "0867424460";
         String url = "jdbc:sqlserver://localhost:1433;databasename=QuanLyNhaThuoc";
         String user = "sa";
-        String password = "sa123";
+        String password = "admin";
         con = DriverManager.getConnection(url, user, password);
         return con;
     }

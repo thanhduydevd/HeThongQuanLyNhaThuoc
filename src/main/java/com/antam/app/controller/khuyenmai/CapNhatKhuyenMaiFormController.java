@@ -18,6 +18,12 @@ import javafx.scene.text.Text;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /*
  * @description
@@ -25,18 +31,13 @@ import java.util.ArrayList;
  * @date: 10/15/2025
  * version: 1.0
  */
-public class CapNhatKhuyenMaiFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class CapNhatKhuyenMaiFormController extends DialogPane{
+
     private TextField txtMaKhuyenMai, txtTenKhuyenMai;
-    @FXML
     private ComboBox<LoaiKhuyenMai> cbLoaiKhuyenMai;
-    @FXML
     private Spinner<Integer> spSo, spSoLuongToiDa;
-    @FXML
     private DatePicker dpNgayBacDau, dpNgayKetThuc;
-    @FXML
+    
     private Text txtThongBao;
     private KhuyenMai_DAO khuyenMai_dao = new KhuyenMai_DAO();
     private LoaiKhuyenMai_DAO loaiKhuyenMai_dao = new LoaiKhuyenMai_DAO();
@@ -69,15 +70,129 @@ public class CapNhatKhuyenMaiFormController {
         }
     }
     public CapNhatKhuyenMaiFormController() {
-    }
+        this.setPrefSize(800, 600);
+        FlowPane header = new FlowPane();
+        header.setAlignment(javafx.geometry.Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
 
-    public void initialize() {
+        Text txtHeader = new Text("Cập Nhật Khuyến Mãi");
+        txtHeader.setFill(Color.WHITE);
+        txtHeader.setFont(Font.font("System Bold", 15));
+        FlowPane.setMargin(txtHeader, new Insets(10, 0, 10, 0));
+
+        header.getChildren().add(txtHeader);
+        this.setHeader(header);
+
+        // ====================== CONTENT ROOT ======================
+        AnchorPane root = new AnchorPane();
+        VBox vbox = new VBox(10);
+
+        AnchorPane.setLeftAnchor(vbox, 0.0);
+        AnchorPane.setRightAnchor(vbox, 0.0);
+
+        // ====================== GRIDPANE FORM ======================
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+
+        // Column cấu hình
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPrefWidth(100);
+        col1.setHgrow(Priority.SOMETIMES);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPrefWidth(100);
+        col2.setHgrow(Priority.SOMETIMES);
+
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        // Row spacing theo FXML
+        for (int i = 0; i < 8; i++) {
+            RowConstraints row = new RowConstraints();
+            row.setPrefHeight((i % 2 == 0) ? 30 : 40);
+            row.setVgrow(Priority.SOMETIMES);
+            grid.getRowConstraints().add(row);
+        }
+
+        // ====================== TẠO COMPONENT ======================
+        Text lblMa = label("Mã khuyến mãi:");
+        txtMaKhuyenMai = createTextField();
+
+        Text lblTen = label("Tên khuyến mãi:");
+        txtTenKhuyenMai = createTextField();
+
+        Text lblLoai = label("Loại khuyến mãi:");
+        cbLoaiKhuyenMai = new ComboBox<>();
+        cbLoaiKhuyenMai.setPrefHeight(40);
+        cbLoaiKhuyenMai.setMaxWidth(Double.MAX_VALUE);
+
+        Text lblSo = label("Số (Giá trị):");
+        spSo = new Spinner<>(0, Integer.MAX_VALUE, 0);
+        spSo.setEditable(true);
+        spSo.setPrefHeight(40);
+        spSo.setMaxWidth(Double.MAX_VALUE);
+
+        Text lblNgayBD = label("Ngày bắt đầu:");
+        dpNgayBacDau = new DatePicker();
+        dpNgayBacDau.setPrefHeight(40);
+
+        Text lblNgayKT = label("Ngày kết thúc:");
+        dpNgayKetThuc = new DatePicker();
+        dpNgayKetThuc.setPrefHeight(40);
+
+        Text lblSLToiDa = label("Số lượng tối đa:");
+        spSoLuongToiDa = new Spinner<>(0, Integer.MAX_VALUE, 0);
+        spSoLuongToiDa.setEditable(true);
+        spSoLuongToiDa.setPrefHeight(40);
+        spSoLuongToiDa.setMaxWidth(Double.MAX_VALUE);
+
+        txtThongBao = new Text();
+        txtThongBao.setFill(Color.RED);
+        txtThongBao.setWrappingWidth(386);
+
+        // ====================== ADD vào GRID ======================
+
+        // Hàng 0
+        grid.add(lblMa, 0, 0);
+        grid.add(lblTen, 1, 0);
+
+        // Hàng 1
+        grid.add(txtMaKhuyenMai, 0, 1);
+        grid.add(txtTenKhuyenMai, 1, 1);
+
+        // Hàng 2
+        grid.add(lblLoai, 0, 2);
+        grid.add(lblSo, 1, 2);
+
+        // Hàng 3
+        grid.add(cbLoaiKhuyenMai, 0, 3);
+        grid.add(spSo, 1, 3);
+
+        // Hàng 4
+        grid.add(lblNgayBD, 0, 4);
+        grid.add(lblNgayKT, 1, 4);
+
+        // Hàng 5
+        grid.add(dpNgayBacDau, 0, 5);
+        grid.add(dpNgayKetThuc, 1, 5);
+
+        // Hàng 6
+        grid.add(lblSLToiDa, 0, 6);
+
+        // Hàng 7
+        grid.add(spSoLuongToiDa, 0, 7);
+        grid.add(txtThongBao, 1, 7);
+
+        vbox.getChildren().add(grid);
+        root.getChildren().add(vbox);
+
+        this.setContent(root);
+        /** Sự kiện **/
         // them button vao dialog
         ButtonType closeButton = new ButtonType("Đóng", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType applyButtonUpdate = new ButtonType("Sửa", ButtonBar.ButtonData.APPLY);
         ButtonType applyButtonDelete = new ButtonType("Xóa", ButtonBar.ButtonData.APPLY);
         // them button vao dialog
-        dialogPane.getButtonTypes().addAll(applyButtonUpdate, applyButtonDelete, closeButton);
+        this.getButtonTypes().addAll(applyButtonUpdate, applyButtonDelete, closeButton);
 
         try {
             Connection con = ConnectDB.getInstance().getConnection();
@@ -85,8 +200,8 @@ public class CapNhatKhuyenMaiFormController {
             e.printStackTrace();
         }
         // su kien button
-        Button applyBtnUpdate = (Button) dialogPane.lookupButton(applyButtonUpdate);
-        Button applyBtnDelete = (Button) dialogPane.lookupButton(applyButtonDelete);
+        Button applyBtnUpdate = (Button) this.lookupButton(applyButtonUpdate);
+        Button applyBtnDelete = (Button) this.lookupButton(applyButtonDelete);
 
         applyBtnUpdate.addEventFilter(ActionEvent.ACTION, e -> {
             if (!validate()) {
@@ -150,6 +265,18 @@ public class CapNhatKhuyenMaiFormController {
         });
     }
 
+    private Text label(String text) {
+        Text lbl = new Text(text);
+        lbl.setFill(Color.web("#374151"));
+        return lbl;
+    }
+
+    private TextField createTextField() {
+        TextField tf = new TextField();
+        tf.setPrefHeight(40);
+        tf.setMaxHeight(Double.MAX_VALUE);
+        return tf;
+    }
 
     public void loadLoaiKhuyenMai(){
         ArrayList<LoaiKhuyenMai> listLoaiKhuyenMai = loaiKhuyenMai_dao.getAllLoaiKhuyenMai();

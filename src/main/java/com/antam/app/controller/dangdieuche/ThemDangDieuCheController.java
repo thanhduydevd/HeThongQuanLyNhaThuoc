@@ -8,6 +8,8 @@ package com.antam.app.controller.dangdieuche;
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.DangDieuChe_DAO;
 import com.antam.app.entity.DangDieuChe;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,30 +19,125 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-public class ThemDangDieuCheController {
+public class ThemDangDieuCheController extends ScrollPane{
 
-    @FXML
     private TableView<DangDieuChe> tbDangDieuChe;
-
-    @FXML
     private TextField tfMaDangDieuChe, tfTenDangDieuChe;
-
-    @FXML
     private Button btnThem;
-
     private DangDieuChe_DAO dangDieuChe_DAO = new DangDieuChe_DAO();
 
     /* Lấy dữ liệu từ DAO */
-    private ArrayList<DangDieuChe> dsDangDieuChe = new ArrayList<>();
+    private ArrayList<DangDieuChe> dsDangDieuChe;
     private ObservableList<DangDieuChe> data = FXCollections.observableArrayList();
 
     public ThemDangDieuCheController() {
+        /** Giao diện **/
+        this.setFitToHeight(true);
+        this.setFitToWidth(true);
+        this.setPrefSize(900, 730);
+        AnchorPane.setTopAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 0.0);
+        AnchorPane.setRightAnchor(this, 0.0);
 
-    }
+        VBox root = new VBox(30);
+        root.setStyle("-fx-background-color: #f8fafc;");
+        root.setPadding(new Insets(20));
 
-    public void initialize() {
+        // ============= TITLE =============
+        HBox titleBox = new HBox();
+        titleBox.setAlignment(Pos.CENTER_LEFT);
+
+        Text title = new Text("Thêm dạng điều chế");
+        title.setFill(Color.web("#1e3a8a"));
+        title.setFont(Font.font("System Bold", 30));
+
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        titleBox.getChildren().addAll(title, spacer);
+
+        // ============= INPUT PANEL =============
+        FlowPane formPane = new FlowPane();
+        formPane.setHgap(5);
+        formPane.setVgap(5);
+        formPane.getStyleClass().add("box-pane");
+        formPane.setPadding(new Insets(10));
+
+        DropShadow shadow = new DropShadow();
+        shadow.setBlurType(javafx.scene.effect.BlurType.GAUSSIAN);
+        shadow.setOffsetX(3);
+        shadow.setOffsetY(2);
+        shadow.setRadius(19.5);
+        shadow.setColor(Color.rgb(211, 211, 211));
+
+        formPane.setEffect(shadow);
+
+        // --- Mã dạng điều chế ---
+        VBox colMa = new VBox(5);
+        Text lblMa = new Text("Mã dạng điều chế:");
+        lblMa.setFill(Color.web("#374151"));
+        lblMa.setFont(Font.font(13));
+
+        tfMaDangDieuChe = new TextField();
+        tfMaDangDieuChe.setPrefSize(200, 40);
+        tfMaDangDieuChe.setPromptText("Nhập mã dạng điều chế");
+
+        colMa.getChildren().addAll(lblMa, tfMaDangDieuChe);
+
+
+        // --- Tên dạng điều chế ---
+        VBox colTen = new VBox(5);
+        Text lblTen = new Text("Tên dạng điều chế:");
+        lblTen.setFill(Color.web("#374151"));
+        lblTen.setFont(Font.font(13));
+
+        tfTenDangDieuChe = new TextField();
+        tfTenDangDieuChe.setPrefSize(200, 40);
+        tfTenDangDieuChe.setPromptText("Nhập tên dạng điều chế");
+
+        colTen.getChildren().addAll(lblTen, tfTenDangDieuChe);
+
+        // --- Button thêm ---
+        VBox colBtn = new VBox(5);
+        colBtn.setAlignment(Pos.CENTER);
+
+        btnThem = new Button("Thêm");
+        btnThem.setPrefSize(76, 40);
+        btnThem.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
+        btnThem.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon iconPlus = new FontAwesomeIcon();
+        iconPlus.setIcon(FontAwesomeIcons.PLUS);
+        iconPlus.setFill(Color.WHITE);
+        btnThem.setGraphic(iconPlus);
+
+        colBtn.getChildren().addAll(new Text(), btnThem);
+
+        // Add to formPane
+        formPane.getChildren().addAll(colMa, colTen, colBtn);
+
+        // ============= TABLE =============
+        tbDangDieuChe = new TableView<>();
+        tbDangDieuChe.setPrefHeight(800);
+
+        tbDangDieuChe.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // ============= ADD TO ROOT =============
+        root.getChildren().addAll(titleBox, formPane, tbDangDieuChe);
+
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        this.setContent(root);
+        /** Sự kiện **/
         try {
             Connection con = ConnectDB.getInstance().connect();
         } catch (SQLException e) {
@@ -73,6 +170,7 @@ public class ThemDangDieuCheController {
             }
         });
     }
+
 
     public void loadDanhSachDangDieuChe(){
 

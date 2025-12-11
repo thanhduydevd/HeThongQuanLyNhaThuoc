@@ -15,28 +15,30 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
 
-public class TraThuocFormController {
-    @FXML
-    private DialogPane dialogPane;
-    @FXML
+public class TraThuocFormController extends DialogPane{
     private VBox vbListChiTietHoaDon;
-    @FXML
     private TextField txtMaHoaDonTra, txtKhachHangTra;
-    @FXML
     private Text txtTongTienTra;
-    @FXML
     private ComboBox<String> cbLyDoTra;
 
 
@@ -70,18 +72,136 @@ public class TraThuocFormController {
         txtTongTienTra.setText("0.0 đ");
     }
 
-    public void initialize() {
-        // Thêm nút Huỷ và Xác nhận trả thuốc
+    public TraThuocFormController(){
+        this.setPrefWidth(800);
+
+        FlowPane header = new FlowPane();
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: #1e3a8a;");
+
+        Text title = new Text("Trả thuốc");
+        title.setFill(Color.WHITE);
+        title.setFont(Font.font("System", FontWeight.BOLD, 15));
+        FlowPane.setMargin(title, new Insets(10, 0, 10, 0));
+        header.getChildren().add(title);
+
+        this.setHeader(header);
+
+        // ================= CONTENT ====================
+        AnchorPane contentRoot = new AnchorPane();
+        VBox mainVBox = new VBox(10);
+        AnchorPane.setLeftAnchor(mainVBox, 0.0);
+        AnchorPane.setRightAnchor(mainVBox, 0.0);
+
+        // ---------------- ScrollPane ------------------
+        ScrollPane scroll = new ScrollPane();
+        scroll.setFitToWidth(true);
+        scroll.setPrefHeight(500);
+
+        VBox scrollContent = new VBox(10);
+
+        // ================= GRIDPANE ===================
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+
+        // Column constraints
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+        grid.getColumnConstraints().addAll(col1, col2);
+
+        // Row constraints
+        for (int i = 0; i < 4; i++) {
+            RowConstraints rc = new RowConstraints();
+            rc.setPrefHeight(new double[]{30, 40, 30, 30}[i]);
+            rc.setVgrow(Priority.SOMETIMES);
+            grid.getRowConstraints().add(rc);
+        }
+
+        // ==== Text + TextField + ComboBox =====
+        Text lblMaHD = new Text("Mã hóa đơn gốc:");
+        lblMaHD.setFill(Color.valueOf("#374151"));
+
+        txtMaHoaDonTra = new TextField();
+        txtMaHoaDonTra.setPrefHeight(40);
+        txtMaHoaDonTra.getStyleClass().add("text-field");
+
+        Text lblKH = new Text("Khách hàng:");
+        lblKH.setFill(Color.valueOf("#374151"));
+
+        txtKhachHangTra = new TextField();
+        txtKhachHangTra.setPrefHeight(40);
+        txtKhachHangTra.getStyleClass().add("text-field");
+
+        Text lblLyDo = new Text("Lý do trả:");
+        lblLyDo.setFill(Color.valueOf("#374151"));
+
+        cbLyDoTra = new ComboBox<>();
+        cbLyDoTra.setPrefWidth(150);
+
+        // Add to grid
+        grid.add(lblMaHD, 0, 0);
+        grid.add(txtMaHoaDonTra, 0, 1);
+
+        grid.add(lblKH, 1, 0);
+        grid.add(txtKhachHangTra, 1, 1);
+
+        grid.add(lblLyDo, 0, 2);
+        grid.add(cbLyDoTra, 0, 3);
+
+        // ========= Danh sách thuốc (VBox) ===========
+        Text lblThuocTra = new Text("Thuốc trả:");
+        lblThuocTra.setFill(Color.BLACK);
+
+        vbListChiTietHoaDon = new VBox(5);
+        vbListChiTietHoaDon.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
+        vbListChiTietHoaDon.setPadding(new Insets(10));
+
+        // Add nodes inside scroll content
+        scrollContent.getChildren().addAll(grid, lblThuocTra, vbListChiTietHoaDon);
+        scroll.setContent(scrollContent);
+
+        // =========== Tổng tiền trả grid cuối =============
+        GridPane bottomGrid = new GridPane();
+        bottomGrid.setHgap(5);
+        bottomGrid.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        bottomGrid.setPadding(new Insets(10));
+
+        ColumnConstraints bc1 = new ColumnConstraints();
+        bc1.setHgrow(Priority.SOMETIMES);
+        ColumnConstraints bc2 = new ColumnConstraints();
+        bc2.setHgrow(Priority.SOMETIMES);
+        bottomGrid.getColumnConstraints().addAll(bc1, bc2);
+
+        Text lblTongTien = new Text("Tổng tiền trả:");
+        lblTongTien.setFont(Font.font("System", FontWeight.BOLD, 18));
+        lblTongTien.setFill(Color.valueOf("#374151"));
+
+        txtTongTienTra = new Text("500.000đ");
+        txtTongTienTra.setFont(Font.font("System", FontWeight.BOLD, 18));
+        txtTongTienTra.setFill(Color.valueOf("#374151"));
+
+        bottomGrid.add(lblTongTien, 0, 0);
+        bottomGrid.add(txtTongTienTra, 1, 0);
+
+        // Compose all into main vbox
+        mainVBox.getChildren().addAll(scroll, bottomGrid);
+        contentRoot.getChildren().add(mainVBox);
+
+        this.setContent(contentRoot);
+        this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+        /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Xác nhận trả thuốc", ButtonData.APPLY);
-        this.dialogPane.getButtonTypes().add(cancelButton);
-        this.dialogPane.getButtonTypes().add(applyButton);
+        this.getButtonTypes().add(cancelButton);
+        this.getButtonTypes().add(applyButton);
 
         // Kết nối DB
         try { Connection con = ConnectDB.getInstance().connect(); }
         catch (SQLException e) { throw new RuntimeException(e); }
         // Xử lý sự kiện khi nhấn nút Xác nhận trả thuốc
-        Button applyBtn = (Button) dialogPane.lookupButton(applyButton);
+        Button applyBtn = (Button) this.lookupButton(applyButton);
         applyBtn.addEventFilter(ActionEvent.ACTION, event -> {
             if (selectedItems.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -132,7 +252,7 @@ public class TraThuocFormController {
                             );
                             chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(
                                     ct.getMaCTT().getMaCTT(),
-                                     ct.getSoLuong()
+                                    ct.getSoLuong()
                             );
                             break;
 
