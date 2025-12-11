@@ -175,6 +175,9 @@ public class CapNhatDangDieuCheController extends ScrollPane{
         //Sự kiện khi chọn 1 hàng trong bảng
         tbDangDieuChe.setOnMouseClicked(e -> {
             DangDieuChe DangDieuChe = tbDangDieuChe.getSelectionModel().getSelectedItem();
+            if (DangDieuChe == null) {
+                return;
+            }
             tfMaDangDieuChe.setText(String.valueOf(DangDieuChe.getMaDDC()));
             tfTenDangDieuChe.setText(DangDieuChe.getTenDDC());
         });

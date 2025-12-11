@@ -182,14 +182,20 @@ public class ThemPhieuDatController extends ScrollPane{
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
         /** Sự kiện **/
+
+        // tạo phiếu đặt mới
         this.btnAddPurchaseOrder.setOnAction((e) -> {
             ThemPhieuDatFormController themDialog = new ThemPhieuDatFormController();
-            Dialog<Void> dialog = new Dialog<>();
+            Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setDialogPane(themDialog);
             dialog.setTitle("Chi tiết phiếu đặt");
             dialog.initModality(Modality.APPLICATION_MODAL);
 
-            dialog.showAndWait();
+            dialog.showAndWait().ifPresent(result -> {
+                if (ButtonType.APPLY.equals(result)) {
+                    showMess("Thêm phiếu đặt", "Thêm phiếu đặt thành công!");
+                }
+            });
             loadDataVaoBang();
         });
 
@@ -370,6 +376,14 @@ public class ThemPhieuDatController extends ScrollPane{
         cbGia.getSelectionModel().selectFirst();
         cbNhanVien.getSelectionModel().selectFirst();
         cbTrangThai.getSelectionModel().selectFirst();
+    }
+
+    public void showMess(String tieuDe, String vanBan){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(tieuDe);
+        alert.setContentText(vanBan);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 
 }

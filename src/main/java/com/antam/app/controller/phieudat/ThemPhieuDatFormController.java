@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.sql.Connection;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextFlow;
 
 public class ThemPhieuDatFormController extends DialogPane{
     private TextField txtMa;
@@ -120,21 +122,37 @@ public class ThemPhieuDatFormController extends DialogPane{
         GridPane.setColumnIndex(txtTenKhach, 1);
         GridPane.setRowIndex(txtTenKhach, 1);
 
+        HBox hbSDT = new HBox();
         Text lblSoDienThoai = new Text("Số điện thoại:");
-        lblTenKhach.setFill(javafx.scene.paint.Color.web("#374151"));
-        GridPane.setColumnIndex(lblSoDienThoai, 1);
-        GridPane.setRowIndex(lblSoDienThoai, 2);
+        lblSoDienThoai.setFill(Color.web("#374151"));
+        // Cảnh báo
+        txtCanhBaoSDT.setFill(Color.RED);
 
+        // ngăn chặn nhảy lệch
+        TextFlow warnFlow = new TextFlow(txtCanhBaoSDT);
+        warnFlow.setMinWidth(150);
+        warnFlow.setMaxWidth(150);
+
+        // Tạo nhóm label + cảnh báo
+        hbSDT.getChildren().add(lblSoDienThoai);
+        hbSDT.getChildren().add(warnFlow);
+
+        // Đặt vào GridPane
+        GridPane.setColumnIndex(hbSDT, 1);
+        GridPane.setRowIndex(hbSDT, 2);
+        // TextField nhập SDT
         txtSoDienThoai = new TextField();
         txtSoDienThoai.getStyleClass().add("text-field");
+        // Đặt TextField vào GridPane
         GridPane.setColumnIndex(txtSoDienThoai, 1);
         GridPane.setRowIndex(txtSoDienThoai, 3);
+
 
         Text lblThuocDat = new Text("Thuốc đặt:");
         lblThuocDat.setFill(javafx.scene.paint.Color.web("#374151"));
         GridPane.setRowIndex(lblThuocDat, 4);
 
-        gridTop.getChildren().addAll(lblMa, txtMa, lblTenKhach, txtTenKhach, lblSoDienThoai, txtSoDienThoai, lblThuocDat);
+        gridTop.getChildren().addAll(lblMa, txtMa, lblTenKhach, txtTenKhach, hbSDT, txtSoDienThoai, lblThuocDat);
 
         vbThuoc = new VBox(5);
         vbThuoc.setMaxWidth(Double.MAX_VALUE);
@@ -174,8 +192,11 @@ public class ThemPhieuDatFormController extends DialogPane{
         btnThem.getStyleClass().add("btn-gray");
         btnThem.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
 
+        HBox hbCanhBaoKM = new HBox();
+        txtCanhBaoKM.setFill(Color.RED);
         Text lblKM = new Text("Áp dụng khuyến mãi:");
 
+        hbCanhBaoKM.getChildren().addAll(lblKM, txtCanhBaoKM);
         cbKhuyenMai = new ComboBox();
         cbKhuyenMai.setPrefSize(778, 44);
         cbKhuyenMai.setPromptText("Chọn khuyến mãi");
@@ -226,7 +247,7 @@ public class ThemPhieuDatFormController extends DialogPane{
                 gridTop,
                 vbThuoc,
                 btnThem,
-                lblKM,
+                hbCanhBaoKM,
                 cbKhuyenMai,
                 tbChonThuoc,
                 gridTotal
@@ -238,6 +259,7 @@ public class ThemPhieuDatFormController extends DialogPane{
         this.setHeader(header);
         this.setContent(content);
         /** Sự kiện **/
+
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Lưu", ButtonData.APPLY);
         this.getButtonTypes().add(cancelButton);
