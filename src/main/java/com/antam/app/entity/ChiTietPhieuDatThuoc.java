@@ -36,6 +36,15 @@ public class ChiTietPhieuDatThuoc {
         setThanhTien();
     }
 
+    //Constructor cho lúc khởi tạo mẫu chi tiết phiếu đặt
+    public ChiTietPhieuDatThuoc(Thuoc thuoc, int soLuong, DonViTinh dvt){
+        this.maPhieu = new PhieuDatThuoc();
+        this.maThuoc = thuoc;
+        this.soLuong = soLuong;
+        this.donViTinh = dvt;
+        this.thanhTien = soLuong * thuoc.getGiaBan() * (1 + thuoc.getThue());
+    }
+
     public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, Thuoc maThuoc, int soLuong, DonViTinh donViTinh, double thanhTien) {
         this.maPhieu = maPhieu;
         this.maThuoc = maThuoc;
@@ -101,4 +110,23 @@ public class ChiTietPhieuDatThuoc {
     public void setThanhToan(boolean thanhToan) {
         isThanhToan = thanhToan;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChiTietPhieuDatThuoc that = (ChiTietPhieuDatThuoc) o;
+
+        return this.maThuoc.getMaThuoc().equals(that.maThuoc.getMaThuoc())
+                && this.donViTinh.getMaDVT() == that.donViTinh.getMaDVT();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = maThuoc.getMaThuoc().hashCode();
+        result = 31 * result + donViTinh.getMaDVT();  // maDVT là int → dùng trực tiếp
+        return result;
+    }
+
 }

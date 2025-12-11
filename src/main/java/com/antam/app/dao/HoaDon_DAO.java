@@ -572,5 +572,26 @@ public class HoaDon_DAO {
         }
         return dsHoaDon;
     }
+    /**
+     * Đếm số hóa đơn đã áp dụng khuyến mãi với mã khuyến mãi cụ thể
+     * @param maKM mã khuyến mãi
+     * @return số lượng hóa đơn đã áp dụng khuyến mãi
+     */
+    public int soHoaDonDaCoKhuyenMaiVoiMa(String maKM){
+        int count = 0;
+        String sql = "SELECT COUNT(*) AS SoLuong FROM HoaDon WHERE MaKM = ? AND DeleteAt = 0";
+        Connection con = ConnectDB.getConnection();
+        try{
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, maKM);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                count = rs.getInt("SoLuong");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }
 
