@@ -11,11 +11,17 @@ import com.antam.app.entity.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PhieuDat_DAO {
     public static ArrayList<PhieuDatThuoc> list = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
 
     public static Thuoc_DAO thuoc_dao = new Thuoc_DAO();
+    private NhanVien_DAO nvDAO = new NhanVien_DAO();
+    private KhachHang_DAO khDAO = new KhachHang_DAO();
+    private KhuyenMai_DAO kmDAO = new KhuyenMai_DAO();
 
     /**
      * Lấy toàn bộ danh sách phiếu đặt thuốc với thông tin bao gồm
@@ -23,44 +29,65 @@ public class PhieuDat_DAO {
      * thành tiền của phiếu đặt
      * @return Array[PhieuDatThuoc]
      */
-    public static ArrayList<PhieuDatThuoc> getAllPhieuDatThuocFromDBS(){
+    public static ArrayList<PhieuDatThuoc> getAllPhieuDatThuocFromDBS() {
         ArrayList<PhieuDatThuoc> ds = new ArrayList<>();
+
         try {
             ConnectDB.getInstance().connect();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         Connection con = ConnectDB.getConnection();
 
-        try {
-            String sql = "select * from PhieuDatThuoc";
-            PreparedStatement state = con.prepareStatement(sql);
-            ResultSet kq = state.executeQuery();
-            while(kq.next()){
-                String ma = kq.getString(1);
-                LocalDate ngay = kq.getDate(2).toLocalDate();
-                boolean isThanhToan = kq.getBoolean(3);
-                String maKhach = kq.getString(4);
-                String maNV = kq.getString(5);
-                String maKM = kq.getString(6);
-                double total = kq.getDouble(7);
-                PhieuDatThuoc e = new PhieuDatThuoc(ma,ngay,isThanhToan,
-                        NhanVien_DAO.dsNhanViens.stream()
-                                .filter(t-> t.getMaNV().equalsIgnoreCase(maNV))
-                                .findFirst().orElse(null),
-                        KhachHang_DAO.loadBanFromDB().stream()
-                                .filter(t->t.getMaKH().equalsIgnoreCase(maKhach))
-                                .findFirst().orElse(null),
-                        KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc().stream()
-                                .filter(t->t.getMaKM().equalsIgnoreCase(maKM))
-                                .findFirst().orElse(null),total);
+        String sql = "SELECT MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTien FROM PhieuDatThuoc";
+
+        try (
+                PreparedStatement state = con.prepareStatement(sql);
+                ResultSet kq = state.executeQuery()
+        ) {
+            ArrayList<NhanVien> nvList = NhanVien_DAO.getDsNhanVienformDBS();
+            ArrayList<KhachHang> khList = KhachHang_DAO.loadBanFromDB();
+            List<KhuyenMai> kmList = KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
+
+            Map<String, NhanVien> mapNV = nvList.stream()
+                    .collect(Collectors.toMap(NhanVien::getMaNV, x -> x));
+
+            Map<String, KhachHang> mapKH = khList.stream()
+                    .collect(Collectors.toMap(KhachHang::getMaKH, x -> x));
+
+            Map<String, KhuyenMai> mapKM = kmList.stream()
+                    .collect(Collectors.toMap(KhuyenMai::getMaKM, x -> x));
+
+            while (kq.next()) {
+                String ma = kq.getString("MaPDT");
+                LocalDate ngay = kq.getDate("NgayTao").toLocalDate();
+                boolean isThanhToan = kq.getBoolean("IsThanhToan");
+                String maKhach = kq.getString("MaKH");
+                String maNV = kq.getString("MaNV");
+                String maKM = kq.getString("MaKM");
+                double total = kq.getDouble("TongTien");
+
+                PhieuDatThuoc e = new PhieuDatThuoc(
+                        ma,
+                        ngay,
+                        isThanhToan,
+                        mapNV.get(maNV),
+                        mapKH.get(maKhach),
+                        mapKM.get(maKM),
+                        total
+                );
+
                 ds.add(e);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return ds;
     }
+
 
     public static boolean themPhieuDatThuocVaoDBS(PhieuDatThuoc i) {
         try {
@@ -217,7 +244,7 @@ public class PhieuDat_DAO {
         return dsChiTiet;
     }
 
-    public static void capNhatThanhToanPhieuDat(String maPDT) {
+    public static boolean capNhatThanhToanPhieuDat(String maPDT) {
         try {
             ConnectDB.getInstance().connect();
         } catch (SQLException e) {
@@ -233,6 +260,7 @@ public class PhieuDat_DAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
 

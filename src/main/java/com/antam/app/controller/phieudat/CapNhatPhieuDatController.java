@@ -211,7 +211,6 @@ public class CapNhatPhieuDatController extends ScrollPane{
                 PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
 
                 // Kiểm tra có chọn dòng nào không
-
                 if (selected != null) {
                     selectedPDT = selected;
                     // lưu lại để truyền qua form chi tiết
@@ -221,9 +220,10 @@ public class CapNhatPhieuDatController extends ScrollPane{
                     dialog.setTitle("Chi tiết phiếu đặt");
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.showAndWait();
-                    loadDataVaoBang();
                 }
+                loadDataVaoBang();
             }
+
         });
 
 
@@ -389,6 +389,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         origin = FXCollections.observableArrayList(listPDT);
         filter = FXCollections.observableArrayList(origin);
         tvPhieuDat.setItems(filter);
+        tvPhieuDat.refresh();
     }
 
 
