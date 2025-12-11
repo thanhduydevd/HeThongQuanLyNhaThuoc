@@ -221,18 +221,28 @@ public class TimThuocController extends ScrollPane{
         btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
         searchNameThuoc.setOnKeyReleased(e -> filterAndSearchThuoc());
         // su kien table view
-        tableThuoc.setOnMouseClicked(tv -> {
-            Thuoc selectedThuoc = tableThuoc.getSelectionModel().getSelectedItem();
-            XemChiTietThuocFormController xemDialog = new XemChiTietThuocFormController();
-            xemDialog.setThuoc(selectedThuoc);
-            xemDialog.showData();
-            Dialog<Void> dialog = new Dialog<>();
-            dialog.setDialogPane(xemDialog);
-            dialog.setTitle("Chi tiết thuốc");
-            dialog.initModality(Modality.APPLICATION_MODAL);
+        tableThuoc.setRowFactory(tv -> {
+            TableRow<Thuoc> row = new TableRow<>();
 
-            dialog.showAndWait();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Thuoc selectedThuoc = row.getItem();
+
+                    XemChiTietThuocFormController xemDialog = new XemChiTietThuocFormController();
+                    xemDialog.setThuoc(selectedThuoc);
+                    xemDialog.showData();
+
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết thuốc");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                }
+            });
+
+            return row;
         });
+
         btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
     }
 

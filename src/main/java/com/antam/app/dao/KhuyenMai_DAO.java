@@ -15,9 +15,14 @@ public class KhuyenMai_DAO {
         String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
                 "FROM KhuyenMai km JOIN LoaiKhuyenMai lkm ON km.LoaiKhuyenMai = lkm.MaLKM " +
                 "WHERE km.deleteAt = 0";
-        try (Connection con = ConnectDB.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 String maKM = rs.getString("MaKM");
                 String tenKM = rs.getString("TenKM");

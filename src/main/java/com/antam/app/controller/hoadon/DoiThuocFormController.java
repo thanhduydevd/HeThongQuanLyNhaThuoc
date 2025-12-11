@@ -348,12 +348,6 @@ public class DoiThuocFormController extends DialogPane{
                         case "Khách hàng đổi ý":
                         case "Nhập nhầm lô / dư":
                         case "Sai thông tin đơn / bảo hiểm":
-                            Thuoc t = thuoc_dao.getThuocTheoMa(
-                                    chiTietThuoc_dao
-                                            .getChiTietThuoc(ct.getMaCTT().getMaCTT())
-                                            .getMaThuoc()
-                                            .getMaThuoc()
-                            );
                             chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(
                                     ct.getMaCTT().getMaCTT(),
                                     ct.getSoLuong()
@@ -403,7 +397,7 @@ public class DoiThuocFormController extends DialogPane{
                                                 "Thuốc Mới Khi Đổi",
                                                 Math.round(t.getGiaBan() * soLuong * (1 + t.getThue()) * 100.0) / 100.0
                                         );
-                                        chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
+                                        chiTietHoaDon_dao.themChiTietHoaDon1(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuong);
                                         tongTienMua += newCTHD.getThanhTien();
                                         break;
@@ -417,7 +411,7 @@ public class DoiThuocFormController extends DialogPane{
                                                 "Thuốc Mới Khi Đổi",
                                                 Math.round(t.getGiaBan() * ctt.getSoLuong() * (1 + t.getThue()) * 100.0) / 100.0
                                         );
-                                        chiTietHoaDon_dao.themChiTietHoaDon(newCTHD);
+                                        chiTietHoaDon_dao.themChiTietHoaDon1(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -ctt.getSoLuong());
                                         tongTienMua += newCTHD.getThanhTien();
                                     }

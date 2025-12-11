@@ -251,6 +251,30 @@ public class CapNhatThuocController extends ScrollPane{
         cbDangDieuChe.setOnAction(e -> filterAndSearchThuoc());
         cbTonKho.setOnAction(e -> filterAndSearchThuoc());
 
+        // su kien table view
+        tableThuoc.setRowFactory(tv -> {
+            TableRow<Thuoc> row = new TableRow<>();
+
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Thuoc selectedThuoc = row.getItem();
+
+                    XemChiTietThuocFormController xemDialog = new XemChiTietThuocFormController();
+                    xemDialog.setThuoc(selectedThuoc);
+                    xemDialog.showData();
+
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết thuốc");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                }
+            });
+
+            return row;
+        });
+
+
         // Event tìm kiếm
         btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
         searchNameThuoc.setOnKeyReleased(e -> filterAndSearchThuoc());
