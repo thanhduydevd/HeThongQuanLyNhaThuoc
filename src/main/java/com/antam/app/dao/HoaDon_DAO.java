@@ -12,10 +12,7 @@ import com.antam.app.entity.KhachHang;
 import com.antam.app.entity.KhuyenMai;
 import com.antam.app.entity.NhanVien;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -571,6 +568,51 @@ public class HoaDon_DAO {
             e.printStackTrace();
         }
         return dsHoaDon;
+    }
+    /**
+     * Đếm số hóa đơn đã áp dụng khuyến mãi với mã khuyến mãi cụ thể
+     * @param maKM mã khuyến mãi
+     * @return số lượng hóa đơn đã áp dụng khuyến mãi
+     */
+    public int soHoaDonDaCoKhuyenMaiVoiMa(String maKM){
+        int count = 0;
+        String sql = "SELECT COUNT(*) AS SoLuong FROM HoaDon WHERE MaKM = ? AND DeleteAt = 0";
+        Connection con = ConnectDB.getConnection();
+        try{
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, maKM);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                count = rs.getInt("SoLuong");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    /**
+     * Lấy mã hóa đơn lớn nhất hiện có trong database
+     * @return string - phần số của mã hóa đơn lớn nhất
+     */
+    public String getMaxHash(){
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Connection con = ConnectDB.getConnection();
+            String sql = "select top 1 MaHD from HoaDon order by MaHD desc";
+            PreparedStatement state = con.prepareStatement(sql);
+            ResultSet kq = state.executeQuery();
+            while (kq.next()){
+                return kq.getString(1).substring(3,5);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
     }
 }
 

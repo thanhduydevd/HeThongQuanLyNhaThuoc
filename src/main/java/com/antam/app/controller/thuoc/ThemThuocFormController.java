@@ -43,7 +43,7 @@ public class ThemThuocFormController extends DialogPane{
 
     private TextField txtAddMaThuoc, txtAddTenThuoc, txtAddHamLuong;
 
-    private Text txtAddGiaByDV, notification_addThuoc;
+    private Text notification_addThuoc;
 
     private Spinner<Double> spAddGiaGoc, spAddGiaBan, spAddThue;
 
@@ -405,7 +405,6 @@ public class ThemThuocFormController extends DialogPane{
         cbAddDVCS.getItems().clear();
         arrayDVT.forEach(dvt -> cbAddDVCS.getItems().add(dvt));
         cbAddDVCS.getSelectionModel().selectFirst();
-        txtAddGiaByDV.setText(cbAddDVCS.getValue().toString());
     }
 
     // Cat chuoi lay don vi

@@ -188,6 +188,9 @@ public class CapNhatKeThuocController extends ScrollPane{
         //Sự kiện khi chọn 1 hàng trong bảng
         tbKeThuoc.setOnMouseClicked(e -> {
             Ke ke = tbKeThuoc.getSelectionModel().getSelectedItem();
+            if (ke == null) {
+                return;
+            }
             tfMaKe.setText(ke.getMaKe());
             tfTenKe.setText(ke.getTenKe());
             tfLoaiKe.setText(ke.getLoaiKe());

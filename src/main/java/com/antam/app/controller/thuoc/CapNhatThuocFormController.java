@@ -270,6 +270,7 @@ public class CapNhatThuocFormController extends DialogPane{
         cbDUDVCS.setOnAction(e -> {
             txtDUGiaByDV.setText(cbDUDVCS.getValue().getTenDVT());
         });
+
     }
 
     // hien thi hop thoai xac nhan xoa

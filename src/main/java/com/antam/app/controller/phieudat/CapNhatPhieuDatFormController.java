@@ -5,8 +5,11 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.dao.HoaDon_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.ChiTietPhieuDatThuoc;
+import com.antam.app.entity.HoaDon;
+import com.antam.app.entity.PhienNguoiDung;
 import com.antam.app.entity.PhieuDatThuoc;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.text.Text;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
@@ -40,6 +44,7 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
     private PhieuDatThuoc select = selectedPDT;
     private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = PhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
+    private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
 
     public CapNhatPhieuDatFormController() {
         FlowPane header = new FlowPane();
@@ -56,14 +61,12 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
         // ============================
         // CONTENT ROOT
-        // ============================
         AnchorPane anchor = new AnchorPane();
         VBox rootVBox = new VBox(10);
         rootVBox.setPadding(new Insets(10));
 
         // ============================
         // BOX THÔNG TIN ĐẦU
-        // ============================
         VBox infoBox = new VBox(5);
         infoBox.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
         infoBox.setPadding(new Insets(10, 100, 10, 10));
@@ -86,14 +89,11 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
         infoBox.getChildren().addAll(txtMa, txtNgay, txtSDT, txtStatus);
 
-        // ============================
         // LABEL DANH SÁCH THUỐC
-        // ============================
         Text labelThuoc = new Text("Danh sách thuốc đặt:");
 
         // ============================
         // TABLEVIEW
-        // ============================
         tbThuoc = new TableView();
         tbThuoc.setPrefSize(758, 282);
 
@@ -111,7 +111,6 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
         // ============================
         // GRID TỔNG TIỀN
-        // ============================
         GridPane grid = new GridPane();
         grid.setHgap(5);
         grid.setPadding(new Insets(10));
@@ -184,7 +183,33 @@ public class CapNhatPhieuDatFormController extends DialogPane{
     }
 
     private void thanhToanPhieuDat() {
-        PhieuDat_DAO.capNhatThanhToanPhieuDat(select.getMaPhieu());
+        boolean capNhatOK = PhieuDat_DAO.capNhatThanhToanPhieuDat(select.getMaPhieu());
+        if (!capNhatOK) {
+            showMess("Lỗi", "Không thể cập nhật trạng thái phiếu đặt!");
+            return;
+        }
+
+        // Đồng bộ lại object trong RAM
+        select.setThanhToan(true);
+        HoaDon hoaDon = new HoaDon(getMaxHashHoaDon(),
+                LocalDate.now()
+                , PhienNguoiDung.getMaNV()
+                , select.getKhachHang()
+                , select.getKhuyenMai()
+                ,select.getTongTien()
+                , false);
+        if (hoaDon_dao.insertHoaDon(hoaDon)) {
+            showMess("Thành công","Thanh toán phiếu đặt thuốc thành công");
+        }else {
+            showMess("Lỗi","Thanh toán phiếu đặt thuốc thất bại");
+        }
+    }
+
+    private String getMaxHashHoaDon(){
+        int max = Integer.parseInt(hoaDon_dao.getMaxHash());
+        String hash;
+        hash = String.format("HD%03d", max + 1);
+        return hash;
     }
 
     private void showMess(String tieude, String noidung) {

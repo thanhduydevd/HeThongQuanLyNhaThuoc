@@ -12,6 +12,7 @@ import com.antam.app.entity.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,4 +222,68 @@ public class ChiTietHoaDon_DAO {
         }
         return false;
     }
+
+    /**
+     * Thêm chi tiết hóa đơn với trạng thái "Trả Khi Đổi"
+     * Giới hạn chỉ được có tối đa 2 dòng với trạng thái này cho mỗi MaHD và MaCTT
+     * @param cthd chi tiết hóa đơn
+     * @return true nếu thêm thành công, false nếu thêm thất bại
+     */
+
+    public boolean themChiTietHoaDon1(ChiTietHoaDon cthd) {
+        String countSql = "SELECT COUNT(*) AS cnt FROM ChiTietHoaDon WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = ?";
+        String updateSql = "UPDATE ChiTietHoaDon SET SoLuong = SoLuong + ?, ThanhTien = ThanhTien + ? WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = ?";
+        String insertSql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+
+            // 1️⃣ Đếm xem có bao nhiêu record "Trả Khi Đổi"
+            PreparedStatement countStmt = con.prepareStatement(countSql);
+            countStmt.setString(1, cthd.getMaHD().getMaHD());
+            countStmt.setInt(2, cthd.getMaCTT().getMaCTT());
+            countStmt.setString(3, "Trả Khi Đổi");
+
+            ResultSet rs = countStmt.executeQuery();
+            int count = 0;
+            if (rs.next()) {
+                count = rs.getInt("cnt");
+            }
+
+            // 2️⃣ Nếu đã có đúng 2 dòng → UPDATE (cộng dồn)
+            if (count == 2) {
+                PreparedStatement updateStmt = con.prepareStatement(updateSql);
+                updateStmt.setInt(1, cthd.getSoLuong());
+                updateStmt.setDouble(2, cthd.getThanhTien());
+                updateStmt.setString(3, cthd.getMaHD().getMaHD());
+                updateStmt.setInt(4, cthd.getMaCTT().getMaCTT());
+                updateStmt.setString(5, "Trả Khi Đổi");
+
+                int rowsAffected = updateStmt.executeUpdate();
+                return rowsAffected > 0;
+            }
+
+            // 3️⃣ Nếu ít hơn 2 dòng → INSERT
+            PreparedStatement insertStmt = con.prepareStatement(insertSql);
+            insertStmt.setString(1, cthd.getMaHD().getMaHD());
+            insertStmt.setInt(2, cthd.getMaCTT().getMaCTT());
+            insertStmt.setInt(3, cthd.getSoLuong());
+            insertStmt.setInt(4, cthd.getMaDVT().getMaDVT());
+            insertStmt.setString(5, cthd.getTinhTrang());
+            insertStmt.setDouble(6, cthd.getThanhTien());
+
+            int rowsAffected = insertStmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }
