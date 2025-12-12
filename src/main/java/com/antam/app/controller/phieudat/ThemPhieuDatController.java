@@ -59,10 +59,10 @@ public class ThemPhieuDatController extends ScrollPane{
     private TableColumn<PhieuDatThuoc,String> colTotal = new TableColumn<>("Tổng tiền");
 
 
-    ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
-    ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
-    ObservableList<PhieuDatThuoc> origin;
-    ObservableList<PhieuDatThuoc> filter= FXCollections.observableArrayList();
+    private ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
+    private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
+    private ObservableList<PhieuDatThuoc> origin;
+    private ObservableList<PhieuDatThuoc> filter= FXCollections.observableArrayList();
 
     public ThemPhieuDatController() {
         this.setFitToHeight(true);

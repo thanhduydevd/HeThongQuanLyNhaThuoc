@@ -63,14 +63,13 @@ public class ThemPhieuDatFormController extends DialogPane{
     private ObservableList<ChiTietPhieuDatThuoc> obsThuoc = FXCollections.observableArrayList();
 
 
-    KhachHang_DAO khachHangDAO = new KhachHang_DAO();
-    ArrayList<KhachHang> dsKhach = khachHangDAO.getAllKhachHang();
-    KhuyenMai_DAO KhuyenMai_DAO = new KhuyenMai_DAO();
-    ArrayList<KhuyenMai> dsKhuyenMai = (ArrayList<KhuyenMai>) KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
-    DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
-    ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
-    HoaDon_DAO hoaDon_DAO = new HoaDon_DAO();
-    ChiTietThuoc_DAO chiTietThuoc_DAO = new ChiTietThuoc_DAO();
+    private KhachHang_DAO khachHangDAO = new KhachHang_DAO();
+    private ArrayList<KhachHang> dsKhach = khachHangDAO.getAllKhachHang();
+    private KhuyenMai_DAO KhuyenMai_DAO = new KhuyenMai_DAO();
+    private ArrayList<KhuyenMai> dsKhuyenMai = (ArrayList<KhuyenMai>) KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
+    private DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
+    private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
+    private HoaDon_DAO hoaDon_DAO = new HoaDon_DAO();
     private ObservableList<KhachHang> autoKhach = FXCollections.observableArrayList(dsKhach);
 
     public ThemPhieuDatFormController() {
