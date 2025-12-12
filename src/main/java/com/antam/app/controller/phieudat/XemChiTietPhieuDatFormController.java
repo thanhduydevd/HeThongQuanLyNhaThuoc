@@ -45,6 +45,7 @@ public class XemChiTietPhieuDatFormController extends DialogPane{
 
     private PhieuDatThuoc select = selectedPhieuDatThuoc;
     private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = PhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
+
     public XemChiTietPhieuDatFormController() {
         this.setPrefSize(800, 662);
         FlowPane headerPane = new FlowPane();
