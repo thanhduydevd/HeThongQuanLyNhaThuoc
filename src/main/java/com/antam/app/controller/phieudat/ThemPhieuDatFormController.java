@@ -25,6 +25,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -442,6 +445,7 @@ public class ThemPhieuDatFormController extends DialogPane{
         }
 
         int tongSoLuongTrongKho = dsChiTiet.stream()
+                .filter(ctt -> ctt.getHanSuDung().isAfter(LocalDate.now()))
                 .mapToInt(ChiTietThuoc::getSoLuong)
                 .sum();
         // So sánh tồn kho với số lượng nhập
@@ -456,7 +460,7 @@ public class ThemPhieuDatFormController extends DialogPane{
         if ( (soLuongNhap + soLuongdaChon) > tongSoLuongTrongKho) {
             showMess("Không đủ số lượng",
                     "đơn vị của thuốc " + selectedThuoc.getTenThuoc() +
-                            " Kho chỉ còn \"" + (tongSoLuongTrongKho -soLuongdaChon)+ "\".");
+                            " Kho chỉ còn \"" + (tongSoLuongTrongKho )+ "\".");
             return false;
         }
         return true;
@@ -563,10 +567,47 @@ public class ThemPhieuDatFormController extends DialogPane{
 
         // ===== TẠO CHI TIẾT =====
         for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
+
+            // 1. Lấy danh sách lô thuốc theo hạn sử dụng giảm dần
+            ArrayList<ChiTietThuoc> dsChiTietThuoc =
+                    chiTietThuoc_dao.getChiTietThuocHanSuDungGiamDan(ct.getSoDangKy().getMaThuoc());
+            // Lọc bỏ lô đã hết hạn
+            dsChiTietThuoc = dsChiTietThuoc.stream()
+                    .filter(ctt -> ctt.getHanSuDung().isAfter(LocalDate.now()))
+                    .sorted(Comparator.comparing(ChiTietThuoc::getHanSuDung))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            // 2. Thêm vào bảng ChiTietPhieuDat
             ChiTietPhieuDat_DAO.themChiTietPhieuDatVaoDBS(
                     new ChiTietPhieuDatThuoc(phieu, ct.getSoDangKy(), ct.getSoLuong(), ct.getDonViTinh())
             );
+
+            // 3. Trừ tồn kho theo từng lô
+            int soLuongCanTru = ct.getSoLuong();
+
+            for (ChiTietThuoc ctt : dsChiTietThuoc) {
+                if (soLuongCanTru <= 0) break;
+
+                int tonKho = ctt.getSoLuong();
+
+                if (tonKho >= soLuongCanTru) {
+                    // Lô đủ để trừ
+                    int soMoi = tonKho - soLuongCanTru;
+                    chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), soMoi);
+                    soLuongCanTru = 0; // Hoàn thành
+                } else {
+                    // Lô không đủ → trừ hết lô và chuyển sang lô sau
+                    chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), 0);
+                    soLuongCanTru -= tonKho;
+                }
+            }
+
+            // 4. Nếu hết tồn mà vẫn thiếu → cảnh báo (tuỳ bạn xử lý)
+            if (soLuongCanTru > 0) {
+                System.err.println("Cảnh báo: Tồn kho không đủ cho thuốc " + ct.getSoDangKy().getMaThuoc());
+            }
         }
+
+
     }
 
     /**

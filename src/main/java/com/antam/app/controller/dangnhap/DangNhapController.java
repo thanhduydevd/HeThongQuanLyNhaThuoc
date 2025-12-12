@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,7 +32,7 @@ public class DangNhapController extends StackPane {
     private NhanVien_DAO nv_dao = new NhanVien_DAO();
     private Button btnLogin = new Button("Đăng nhập");
     private TextField txtname_login = new TextField();
-    private TextField txtpass_login = new TextField();
+    private PasswordField txtpass_login = new PasswordField();
     private Text notification_login = new Text();
 
     public DangNhapController() {

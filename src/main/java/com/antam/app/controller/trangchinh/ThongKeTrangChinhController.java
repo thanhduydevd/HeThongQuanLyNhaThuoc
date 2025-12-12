@@ -5,7 +5,9 @@
  */
 package com.antam.app.controller.trangchinh;
 
+import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.ThongKeTrangChinh_DAO;
+import com.antam.app.entity.ChiTietThuoc;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.fxml.FXML;
@@ -28,10 +30,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /*
  * @description Controller for dashboard view
@@ -108,7 +107,9 @@ public class ThongKeTrangChinhController extends ScrollPane{
 
         /** Sự kiện **/
         loadDashboardData();
+
     }
+
 
     private StackPane createCard(FontAwesomeIcons icon, Text valueText, String label) {
         StackPane card = new StackPane();
