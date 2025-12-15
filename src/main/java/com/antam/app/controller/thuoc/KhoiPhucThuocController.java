@@ -173,6 +173,7 @@ public class KhoiPhucThuocController extends ScrollPane{
                 colMaThuoc, colTenThuoc, colHamLuong, colDangDieuChe, colGiaBan, colTonKho, colKe
         );
         tableThuoc.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableThuoc.setPlaceholder(new Label("Không có thuốc nào trong kho đã bị xóa."));
 
         Button guide = new Button("Nhấn 2 lần chuột trái vào bảng để xem chi tiết");
         guide.getStyleClass().add("pane-huongdan");
