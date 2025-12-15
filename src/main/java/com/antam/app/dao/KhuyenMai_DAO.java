@@ -10,6 +10,7 @@ import com.antam.app.connect.ConnectDB;
 
 public class KhuyenMai_DAO {
 
+
     public ArrayList<KhuyenMai> getAllKhuyenMaiChuaXoa() {
         ArrayList<KhuyenMai> list = new ArrayList<>();
         String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
@@ -43,6 +44,54 @@ public class KhuyenMai_DAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public ArrayList<KhuyenMai> getAllKhuyenMaiDaXoa() {
+        ArrayList<KhuyenMai> list = new ArrayList<>();
+        String sql = "SELECT km.MaKM, km.TenKM, km.NgayBatDau, km.NgayKetThuc, km.LoaiKhuyenMai, km.So, km.SoLuongToiDa, km.deleteAt, lkm.TenLKM " +
+                "FROM KhuyenMai km JOIN LoaiKhuyenMai lkm ON km.LoaiKhuyenMai = lkm.MaLKM " +
+                "WHERE km.deleteAt = 1";
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                String maKM = rs.getString("MaKM");
+                String tenKM = rs.getString("TenKM");
+                java.sql.Date sqlNgayBatDau = rs.getDate("NgayBatDau");
+                LocalDate ngayBatDau = sqlNgayBatDau != null ? sqlNgayBatDau.toLocalDate() : LocalDate.now();
+                java.sql.Date sqlNgayKetThuc = rs.getDate("NgayKetThuc");
+                LocalDate ngayKetThuc = sqlNgayKetThuc != null ? sqlNgayKetThuc.toLocalDate() : LocalDate.now();
+                int maLoaiKM = rs.getInt("LoaiKhuyenMai");
+                String tenLoaiKM = rs.getString("TenLKM");
+                double so = rs.getDouble("So");
+                int soLuongToiDa = rs.getInt("SoLuongToiDa");
+                boolean deleteAt = rs.getBoolean("deleteAt");
+                LoaiKhuyenMai loai = new LoaiKhuyenMai(maLoaiKM, tenLoaiKM);
+                KhuyenMai km = new KhuyenMai(maKM, tenKM, ngayBatDau, ngayKetThuc, loai, so, soLuongToiDa, deleteAt);
+                list.add(km);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean khoiPhucKhuyenMai(String maKM) {
+        String sql = "UPDATE KhuyenMai SET deleteAt = 0 WHERE MaKM = ?";
+        try (Connection con = ConnectDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maKM);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public ArrayList<KhuyenMai> getAllKhuyenMai() {
