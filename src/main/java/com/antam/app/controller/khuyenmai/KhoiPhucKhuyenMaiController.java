@@ -69,7 +69,6 @@ public class KhoiPhucKhuyenMaiController extends ScrollPane{
 
         titleBox.getChildren().addAll(title, space, btnKhoiPhuc);
 
-        // ========================= HỘP FILTER =========================
         FlowPane filterPane = new FlowPane(5, 5);
         filterPane.getStyleClass().add("box-pane");
         filterPane.setPadding(new Insets(10));

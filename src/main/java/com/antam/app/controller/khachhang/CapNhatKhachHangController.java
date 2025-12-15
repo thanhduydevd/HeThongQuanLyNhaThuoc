@@ -87,7 +87,6 @@ public class CapNhatKhachHangController extends ScrollPane {
         root.setStyle("-fx-background-color: #f8fafc;");
         root.setPadding(new Insets(20));
 
-        // Header
         HBox header = new HBox();
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Text title = new Text("Cập nhật khách hàng");

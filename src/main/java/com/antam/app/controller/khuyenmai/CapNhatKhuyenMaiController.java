@@ -163,7 +163,6 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
             throw new RuntimeException(e);
         }
         this.btnTuyChon.setOnAction((e) -> {
-            // Lấy khuyến mãi được chọn
             KhuyenMai selectKM = tableKhuyenMai.getSelectionModel().getSelectedItem();
             if (selectKM == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);

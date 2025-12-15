@@ -93,7 +93,6 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getChildren().addAll(title, spacer, btnKhoiPhuc);
 
-        // Filters
         FlowPane filters = new FlowPane(5, 5);
         filters.setStyle("-fx-background-color: white;");
         filters.getStyleClass().add("box-pane");

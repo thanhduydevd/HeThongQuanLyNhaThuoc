@@ -44,7 +44,6 @@ public class KhoiPhucNhanVienController extends ScrollPane{
         root.setStyle("-fx-background-color: #f8fafc;");
         root.setPadding(new Insets(20));
 
-        // Title HBox
         HBox titleBox = new HBox(5);
         titleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Text title = new Text("Khôi phục nhân viên");
