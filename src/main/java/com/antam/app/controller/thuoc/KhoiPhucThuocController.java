@@ -1,24 +1,31 @@
 package com.antam.app.controller.thuoc;
 
+import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.DangDieuChe_DAO;
 import com.antam.app.dao.Ke_DAO;
 import com.antam.app.dao.Thuoc_DAO;
+import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.DangDieuChe;
 import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -180,6 +187,108 @@ public class KhoiPhucThuocController extends ScrollPane{
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(root);
         /** Sự kiện **/
+
+        // Nút thêm thuốc
+        btnKhoiPhuc.setOnAction(e -> {
+            Thuoc selectedThuoc = tableThuoc.getSelectionModel().getSelectedItem();
+            if (selectedThuoc == null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Chưa chọn thuốc");
+                alert.setHeaderText(null);
+                alert.setContentText("Vui lòng chọn thuốc cần khôi phục!");
+                alert.showAndWait();
+                return;
+            }
+
+
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Xác nhận khôi phục");
+            confirmAlert.setHeaderText(null);
+            confirmAlert.setContentText("Bạn có chắc chắn muốn khôi phục thuốc " + selectedThuoc.getTenThuoc() + "?");
+            confirmAlert.initModality(Modality.APPLICATION_MODAL);
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    boolean success = thuoc_dao.khoiPhucThuocTheoMa(selectedThuoc.getMaThuoc());
+                    if (success) {
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setTitle("Khôi phục thành công");
+                        successAlert.setHeaderText(null);
+                        successAlert.setContentText("Khôi phục thuốc thành công!");
+                        successAlert.showAndWait();
+                        updateTableThuoc();
+                    } else {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setTitle("Khôi phục thất bại");
+                        errorAlert.setHeaderText(null);
+                        errorAlert.setContentText("Khôi phục thuốc thất bại. Vui lòng thử lại!");
+                        errorAlert.showAndWait();
+                    }
+                }
+            });
+        });
+
+        // Load tồn kho
+        loadTonKho();
+
+        // Kết nối DB
+        try { Connection con = ConnectDB.getInstance().connect(); }
+        catch (SQLException e) { throw new RuntimeException(e); }
+
+        // Cấu hình Table
+        colMaThuoc.setCellValueFactory(new PropertyValueFactory<>("maThuoc"));
+        colTenThuoc.setCellValueFactory(new PropertyValueFactory<>("tenThuoc"));
+        colHamLuong.setCellValueFactory(new PropertyValueFactory<>("hamLuong"));
+        colGiaBan.setCellValueFactory(new PropertyValueFactory<>("giaBan"));
+        colTonKho.setCellValueFactory(data -> {
+            int tonKho = TinhTonKho(data.getValue());
+            return new SimpleStringProperty(String.valueOf(tonKho));
+        });
+
+        colDangDieuChe.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDangDieuChe().getTenDDC()));
+        colKe.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaKe().getTenKe()));
+
+        // Load comboBox
+        addComBoBoxKe();
+        addComBoBoxDDC();
+        addComboboxTonKho();
+
+        // Load dữ liệu
+        thuoc_dao = new Thuoc_DAO();
+        arrayThuoc = thuoc_dao.getAllThuocDaXoa();
+        thuocList.addAll(arrayThuoc);
+        tableThuoc.setItems(thuocList);
+
+        // Event lọc
+        cbKe.setOnAction(e -> filterAndSearchThuoc());
+        cbDangDieuChe.setOnAction(e -> filterAndSearchThuoc());
+        cbTonKho.setOnAction(e -> filterAndSearchThuoc());
+
+        // Event tìm kiếm
+        btnSearchThuoc.setOnAction(e -> filterAndSearchThuoc());
+        searchNameThuoc.setOnKeyReleased(e -> filterAndSearchThuoc());
+        btnSearchInvoice1.setOnAction(e -> clearSearchAndFilter());
+
+        tableThuoc.setRowFactory(tv -> {
+            TableRow<Thuoc> row = new TableRow<>();
+
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Thuoc selectedThuoc = row.getItem();
+
+                    XemChiTietThuocFormController xemDialog = new XemChiTietThuocFormController();
+                    xemDialog.setThuoc(selectedThuoc);
+                    xemDialog.showData();
+
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết thuốc");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                }
+            });
+
+            return row;
+        });
     }
 
     private VBox createFilterBox(String label, ComboBox<?> cb) {
@@ -191,4 +300,115 @@ public class KhoiPhucThuocController extends ScrollPane{
         box.getChildren().addAll(t, cb);
         return box;
     }
+
+    // them value vao combobox ke
+    public void addComBoBoxKe() {
+        ke_dao = new Ke_DAO();
+        ArrayList<Ke> arrayKe = ke_dao.getAllKe();
+        cbKe.getItems().clear();
+        Ke tatCa = new Ke("KE0001", "Tất cả", "Tất cả", false);
+        cbKe.getItems().add(tatCa);
+        for (Ke ke : arrayKe) {
+            cbKe.getItems().add(ke);
+        }
+        cbKe.getSelectionModel().selectFirst();
+    }
+
+    // them value vao combobox dang dieu che
+    public void addComBoBoxDDC() {
+        ddc_dao = new DangDieuChe_DAO();
+        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getAllDDC();
+        cbDangDieuChe.getItems().clear();
+        DangDieuChe Tatca = new DangDieuChe(-1, "Tất cả");
+        cbDangDieuChe.getItems().add(Tatca);
+        for (DangDieuChe ddc : arrayDDC){
+            cbDangDieuChe.getItems().add(ddc);
+        }
+        cbDangDieuChe.getSelectionModel().selectFirst();
+    }
+
+    // them value vao combobox ton kho
+    public void addComboboxTonKho() {
+        cbTonKho.getItems().clear();
+        cbTonKho.getItems().addAll("Tất cả","Tồn kho thấp (< 50)","Bình thường (50-200)","Dồi dào (> 200)");
+        cbTonKho.getSelectionModel().selectFirst();
+    }
+
+    // ham update table
+    public void updateTableThuoc(){
+        thuocList.clear();
+        tableThuoc.refresh();
+        thuoc_dao = new Thuoc_DAO();
+        arrayThuoc = thuoc_dao.getAllThuocDaXoa();
+        thuocList.addAll(arrayThuoc);
+        tableThuoc.setItems(thuocList);
+    }
+
+    // ham loc va tim kiem thuoc
+    public void filterAndSearchThuoc() {
+        String selectedKe = cbKe.getValue().getTenKe();
+        String selectedDDC = cbDangDieuChe.getValue().getTenDDC();
+        String selectedTonKho =  cbTonKho.getValue();
+        String searchText = searchNameThuoc.getText().trim().toLowerCase();
+
+        ArrayList<Thuoc> filteredList = new ArrayList<>();
+
+        for (Thuoc p : arrayThuoc) { // luôn thao tác trên danh sách gốc
+            boolean match = true;
+
+            // Filter Ke
+            if (!selectedKe.equals("Tất cả") && !p.getMaKe().getTenKe().equals(selectedKe)) match = false;
+
+            // Filter DDC
+            if (!selectedDDC.equals("Tất cả") && !p.getDangDieuChe().getTenDDC().equals(selectedDDC)) match = false;
+
+            // Filter TonKho
+            if (!selectedTonKho.equals("Tất cả")) {
+                if (selectedTonKho.equals("Tồn kho thấp (< 50)") && TinhTonKho(p) >= 50) match = false;
+                else if (selectedTonKho.equals("Bình thường (50-200)") && TinhTonKho(p) < 50 || TinhTonKho(p) > 200) match = false;
+                else if (selectedTonKho.equals("Dồi dào (> 200)") && TinhTonKho(p) <= 200) match = false;
+            }
+
+
+            // Search theo tên
+            if (!searchText.isEmpty() && !p.getTenThuoc().toLowerCase().contains(searchText)) match = false;
+
+            if (match) filteredList.add(p);
+        }
+
+        thuocList.setAll(filteredList);
+        tableThuoc.setItems(thuocList);
+    }
+
+    // ham load ton kho
+    public void loadTonKho() {
+        try {
+            Connection con = ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        chiTietThuoc_dao = new ChiTietThuoc_DAO();
+        ArrayList<ChiTietThuoc> list = chiTietThuoc_dao.getAllChiTietThuoc();
+        mapTonKho.clear();
+
+        for (ChiTietThuoc ct : list) {
+            String maThuoc = ct.getMaThuoc().getMaThuoc();
+            mapTonKho.put(maThuoc, mapTonKho.getOrDefault(maThuoc, 0) + ct.getSoLuong());
+        }
+    }
+
+    // ham xoa trang thai tim kiem
+    public void clearSearchAndFilter() {
+        cbKe.getSelectionModel().selectFirst();
+        cbDangDieuChe.getSelectionModel().selectFirst();
+        cbTonKho.getSelectionModel().selectFirst();
+        searchNameThuoc.clear();
+        updateTableThuoc();
+    }
+
+    // ham tinh ton kho
+    public int TinhTonKho(Thuoc thuoc) {
+        return mapTonKho.getOrDefault(thuoc.getMaThuoc(), 0);
+    }
+
 }

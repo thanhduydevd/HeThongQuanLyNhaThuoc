@@ -219,19 +219,6 @@ public class ThemKhuyenMaiController extends ScrollPane{
         txtTiemKiemKhuyenMai.setOnKeyReleased(e -> fiterAndSearch());
         // su kien xoa rong
         btnclear.setOnAction(e -> clearFilters());
-
-        tableKhuyenMai.setRowFactory(tv -> {
-            TableRow<KhuyenMai> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    KhuyenMai selectKM  = row.getItem();
-                    // Mở dialog
-
-                    updateTableKhuyenMai();
-                }
-            });
-            return row;
-        });
     }
 
     private VBox createLabeledBox(String label, Control field) {
