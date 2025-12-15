@@ -114,7 +114,6 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
         filters.getChildren().add(createFilterVBox("Đến ngày:", dpend));
         filters.getChildren().add(createFilterVBox("Khoảng giá:", cbGia));
 
-        // --- Button Xoá rỗng ---
         VBox vbReset = new VBox(5);
         Text emptyText = new Text("");
         emptyText.setFont(Font.font(13));

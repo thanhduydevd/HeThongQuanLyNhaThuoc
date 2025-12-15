@@ -51,7 +51,6 @@ public class CapNhatDangDieuCheController extends ScrollPane{
         root.setStyle("-fx-background-color: #f8fafc;");
         root.setPadding(new Insets(20));
 
-        // ============= TITLE =============
         HBox titleBox = new HBox();
         titleBox.setAlignment(Pos.CENTER_LEFT);
 
