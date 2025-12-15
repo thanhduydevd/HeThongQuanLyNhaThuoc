@@ -13,20 +13,26 @@ import com.antam.app.controller.kethuoc.CapNhatKeThuocController;
 import com.antam.app.controller.kethuoc.ThemKeThuocController;
 import com.antam.app.controller.kethuoc.TimKeThuocController;
 import com.antam.app.controller.khachhang.CapNhatKhachHangController;
+import com.antam.app.controller.khachhang.KhoiPhucKhachHangController;
 import com.antam.app.controller.khachhang.TimKhachHangController;
 import com.antam.app.controller.khuyenmai.CapNhatKhuyenMaiController;
+import com.antam.app.controller.khuyenmai.KhoiPhucKhuyenMaiController;
 import com.antam.app.controller.khuyenmai.ThemKhuyenMaiController;
 import com.antam.app.controller.khuyenmai.TimKhuyenMaiController;
 import com.antam.app.controller.nhanvien.CapNhatNhanVienController;
+import com.antam.app.controller.nhanvien.KhoiPhucNhanVienController;
 import com.antam.app.controller.nhanvien.ThemNhanVienController;
 import com.antam.app.controller.nhanvien.TimNhanVienController;
 import com.antam.app.controller.phieudat.CapNhatPhieuDatController;
+import com.antam.app.controller.phieudat.KhoiPhucPhieuDatController;
 import com.antam.app.controller.phieudat.ThemPhieuDatController;
 import com.antam.app.controller.phieudat.TimPhieuDatController;
 import com.antam.app.controller.phieunhap.CapNhatPhieuNhapController;
+import com.antam.app.controller.phieunhap.KhoiPhucPhieuNhapController;
 import com.antam.app.controller.phieunhap.ThemPhieuNhapController;
 import com.antam.app.controller.phieunhap.TimPhieuNhapController;
 import com.antam.app.controller.thuoc.CapNhatThuocController;
+import com.antam.app.controller.thuoc.KhoiPhucThuocController;
 import com.antam.app.controller.thuoc.ThemThuocController;
 import com.antam.app.controller.thuoc.TimThuocController;
 import com.antam.app.controller.trangchinh.ThongKeTrangChinhController;
@@ -133,15 +139,15 @@ public class KhungChinhController extends BorderPane {
         btnCaiDat = createMainButton(FontAwesomeIcons.valueOf("COG"),"Cài đặt");
 
         subMenuHoaDon = createSubMenu("Tìm hoá đơn", "Thêm hoá đơn", "Cập nhật hoá đơn", "Thống kê doanh thu");
-        subMenuPhieuDat = createSubMenu("Tìm phiếu đặt", "Thêm phiếu đặt", "Cập nhật phiếu đặt");
-        subMenuThuoc = createSubMenu("Tìm thuốc", "Thêm thuốc", "Cập nhật thuốc");
+        subMenuPhieuDat = createSubMenu("Tìm phiếu đặt", "Thêm phiếu đặt", "Cập nhật phiếu đặt", "Khôi phục phiếu đặt");
+        subMenuThuoc = createSubMenu("Tìm thuốc", "Thêm thuốc", "Cập nhật thuốc", "Khôi phục thuốc");
         subMenuKeThuoc = createSubMenu("Tìm kệ thuốc", "Thêm kệ thuốc", "Cập nhật kệ thuốc");
         subMenuDangDieuChe = createSubMenu("Thêm dạng điều chế", "Cập nhật dạng điều chế");
         subMenuDonViTinh = createSubMenu("Thêm đơn vị tính", "Cập nhật đơn vị tính");
-        subMenuKhuyenMai = createSubMenu("Tìm khuyến mãi", "Thêm khuyến mãi", "Cập nhật khuyến mãi");
-        subMenuPhieuNhap = createSubMenu("Tìm phiếu nhập", "Thêm phiếu nhập", "Cập nhật phiếu nhập");
-        subMenuKhachHang = createSubMenu("Tìm khách hàng", "Cập nhật khách hàng");
-        subMenuNhanVien = createSubMenu("Tìm nhân viên", "Thêm nhân viên", "Cập nhật nhân viên");
+        subMenuKhuyenMai = createSubMenu("Tìm khuyến mãi", "Thêm khuyến mãi", "Cập nhật khuyến mãi", "Khôi phục khuyến mãi");
+        subMenuPhieuNhap = createSubMenu("Tìm phiếu nhập", "Thêm phiếu nhập", "Cập nhật phiếu nhập", "Khôi phục phiếu nhập");
+        subMenuKhachHang = createSubMenu("Tìm khách hàng", "Cập nhật khách hàng", "Khôi phục khách hàng");
+        subMenuNhanVien = createSubMenu("Tìm nhân viên", "Thêm nhân viên", "Cập nhật nhân viên", "Khôi phục nhân viên");
         subMenuCaiDat = createSubMenu("Cài đặt tài khoản");
 
         hideAllSubMenus();
@@ -310,6 +316,9 @@ public class KhungChinhController extends BorderPane {
             case "Cập nhật phiếu đặt":
                 nodePageLoad = new CapNhatPhieuDatController();
                 break;
+            case "Khôi phục phiếu đặt":
+                nodePageLoad = new KhoiPhucPhieuDatController();
+                break;
             case "Tìm thuốc":
                 nodePageLoad = new TimThuocController();
                 break;
@@ -318,6 +327,9 @@ public class KhungChinhController extends BorderPane {
                 break;
             case "Cập nhật thuốc":
                 nodePageLoad = new CapNhatThuocController();
+                break;
+            case "Khôi phục thuốc":
+                nodePageLoad = new KhoiPhucThuocController();
                 break;
             case "Tìm kệ thuốc":
                 nodePageLoad = new TimKeThuocController();
@@ -349,6 +361,9 @@ public class KhungChinhController extends BorderPane {
             case "Cập nhật khuyến mãi":
                 nodePageLoad = new CapNhatKhuyenMaiController();
                 break;
+            case "Khôi phục khuyến mãi":
+                nodePageLoad = new KhoiPhucKhuyenMaiController();
+                break;
             case "Tìm phiếu nhập":
                 nodePageLoad = new TimPhieuNhapController();
                 break;
@@ -358,11 +373,17 @@ public class KhungChinhController extends BorderPane {
             case "Cập nhật phiếu nhập":
                 nodePageLoad = new CapNhatPhieuNhapController();
                 break;
+            case "Khôi phục phiếu nhập":
+                nodePageLoad = new KhoiPhucPhieuNhapController();
+                break;
             case "Tìm khách hàng":
                 nodePageLoad = new TimKhachHangController();
                 break;
             case "Cập nhật khách hàng":
                 nodePageLoad = new CapNhatKhachHangController();
+                break;
+            case "Khôi phục khách hàng":
+                nodePageLoad = new KhoiPhucKhachHangController();
                 break;
             case "Tìm nhân viên":
                 nodePageLoad = new TimNhanVienController();
@@ -372,6 +393,9 @@ public class KhungChinhController extends BorderPane {
                 break;
             case "Cập nhật nhân viên":
                 nodePageLoad = new CapNhatNhanVienController();
+                break;
+            case "Khôi phục nhân viên":
+                nodePageLoad = new KhoiPhucNhanVienController();
                 break;
             case "Cài đặt tài khoản":
                 nodePageLoad = new CaiDatTaiKhoanController();

@@ -464,6 +464,23 @@
     -fx-pref-width: 118px;
     -fx-text-fill: WHITE;
 }
+/* Button khôi phục */
+.btn-khoiphuc{
+    -fx-background-color: #ffc027;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 118px;
+    -fx-text-fill: WHITE;
+}
+
+.btn-khoiphuc-mini{
+    -fx-background-color: #ffc027;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 95px;
+    -fx-text-fill: WHITE;
+}
+
 
 /* Button cập nhật*/
 .btn-capnhat{
