@@ -31,7 +31,7 @@ public class CapNhatDangDieuCheController extends ScrollPane{
 
     private TableView<DangDieuChe> tbDangDieuChe = new TableView<>();
     private TextField tfMaDangDieuChe, tfTenDangDieuChe ;
-    private Button btnCapNhat, btnXoa;
+    private Button btnCapNhat, btnXoa, btnKhoiPhuc;
     private DangDieuChe_DAO DangDieuChe_DAO = new DangDieuChe_DAO();
 
     /* Lấy dữ liệu từ DAO */
@@ -144,9 +144,24 @@ public class CapNhatDangDieuCheController extends ScrollPane{
 
         colXoa.getChildren().addAll(new Text(), btnXoa);
 
+        VBox colKhoiPhuc = new VBox(5);
+        colXoa.setAlignment(Pos.CENTER);
+
+        btnKhoiPhuc = new Button("Khôi phục");
+        btnKhoiPhuc.setPrefSize(102, 40);
+        btnKhoiPhuc.setTextFill(Color.WHITE);
+        btnKhoiPhuc.getStyleClass().add("btn-khoiphuc-mini");
+
+        FontAwesomeIcon iconRestore = new FontAwesomeIcon();
+        iconRestore.setIcon(FontAwesomeIcons.BACKWARD);
+        iconRestore.setFill(Color.WHITE);
+        btnKhoiPhuc.setGraphic(iconRestore);
+
+        colKhoiPhuc.getChildren().addAll(new Text(), btnKhoiPhuc);
+
 
         // Add all fields to formPane
-        formPane.getChildren().addAll(colMa, colTen, colCapNhat, colXoa);
+        formPane.getChildren().addAll(colMa, colTen, colCapNhat, colXoa, colKhoiPhuc);
 
         // ============= TABLE =============
         tbDangDieuChe.setPrefHeight(800);

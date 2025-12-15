@@ -32,7 +32,7 @@ public class CapNhatKeThuocController extends ScrollPane{
 
     private TableView<Ke> tbKeThuoc;
     private TextField tfMaKe, tfTenKe, tfLoaiKe;
-    private Button btnSuaKe, btnXoaKe;
+    private Button btnSuaKe, btnXoaKe, btnKhoiPhucKe;
     private Ke_DAO ke_DAO = new Ke_DAO();
 
     /* Lấy dữ liệu từ DAO */
@@ -144,14 +144,24 @@ public class CapNhatKeThuocController extends ScrollPane{
         btnXoaKe.getStyleClass().add("btn-xoa");
         btnXoaKe.setTextFill(Color.WHITE);
 
-        FontAwesomeIcon iconRemove = new FontAwesomeIcon();
-        iconRemove.setIcon(FontAwesomeIcons.REMOVE);
-        iconRemove.setFill(Color.WHITE);
-        btnXoaKe.setGraphic(iconRemove);
-
         vbRemove.getChildren().addAll(lbEmpty1,btnXoaKe);
 
-        formPane.getChildren().addAll(vbMaKe, vbTenKe, vbLoaiKe, vbEdit, vbRemove);
+        // ---- Button Xoá ----
+        VBox vbRestore = new VBox(5);
+        Text lbEmpty2 = new Text("");
+        btnKhoiPhucKe = new Button("Khôi phục");
+        btnKhoiPhucKe.setPrefSize(93, 40);
+        btnKhoiPhucKe.getStyleClass().add("btn-khoiphuc-mini");
+        btnKhoiPhucKe.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon iconRemove = new FontAwesomeIcon();
+        iconRemove.setIcon(FontAwesomeIcons.BACKWARD);
+        iconRemove.setFill(Color.WHITE);
+        btnKhoiPhucKe.setGraphic(iconRemove);
+
+        vbRestore.getChildren().addAll(lbEmpty2,btnKhoiPhucKe);
+
+        formPane.getChildren().addAll(vbMaKe, vbTenKe, vbLoaiKe, vbEdit, vbRemove, vbRestore);
 
 
         // ============================

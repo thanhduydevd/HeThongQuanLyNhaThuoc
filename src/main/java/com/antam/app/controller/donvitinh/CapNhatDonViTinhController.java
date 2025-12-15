@@ -26,7 +26,7 @@ public class CapNhatDonViTinhController extends ScrollPane {
     private TextField txtMa,txtTen;
     private TableView<DonViTinh> tableThuoc;
     private TableColumn<DonViTinh, String> colMaThuoc, colTenThuoc;
-    private Button btnXoa,btnCapNhat;
+    private Button btnXoa,btnCapNhat, btnKhoiPhuc;
 
     DonViTinh_DAO donViTinh_dao = new DonViTinh_DAO();
     ArrayList<DonViTinh> listDVT ;
@@ -122,8 +122,22 @@ public class CapNhatDonViTinhController extends ScrollPane {
 
         boxDelete.getChildren().addAll(new Text(), btnXoa);
 
+        VBox boxRestore = new VBox(5);
+        boxRestore.setAlignment(Pos.CENTER);
+
+        btnKhoiPhuc = new Button("Khôi phục");
+        btnKhoiPhuc.getStyleClass().add("btn-khoiphuc-mini");
+        btnKhoiPhuc.setTextFill(Color.WHITE);
+
+        FontAwesomeIcon iconRestore = new FontAwesomeIcon();
+        iconRestore.setIcon(FontAwesomeIcons.BACKWARD);
+        iconRestore.setFill(Color.WHITE);
+        btnKhoiPhuc.setGraphic(iconRestore);
+
+        boxRestore.getChildren().addAll(new Text(), btnKhoiPhuc);
+
         // Add all to FlowPane
-        flow.getChildren().addAll(boxMa, boxTen, boxUpdate, boxDelete);
+        flow.getChildren().addAll(boxMa, boxTen, boxUpdate, boxDelete, boxRestore);
 
         // ========================= TABLE =========================
         tableThuoc = new TableView<>();
