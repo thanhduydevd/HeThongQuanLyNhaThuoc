@@ -274,10 +274,6 @@ public class ThongKeDoanhThuController extends ScrollPane {
 
         // Load dữ liệu
         loadData();
-
-        // Thêm event handlers
-        cmbThoiGian.setOnAction(e -> locTheoThoiGian(e));
-        cmbNhanVien.setOnAction(e -> locTheoNhanVien(e));
         btnRefresh.setOnAction(e->refreshData());
         btnXuatBaoCao.setOnAction(e->xuatBaoCao());
 
@@ -552,32 +548,13 @@ public class ThongKeDoanhThuController extends ScrollPane {
             : DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         if (hienThiTheoThang) {
-            // Hiển thị theo tháng - tạo đầy đủ các tháng trong khoảng thời gian
-            Map<String, ThongKeDoanhThu> dataMap = new java.util.HashMap<>();
-            for (ThongKeDoanhThu tk : dsThongKe) {
-                String monthKey = tk.getNgay().format(dateFormatter);
-                dataMap.put(monthKey, tk);
-            }
-
+            // Hiển thị theo tháng - không cần tạo đầy đủ các tháng trống
             Map<String, ThongKeDoanhThu> displayMap = new java.util.LinkedHashMap<>();
 
-            // Tạo đầy đủ các tháng từ tuNgay đến denNgay
-            LocalDate currentMonth = tuNgay.withDayOfMonth(1);
-            LocalDate endMonth = denNgay.withDayOfMonth(1);
-
-            while (!currentMonth.isAfter(endMonth)) {
-                String monthKey = currentMonth.format(dateFormatter);
-                ThongKeDoanhThu tk = dataMap.get(monthKey);
-
-                if (tk == null) {
-                    // Tạo dữ liệu rỗng cho tháng không có data
-                    tk = new ThongKeDoanhThu(currentMonth, 0, 0.0, 0.0, 0, "");
-                }
-
-                displayMap.put(monthKey, tk);
-                series.getData().add(new XYChart.Data<>(monthKey, tk.getDoanhThu()));
-
-                currentMonth = currentMonth.plusMonths(1);
+            for (ThongKeDoanhThu tk : dsThongKe) {
+                String shortDate = tk.getNgay().format(dateFormatter);
+                displayMap.put(shortDate, tk);
+                series.getData().add(new XYChart.Data<>(shortDate, tk.getDoanhThu()));
             }
 
             chartDoanhThu.getData().add(series);
