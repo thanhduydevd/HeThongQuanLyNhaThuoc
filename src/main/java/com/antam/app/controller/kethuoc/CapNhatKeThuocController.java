@@ -26,7 +26,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import javafx.scene.layout.*;
 
 public class CapNhatKeThuocController extends ScrollPane{
 

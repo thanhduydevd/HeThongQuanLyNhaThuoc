@@ -56,9 +56,6 @@ public class KhoiPhucPhieuNhapController extends ScrollPane{
         root.setStyle("-fx-background-color: #f8fafc;");
         root.setPadding(new Insets(20));
 
-        // ====================
-        // 1. Title
-        // =====================
         HBox titleBox = new HBox();
         titleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
