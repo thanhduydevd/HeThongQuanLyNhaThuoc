@@ -76,7 +76,6 @@ public class KhoiPhucThuocController extends ScrollPane{
 
         titleBox.getChildren().addAll(title, spacer, btnKhoiPhuc);
 
-        // ===================== BỘ LỌC =====================
         FlowPane filterPane = new FlowPane(5, 5);
         filterPane.getStyleClass().add("box-pane");
 

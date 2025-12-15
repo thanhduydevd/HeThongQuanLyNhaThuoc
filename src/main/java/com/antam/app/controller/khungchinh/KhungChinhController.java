@@ -65,6 +65,7 @@ public class KhungChinhController extends BorderPane {
     private AnchorPane paneContent;
 
     public KhungChinhController() {
+        /** Giao diện **/
         HBox topMenu = new HBox();
         topMenu.setAlignment(Pos.CENTER);
         topMenu.setPrefHeight(70);

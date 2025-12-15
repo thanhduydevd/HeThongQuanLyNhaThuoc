@@ -80,7 +80,6 @@ public class KhoiPhucKhuyenMaiController extends ScrollPane{
         shadow.setOffsetY(2);
         filterPane.setEffect(shadow);
 
-        // 4 combobox theo cột
         cbLoaiKhuyenMai = new ComboBox<>();
         cbTrangThai = new ComboBox<>();
         dpTuNgay = new DatePicker();

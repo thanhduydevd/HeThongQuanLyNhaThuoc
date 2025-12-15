@@ -43,7 +43,7 @@ public class KhoiPhucPhieuNhapController extends ScrollPane{
     private PhieuNhap phieuNhapDuocChon;
 
     public KhoiPhucPhieuNhapController() {
-/** Giao diện **/
+        /** Giao diện **/
         this.setFitToHeight(true);
         this.setFitToWidth(true);
         this.setPrefSize(900, 730);

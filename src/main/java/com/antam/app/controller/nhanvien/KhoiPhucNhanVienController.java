@@ -59,7 +59,6 @@ public class KhoiPhucNhanVienController extends ScrollPane{
         btnKhoiPhuc.setGraphic(iconRestore);
         titleBox.getChildren().addAll(title, spacer, btnKhoiPhuc);
 
-        // Filters FlowPane
         FlowPane filterPane = new FlowPane(5, 5);
         filterPane.setPadding(new Insets(10));
         filterPane.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-border-radius: 5px;");
