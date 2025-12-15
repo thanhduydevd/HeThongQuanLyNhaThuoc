@@ -151,6 +151,7 @@ public class CapNhatKhuyenMaiController extends ScrollPane{
         );
 
         tableKhuyenMai.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableKhuyenMai.setPlaceholder(new Label("Không có khuyến mãi"));
 
         // ========================= ADD TO ROOT =========================
         root.getChildren().addAll(titleBox, filterPane, searchBox, tableKhuyenMai);

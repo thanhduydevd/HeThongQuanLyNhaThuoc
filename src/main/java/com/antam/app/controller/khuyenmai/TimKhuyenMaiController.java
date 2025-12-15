@@ -146,6 +146,7 @@ public class TimKhuyenMaiController extends ScrollPane{
         );
 
         tableKhuyenMai.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableKhuyenMai.setPlaceholder(new Label("Không có khuyến mãi"));
 
         // ================= Add vào root ===================
         root.getChildren().addAll(titleBox, flow, searchBox, tableKhuyenMai);
