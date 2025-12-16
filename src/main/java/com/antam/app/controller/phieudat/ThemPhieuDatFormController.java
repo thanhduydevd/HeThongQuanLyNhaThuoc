@@ -683,7 +683,7 @@ public class ThemPhieuDatFormController extends DialogPane{
     public double tinhTongTien(){
         double tongTien = 0.0;
         for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
-            tongTien += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan();
+            tongTien += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan() * e.getChiTietThuoc().getMaThuoc().getThue();
         }
         // Áp dụng khuyến mãi nếu có
         if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null &&
@@ -694,7 +694,6 @@ public class ThemPhieuDatFormController extends DialogPane{
             KhuyenMai khuyenMai = cbKhuyenMai.getSelectionModel().getSelectedItem();
             LoaiKhuyenMai loaiKM = khuyenMai.getLoaiKhuyenMai();
             int soDaSuDung = hoaDon_DAO.soHoaDonDaCoKhuyenMaiVoiMa(khuyenMai.getMaKM());
-//            System.out.println("Số hóa đơn: "+soDaSuDung);
             if (soDaSuDung >= khuyenMai.getSoLuongToiDa()) {
                 return tongTien > 0? tongTien : 0;
             }else{

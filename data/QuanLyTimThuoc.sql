@@ -219,7 +219,7 @@ GO
 
 -- 1) DonViTinh (các đơn vị cơ sở)
 INSERT INTO DonViTinh (TenDVT) VALUES
-(N'Viên'), (N'Vỉ'), (N'Hộp'), (N'Chai'), (N'Lọ'), (N'Ống'), (N'Tuýp');
+(N'Viên'), (N'Chai'), (N'Lọ'), (N'Ống'), (N'Tuýp');
 
 -- 2) KeThuoc (tạo 5 kệ mẫu)
 INSERT INTO KeThuoc (MaKe, TenKe, LoaiKe) VALUES
@@ -286,7 +286,7 @@ VALUES
 
 INSERT INTO NhanVien (MaNV, HoTen, SoDienThoai, Email, DiaChi, LuongCoBan, TaiKhoan, MatKhau, IsQuanLi)
 VALUES
-('NV00011', N'Nguyễn Thái Dương', '0901111111', 'a@demo.com', N'Hà Nội', 8000000, 'Duong2008', '@Qlinh2702', 0);
+('NV00011', N'Phạm Đăng Khoa', '0391199992', 'dk@gmail.com', N'Long Định', 15000000, 'dangkhoa123', '$2a$10$.Zk2ghacRW2GFixl.RBHY.FSABSzOGa7RPbq3ubt3NkZRGdVJc7F.', 1);
 
 -- 7) KhachHang (10)
 INSERT INTO KhachHang (MaKH, TenKH, SoDienThoai)
@@ -340,7 +340,7 @@ VALUES
 ('VN-10033-01', N'Glucose 5%', 4, N'5%', 9500, 7500, 0.05, 1, 'KE0003'),
 ('VN-10034-01', N'Ringer Lactate', 4, N'—', 12000, 9500, 0.05, 1, 'KE0004'),
 ('VN-10035-01', N'Vitamin B1 100mg', 9, N'100mg', 2000, 1500, 0.05, 1, 'KE0005'),
-('VN-10036-01', N'Vitamin B6 50mg', 9, N'50mg', 1800, 1400, 0.05, 4, 'KE0001'),
+('VN-10036-01', N'Vitamin B6 50mg', 9, N'50mg', 1800, 1400, 0.05, 2, 'KE0001'),
 ('VN-10037-01', N'Vitamin B12 500mcg', 9, N'500mcg', 2500, 1900, 0.05, 1, 'KE0002'),
 ('VN-10038-01', N'Calcium Carbonate 500mg', 1, N'500mg', 3000, 2500, 0.05, 1, 'KE0003'),
 ('VN-10039-01', N'Ferrous Sulfate 325mg', 1, N'325mg', 2800, 2300, 0.05, 1, 'KE0004'),
@@ -350,11 +350,11 @@ VALUES
 ('VN-10043-01', N'Probiotic 3Billion CFU', 9, N'3 tỷ CFU', 4500, 3500, 0.05, 1, 'KE0003'),
 ('VN-10044-01', N'Loperamide 2mg', 1, N'2mg', 2700, 2100, 0.05, 1, 'KE0004'),
 ('VN-10045-01', N'ORS Gói', 7, N'20.5g', 1500, 1200, 0.05, 1, 'KE0005'),
-('VN-10046-01', N'Clotrimazole 1%', 6, N'1%', 5000, 4200, 0.05, 6, 'KE0001'),
-('VN-10047-01', N'Mupirocin 2%', 6, N'2%', 6500, 5500, 0.05, 6, 'KE0002'),
-('VN-10048-01', N'Hydrocortisone Cream 1%', 6, N'1%', 4800, 4000, 0.05, 6, 'KE0003'),
-('VN-10049-01', N'Betamethasone 0.05%', 6, N'0.05%', 5500, 4500, 0.05, 6, 'KE0004'),
-('VN-10050-01', N'Silver Sulfadiazine 1%', 6, N'1%', 6000, 5000, 0.05, 6, 'KE0005');
+('VN-10046-01', N'Clotrimazole 1%', 6, N'1%', 5000, 4200, 0.05, 4, 'KE0001'),
+('VN-10047-01', N'Mupirocin 2%', 6, N'2%', 6500, 5500, 0.05, 4, 'KE0002'),
+('VN-10048-01', N'Hydrocortisone Cream 1%', 6, N'1%', 4800, 4000, 0.05, 4, 'KE0003'),
+('VN-10049-01', N'Betamethasone 0.05%', 6, N'0.05%', 5500, 4500, 0.05, 4, 'KE0004'),
+('VN-10050-01', N'Silver Sulfadiazine 1%', 6, N'1%', 6000, 5000, 0.05, 4, 'KE0005');
 
 
 -- 9) PhieuNhap (10)
@@ -439,11 +439,11 @@ VALUES
 ('PN000009', 'VN-10045-01', 1, 300, 1000, 810000),
 
 -- PN000010 (5 dòng)
-('PN000010', 'VN-10046-01', 6, 90, 3800, 3600000),
-('PN000010', 'VN-10047-01', 6, 100, 5000, 3000000),
-('PN000010', 'VN-10048-01', 6, 110, 3000, 3750000),
-('PN000010', 'VN-10049-01', 6, 95, 3200, 3600000),
-('PN000010', 'VN-10050-01', 6, 85, 2200, 2200000),
+('PN000010', 'VN-10046-01', 4, 90, 3800, 3600000),
+('PN000010', 'VN-10047-01', 4, 100, 5000, 3000000),
+('PN000010', 'VN-10048-01', 4, 110, 3000, 3750000),
+('PN000010', 'VN-10049-01', 4, 95, 3200, 3600000),
+('PN000010', 'VN-10050-01', 4, 85, 2200, 2200000),
 
 ('PN000011', 'VN-10001-01', 1, 100, 1200, 120000),
 ('PN000011', 'VN-10002-01', 1, 150, 1500, 225000);
@@ -559,3 +559,4 @@ INSERT INTO ChiTietPhieuDatThuoc VALUES
 GO
 
 select * from ChiTietHoaDon
+
