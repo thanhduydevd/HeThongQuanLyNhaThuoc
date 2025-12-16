@@ -19,17 +19,18 @@ public class TuDongGoiY {
      * @param txtSDT - TextField số điện thoại khách hàng
      * @param dsKhach - Danh sách khách hàng để gợi ý
      */
-    public static void goiYKhach(TextField txtTen, TextField txtSDT, ObservableList<KhachHang> dsKhach) {
+    public static void goiYKhach(TextField txtTen, TextField txtSDT,
+                                 ObservableList<KhachHang> dsKhach) {
         taoGoiY(txtTen, dsKhach, true, txtSDT);
         taoGoiY(txtSDT, dsKhach, false, txtTen);
     }
-
     /**
      * Tự động gợi ý khách hàng khi nhập tên hoặc số điện thoại.
      * @param textField - TextField mà phương thức áp dụng gợi ý
      * @param dsKhach - Danh sách khách hàng để gợi ý
      */
-    // Tạo gợi ý cho từng TextField
+    private static boolean dangChonGoiY = false;
+
     private static void taoGoiY(TextField textField,
                                 ObservableList<KhachHang> dsKhach,
                                 boolean timTheoTen,
@@ -38,43 +39,30 @@ public class TuDongGoiY {
         ContextMenu menuGoiY = new ContextMenu();
 
         textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.isEmpty()) {
+            if (dangChonGoiY || newVal == null || newVal.isEmpty()) {
                 menuGoiY.hide();
                 return;
             }
 
-            // Lọc theo tên hoặc theo số điện thoại
-            FilteredList<KhachHang> listLoc = dsKhach.filtered(kh -> {
-                if (timTheoTen) {
-                    return kh.getTenKH().toLowerCase().contains(newVal.toLowerCase());
-                } else {
-                    return kh.getSoDienThoai().contains(newVal);
-                }
-            });
+            FilteredList<KhachHang> listLoc = dsKhach.filtered(kh ->
+                    timTheoTen
+                            ? kh.getTenKH().toLowerCase().contains(newVal.toLowerCase())
+                            : kh.getSoDienThoai().contains(newVal)
+            );
 
             if (listLoc.isEmpty()) {
                 menuGoiY.hide();
                 return;
             }
 
-            // Xóa gợi ý cũ
             menuGoiY.getItems().clear();
 
             for (KhachHang kh : listLoc) {
                 String label = kh.getTenKH() + " — " + kh.getSoDienThoai();
-
                 MenuItem item = new MenuItem(label);
+
                 item.setOnAction(e -> {
-                    textField.setText(timTheoTen ? kh.getTenKH() : kh.getSoDienThoai());
-
-                    // Điền luôn TextField còn lại
-                    if (timTheoTen) {
-                        textFieldConLai.setText(kh.getSoDienThoai());
-                    } else {
-                        textFieldConLai.setText(kh.getTenKH());
-                    }
-
-                    menuGoiY.hide();
+                    chonKhach(kh, textField, textFieldConLai, timTheoTen, menuGoiY);
                 });
 
                 menuGoiY.getItems().add(item);
@@ -87,7 +75,55 @@ public class TuDongGoiY {
                 );
             }
         });
+
+        // ENTER = chọn item đầu tiên & đóng menu
+        textField.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case ENTER:
+                    if (menuGoiY.isShowing() && !menuGoiY.getItems().isEmpty()) {
+                        menuGoiY.getItems().get(0).fire();
+                    }
+                    break;
+                case TAB:
+                case ESCAPE:
+                    menuGoiY.hide();
+                    break;
+            }
+        });
+
+        // Mất focus là đóng menu
+        textField.focusedProperty().addListener((obs, old, isFocused) -> {
+            if (!isFocused) {
+                menuGoiY.hide();
+            }
+        });
     }
+
+    private static void chonKhach(KhachHang kh,
+                                  TextField textField,
+                                  TextField textFieldConLai,
+                                  boolean timTheoTen,
+                                  ContextMenu menuGoiY) {
+
+        dangChonGoiY = true;
+
+        if (timTheoTen) {
+            textField.setText(kh.getTenKH());
+            textFieldConLai.setText(kh.getSoDienThoai());
+        } else {
+            textField.setText(kh.getSoDienThoai());
+            textFieldConLai.setText(kh.getTenKH());
+        }
+
+        menuGoiY.hide();
+        dangChonGoiY = false;
+    }
+
+    /**
+     * Tự động gợi ý tên khách hàng khi nhập liệu. Đây là bản cũ nhầm mục đích thử nghiệm.
+     * @param txtTenKhach
+     * @param dataList
+     */
     public static void tuDongGoiYTenKhach(TextField txtTenKhach,
                                           ObservableList<KhachHang> dataList) {
 
