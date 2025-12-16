@@ -10,7 +10,6 @@ import com.antam.app.entity.DonViTinh;
 import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -362,7 +361,7 @@ public class CapNhatThuocFormController extends DialogPane{
 
     // them value vao combobox ke
     public void addComBoBoxKe() {
-        ArrayList<Ke> arrayKe = ke_dao.getAllKe();
+        ArrayList<Ke> arrayKe = ke_dao.getTatCaKeHoatDong();
         cbDUKe.getItems().clear();
         for (Ke ke : arrayKe) {
             cbDUKe.getItems().add(ke);
@@ -372,7 +371,7 @@ public class CapNhatThuocFormController extends DialogPane{
 
     // Them value vao combobox dang dieu che
     public void addComBoBoxDDC() {
-        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getAllDDC();
+        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getDangDieuCheHoatDong();
         cbDUDangDieuChe.getItems().clear();
         for (DangDieuChe ddc : arrayDDC){
             cbDUDangDieuChe.getItems().add(ddc);

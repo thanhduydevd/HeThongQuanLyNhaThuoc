@@ -36,7 +36,7 @@ import java.util.Locale;
 
 public class CapNhatPhieuNhapController extends ScrollPane{
     
-    private Button btnTuyChon, btnXoaRong;
+    private Button btnCapNhat, btnXoaRong;
     private TableView<PhieuNhap> tbPhieuNhap;
     private ComboBox<NhanVien> cbNhanVienNhap;
     private DatePicker dpTuNgay, dpDenNgay;
@@ -53,7 +53,7 @@ public class CapNhatPhieuNhapController extends ScrollPane{
     private PhieuNhap phieuNhapDuocChon;
 
     public CapNhatPhieuNhapController() {
-/** Giao diện **/
+        /** Giao diện **/
         this.setFitToHeight(true);
         this.setFitToWidth(true);
         this.setPrefSize(900, 730);
@@ -79,14 +79,15 @@ public class CapNhatPhieuNhapController extends ScrollPane{
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        btnTuyChon = new Button("Cập nhật");
-        btnTuyChon.getStyleClass().add("btn-them");
+        FontAwesomeIcon iconUpdate = new FontAwesomeIcon();
+        iconUpdate.setIcon(FontAwesomeIcons.EDIT);
+        iconUpdate.setFill(Color.WHITE);
+        btnCapNhat = new Button("Cập nhật");
+        btnCapNhat.getStyleClass().add("btn-them");
+        btnCapNhat.setGraphic(iconUpdate);
 
-        titleBox.getChildren().addAll(title, spacer, btnTuyChon);
+        titleBox.getChildren().addAll(title, spacer, btnCapNhat);
 
-        // ====================
-        // 2. TabPane
-        // =====================
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabPane.setPrefWidth(200);
@@ -227,7 +228,7 @@ public class CapNhatPhieuNhapController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        this.btnTuyChon.setOnAction((e) -> {
+        this.btnCapNhat.setOnAction((e) -> {
             if (phieuNhapDuocChon == null){
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Chưa chọn phiếu nhập");
@@ -244,7 +245,7 @@ public class CapNhatPhieuNhapController extends ScrollPane{
                 dialog.showAndWait();
 
                 tbPhieuNhap.refresh();
-                ObservableList<PhieuNhap> phieuNhapList = FXCollections.observableArrayList(phieuNhap_DAO.getDanhSachPhieuNhap());
+                ObservableList<PhieuNhap> phieuNhapList = FXCollections.observableArrayList(phieuNhap_DAO.getDanhSachPhieuNhapTheoTrangThai(false));
                 tbPhieuNhap.setItems(phieuNhapList);
             }
         });
@@ -253,7 +254,7 @@ public class CapNhatPhieuNhapController extends ScrollPane{
         loadDanhSachNhanVien();
         loadKhoangGia();
 
-        dsPhieuNhap = phieuNhap_DAO.getDanhSachPhieuNhap();
+        dsPhieuNhap = phieuNhap_DAO.getDanhSachPhieuNhapTheoTrangThai(false);
         data.setAll(dsPhieuNhap);
         tbPhieuNhap.setItems(data);
 
@@ -262,26 +263,6 @@ public class CapNhatPhieuNhapController extends ScrollPane{
         dpDenNgay.setOnAction(e -> filterAndSearch());
         cbKhoangGia.setOnAction(e -> filterAndSearch());
         tfTimPhieuNhap.setOnKeyReleased(e -> filterAndSearch());
-
-        //Sự kiện khi click table
-        tbPhieuNhap.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        tbPhieuNhap.setOnMouseClicked(e -> {
-            PhieuNhap selected = tbPhieuNhap.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                System.out.println(selected.getMaPhieuNhap());
-                phieuNhapDuocChon = new PhieuNhap(
-                        selected.getMaPhieuNhap(),
-                        selected.getNhaCungCap(),
-                        selected.getNgayNhap(),
-                        selected.getDiaChi(),
-                        selected.getLyDo(),
-                        selected.getMaNV(),
-                        selected.getTongTien(),
-                        selected.isDeleteAt()
-                );
-                System.out.println(phieuNhapDuocChon);
-            }
-        });
 
         //Tuỳ chỉnh field
         dpTuNgay.setPromptText("Chọn ngày");
@@ -297,6 +278,45 @@ public class CapNhatPhieuNhapController extends ScrollPane{
             data.setAll(dsPhieuNhap);
             tbPhieuNhap.setItems(data);
         });
+
+        //Khi click double vào 1 phiếu nhập sẽ hiện chi tiết phiếu nhập
+        //Sự kiện khi click table
+        tbPhieuNhap.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        tbPhieuNhap.setOnMouseReleased(e -> {
+            PhieuNhap selected = tbPhieuNhap.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                phieuNhapDuocChon = new PhieuNhap(
+                        selected.getMaPhieuNhap(),
+                        selected.getNhaCungCap(),
+                        selected.getNgayNhap(),
+                        selected.getDiaChi(),
+                        selected.getLyDo(),
+                        selected.getMaNV(),
+                        selected.getTongTien(),
+                        selected.isDeleteAt()
+                );
+            }
+            if (e.getClickCount() == 2) {
+                if (selected != null) {
+                    XemChiTietPhieuNhapFormController xemDialog = new XemChiTietPhieuNhapFormController();
+                    xemDialog.showChiTietPhieuNhap(phieuNhapDuocChon);
+                    Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết phiếu nhập");
+                    dialog.showAndWait();
+                } else {
+                    showMess("Cảnh báo", "Hãy chọn một phiếu nhập để xem chi tiết");
+                }
+            }
+        });
+    }
+
+    private void showMess(String canhBao, String s) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(canhBao);
+        alert.setHeaderText(null);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 
     private VBox createLabeledBox(String label, Control control) {
@@ -357,7 +377,21 @@ public class CapNhatPhieuNhapController extends ScrollPane{
             }
         });
 
-        tbPhieuNhap.getColumns().addAll(colMaPhieuNhap, colNhaCungCap, colNgayNhap, colDiaChi, colLyDo, colHoTenNhanVien, colTongTien);
+        TableColumn<PhieuNhap, Boolean> colTrangThai = new TableColumn<>("Trạng Thái");
+        colTrangThai.setCellValueFactory(new PropertyValueFactory<>("deleteAt"));
+        colTrangThai.setCellFactory(column -> new TableCell<PhieuNhap, Boolean>() {
+            @Override
+            protected void updateItem(Boolean isDeleted, boolean empty) {
+                super.updateItem(isDeleted, empty);
+                if (empty || isDeleted == null) {
+                    setText(null);
+                } else {
+                    setText(isDeleted ? "Đã huỷ" : "Hoạt động");
+                }
+            }
+        });
+
+        tbPhieuNhap.getColumns().addAll(colMaPhieuNhap, colNhaCungCap, colNgayNhap, colDiaChi, colLyDo, colHoTenNhanVien, colTongTien, colTrangThai);
 
     }
 

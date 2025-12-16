@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -36,7 +37,7 @@ import javafx.scene.paint.Color;
 
 public class XemChiTietPhieuNhapFormController extends DialogPane{
 
-    private Text txtMaPhieuNhap, txtDiaChi, txtLyDo, txtNgayNhap, txtTongTien, txtNhanVien, txtNhaCungCap;
+    private Text txtMaPhieuNhap, txtDiaChi, txtLyDo, txtNgayNhap, txtTongTien, txtNhanVien, txtNhaCungCap, txtTrangThai;
     private TableView<ChiTietPhieuNhap> tbChiTietPhieuNhap;
 
     private PhieuNhap_DAO phieuNhap_DAO = new PhieuNhap_DAO();
@@ -50,16 +51,15 @@ public class XemChiTietPhieuNhapFormController extends DialogPane{
         AnchorPane.setLeftAnchor(mainVBox, 0.0);
         AnchorPane.setRightAnchor(mainVBox, 0.0);
 
-        // Header
         FlowPane header = new FlowPane();
         header.setStyle("-fx-background-color: #1e3a8a;");
         header.setPadding(new Insets(10, 0, 10, 0));
         Text headerText = new Text("Chi tiết phiếu nhập");
         headerText.setFont(Font.font("System Bold", 15));
         headerText.setFill(Color.WHITE);
+        header.setAlignment(Pos.CENTER);
         header.getChildren().add(headerText);
 
-        // Phiếu nhập info
         VBox infoBox = new VBox(10);
         infoBox.setStyle("-fx-background-color: #2563eb; -fx-background-radius: 5px;");
         infoBox.setPadding(new Insets(10));
@@ -103,17 +103,21 @@ public class XemChiTietPhieuNhapFormController extends DialogPane{
         GridPane.setColumnIndex(txtNhanVien, 1);
         GridPane.setRowIndex(txtNhanVien, 1);
 
-        gridInfo.getChildren().addAll(txtLyDo, txtNgayNhap, txtNhaCungCap, txtDiaChi, txtNhanVien);
+        txtTrangThai = new Text("Trạng thái : 1");
+        txtTrangThai.setFont(Font.font(13));
+        txtTrangThai.setFill(Color.WHITE);
+        GridPane.setColumnIndex(txtTrangThai, 1);
+        GridPane.setRowIndex(txtTrangThai, 2);
+
+        gridInfo.getChildren().addAll(txtLyDo, txtNgayNhap, txtNhaCungCap, txtDiaChi, txtNhanVien, txtTrangThai);
 
         infoBox.getChildren().addAll(txtMaPhieuNhap, gridInfo);
 
-        // Table chi tiết
         Text tableLabel = new Text("Danh chi tiết:");
         tbChiTietPhieuNhap = new TableView<>();
         tbChiTietPhieuNhap.getStyleClass().add("table-view");
         tbChiTietPhieuNhap.setPrefWidth(200);
 
-        // Tổng tiền
         GridPane totalGrid = new GridPane();
         totalGrid.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
         totalGrid.setHgap(5);
@@ -148,7 +152,6 @@ public class XemChiTietPhieuNhapFormController extends DialogPane{
             throw new RuntimeException(e);
         }
 
-
         ButtonType applyButton = new ButtonType("Đóng", ButtonData.CANCEL_CLOSE);
         this.getButtonTypes().add(applyButton);
     }
@@ -163,6 +166,7 @@ public class XemChiTietPhieuNhapFormController extends DialogPane{
         txtTongTien.setText(decimal.format(phieuNhap.getTongTien()));
         txtNhanVien.setText("Nhân viên nhập: " + phieuNhap.getMaNV().getHoTen());
         txtNhaCungCap.setText("Nhà cung cấp: " + phieuNhap.getNhaCungCap());
+        txtTrangThai.setText("Trạng thái: " + (phieuNhap.isDeleteAt() ? "Đã hủy" : "Hoạt động"));
 
         //Load chi tiết phiếu nhập
         ArrayList<ChiTietPhieuNhap> dsChiTietPhieuNhap = chiTietPhieuNhap_DAO.getDanhSachChiTietPhieuNhapTheoMaPN(phieuNhap.getMaPhieuNhap());

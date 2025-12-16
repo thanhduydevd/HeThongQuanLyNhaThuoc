@@ -35,7 +35,7 @@ import java.util.Locale;
 
 public class ThemPhieuNhapController extends ScrollPane{
    
-    private Button btnAddGoodsReceipt, btnXoaRong;
+    private Button btnThem, btnXoaRong;
     private TableView<PhieuNhap> tbPhieuNhap;
     private ComboBox<NhanVien> cbNhanVienNhap;
     private DatePicker dpTuNgay, dpDenNgay;
@@ -49,6 +49,8 @@ public class ThemPhieuNhapController extends ScrollPane{
     /* Lấy dữ liệu từ DAO */
     private ArrayList<PhieuNhap> dsPhieuNhap = new ArrayList<>();
     private ObservableList<PhieuNhap> data = FXCollections.observableArrayList();
+
+    private PhieuNhap phieuNhapDuocChon;
 
     public ThemPhieuNhapController() {
         /** Giao diện **/
@@ -64,9 +66,6 @@ public class ThemPhieuNhapController extends ScrollPane{
         root.setStyle("-fx-background-color: #f8fafc;");
         root.setPadding(new Insets(20));
 
-        // ====================
-        // 1. Title
-        // =====================
         HBox titleBox = new HBox();
         titleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
@@ -77,14 +76,15 @@ public class ThemPhieuNhapController extends ScrollPane{
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        btnAddGoodsReceipt = new Button("Thêm phiếu nhập");
-        btnAddGoodsReceipt.getStyleClass().add("btn-them");
+        FontAwesomeIcon iconAdd = new FontAwesomeIcon();
+        iconAdd.setIcon(FontAwesomeIcons.PLUS);
+        iconAdd.setFill(Color.WHITE);
+        btnThem = new Button("Thêm phiếu nhập");
+        btnThem.getStyleClass().add("btn-them");
+        btnThem.setGraphic(iconAdd);
 
-        titleBox.getChildren().addAll(title, spacer, btnAddGoodsReceipt);
+        titleBox.getChildren().addAll(title, spacer, btnThem);
 
-        // ====================
-        // 2. TabPane
-        // =====================
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabPane.setPrefWidth(200);
@@ -95,9 +95,6 @@ public class ThemPhieuNhapController extends ScrollPane{
         VBox tabContent = new VBox(10);
         tabContent.setPadding(new Insets(10));
 
-        // ====================
-        // 3. FlowPane (ô lọc)
-        // =====================
         FlowPane filterPane = new FlowPane();
         filterPane.setHgap(5);
         filterPane.setVgap(5);
@@ -114,7 +111,6 @@ public class ThemPhieuNhapController extends ScrollPane{
 
         filterPane.setEffect(ds);
 
-        // --- Nhân viên nhập
         cbNhanVienNhap = new ComboBox<>();
         cbNhanVienNhap.setPrefSize(200, 40);
         cbNhanVienNhap.setPromptText("Chọn nhân viên nhập");
@@ -122,21 +118,18 @@ public class ThemPhieuNhapController extends ScrollPane{
 
         VBox v1 = createLabeledBox("Nhân viên nhập:", cbNhanVienNhap);
 
-        // --- Từ ngày
         dpTuNgay = new DatePicker();
         dpTuNgay.setPrefSize(200, 40);
         dpTuNgay.getStyleClass().add("combo-box");
 
         VBox v2 = createLabeledBox("Từ ngày:", dpTuNgay);
 
-        // --- Đến ngày
         dpDenNgay = new DatePicker();
         dpDenNgay.setPrefSize(200, 40);
         dpDenNgay.getStyleClass().add("combo-box");
 
         VBox v3 = createLabeledBox("Đến ngày:", dpDenNgay);
 
-        // --- Khoảng giá
         cbKhoangGia = new ComboBox<>();
         cbKhoangGia.setPrefSize(200, 40);
         cbKhoangGia.setPromptText("Chọn khoảng giá");
@@ -144,7 +137,6 @@ public class ThemPhieuNhapController extends ScrollPane{
 
         VBox v4 = createLabeledBox("Khoảng giá:", cbKhoangGia);
 
-        // --- Button Xóa rỗng
         btnXoaRong = new Button("Xoá rỗng");
         btnXoaRong.setPrefSize(93, 40);
         btnXoaRong.getStyleClass().add("btn-xoarong");
@@ -159,9 +151,6 @@ public class ThemPhieuNhapController extends ScrollPane{
 
         filterPane.getChildren().addAll(v1, v2, v3, v4, v5);
 
-        // ====================
-        // 4. Thanh tìm kiếm
-        // =====================
         HBox searchBox = new HBox(10);
 
         tfTimPhieuNhap = new TextField();
@@ -182,17 +171,11 @@ public class ThemPhieuNhapController extends ScrollPane{
 
         searchBox.getChildren().addAll(tfTimPhieuNhap, btnSearch);
 
-        // ====================
-        // 5. TableView
-        // =====================
         tbPhieuNhap = new TableView();
         tbPhieuNhap.setPrefHeight(800);
 
         tbPhieuNhap.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // ====================
-        // 6. Hướng dẫn
-        // =====================
         Button btnHuongDan = new Button("Nhấn 2 lần chuột trái vào bảng để xem chi tiết");
         btnHuongDan.setMaxWidth(Double.MAX_VALUE);
         btnHuongDan.getStyleClass().add("pane-huongdan");
@@ -203,17 +186,11 @@ public class ThemPhieuNhapController extends ScrollPane{
         btnHuongDan.setGraphic(infoIcon);
         btnHuongDan.setPadding(new Insets(10));
 
-        // ====================
-        // Add tất cả vào tabContent
-        // =====================
         tabContent.getChildren().addAll(filterPane, searchBox, tbPhieuNhap, btnHuongDan);
 
         tabPhieuNhap.setContent(tabContent);
         tabPane.getTabs().add(tabPhieuNhap);
 
-        // ====================
-        // Add tất cả vào root
-        // =====================
         root.getChildren().addAll(titleBox, tabPane);
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
@@ -225,13 +202,17 @@ public class ThemPhieuNhapController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        this.btnAddGoodsReceipt.setOnAction((e) -> {
+        this.btnThem.setOnAction((e) -> {
             ThemPhieuNhapFormController themDialog = new ThemPhieuNhapFormController();
             Dialog<Void> dialog = new Dialog<>();
             dialog.setDialogPane(themDialog);
             dialog.setTitle("Thêm phiếu nhập");
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
+
+            tbPhieuNhap.refresh();
+            ObservableList<PhieuNhap> phieuNhapList = FXCollections.observableArrayList(phieuNhap_DAO.getDanhSachPhieuNhap());
+            tbPhieuNhap.setItems(phieuNhapList);
         });
 
         loadDanhSachPhieuNhap();
@@ -262,6 +243,43 @@ public class ThemPhieuNhapController extends ScrollPane{
             data.setAll(dsPhieuNhap);
             tbPhieuNhap.setItems(data);
         });
+
+        //Khi click double vào 1 phiếu nhập sẽ hiện chi tiết phiếu nhập
+        //Sự kiện khi click table
+        tbPhieuNhap.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        tbPhieuNhap.setOnMousePressed(e -> {
+            PhieuNhap selected = tbPhieuNhap.getSelectionModel().getSelectedItem();
+            if (e.getClickCount() == 2){
+                if (selected != null) {
+                    phieuNhapDuocChon = new PhieuNhap(
+                            selected.getMaPhieuNhap(),
+                            selected.getNhaCungCap(),
+                            selected.getNgayNhap(),
+                            selected.getDiaChi(),
+                            selected.getLyDo(),
+                            selected.getMaNV(),
+                            selected.getTongTien(),
+                            selected.isDeleteAt()
+                    );
+                    XemChiTietPhieuNhapFormController xemDialog = new XemChiTietPhieuNhapFormController();
+                    xemDialog.showChiTietPhieuNhap(phieuNhapDuocChon);
+                    Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết phiếu nhập");
+                    dialog.showAndWait();
+                }else{
+                    showMess("Cảnh báo","Hãy chọn một phiếu nhập để xem chi tiết");
+                }
+            }
+        });
+    }
+
+    private void showMess(String canhBao, String s) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(canhBao);
+        alert.setHeaderText(null);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 
     private VBox createLabeledBox(String label, Control control) {
@@ -322,7 +340,21 @@ public class ThemPhieuNhapController extends ScrollPane{
             }
         });
 
-        tbPhieuNhap.getColumns().addAll(colMaPhieuNhap, colNhaCungCap, colNgayNhap, colDiaChi, colLyDo, colHoTenNhanVien, colTongTien);
+        TableColumn<PhieuNhap, Boolean> colTrangThai = new TableColumn<>("Trạng Thái");
+        colTrangThai.setCellValueFactory(new PropertyValueFactory<>("deleteAt"));
+        colTrangThai.setCellFactory(column -> new TableCell<PhieuNhap, Boolean>() {
+            @Override
+            protected void updateItem(Boolean isDeleted, boolean empty) {
+                super.updateItem(isDeleted, empty);
+                if (empty || isDeleted == null) {
+                    setText(null);
+                } else {
+                    setText(isDeleted ? "Đã huỷ" : "Hoạt động");
+                }
+            }
+        });
+
+        tbPhieuNhap.getColumns().addAll(colMaPhieuNhap, colNhaCungCap, colNgayNhap, colDiaChi, colLyDo, colHoTenNhanVien, colTongTien, colTrangThai);
 
     }
 

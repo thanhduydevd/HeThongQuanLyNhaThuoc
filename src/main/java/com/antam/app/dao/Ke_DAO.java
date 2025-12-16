@@ -33,6 +33,22 @@ public class Ke_DAO {
             return false;
         }
     }
+
+    /* Duy - Khôi phục kệ */
+    public boolean khoiPhucKe(String maKe) {
+        String sql = "UPDATE KeThuoc SET DeleteAt = 0 WHERE MaKe = ? AND DeleteAt = 1";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maKe);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /* Duy - Sửa kệ */
     public boolean suaKe(Ke ke) {
         String sql = "UPDATE KeThuoc SET TenKe = ?, LoaiKe = ? WHERE MaKe = ? AND DeleteAt = 0";
@@ -84,11 +100,33 @@ public class Ke_DAO {
         return maKeMoi;
     }
 
+    /* Duy - Lấy tất cả kệ */
+    public ArrayList<Ke> getTatCaKeThuoc() {
+        ArrayList<Ke> listKe = new ArrayList<>();
+        String sql = "SELECT * FROM KeThuoc ORDER BY MaKe DESC";
+        try{
+            Connection con = ConnectDB.getConnection();
+            Statement state = con.createStatement();
+            ResultSet rs = state.executeQuery(sql);
+            while (rs.next()) {
+                String maKe = rs.getString("MaKe");
+                String tenKe = rs.getString("TenKe");
+                String loaiKe = rs.getString("LoaiKe");
+                boolean deleteAt = rs.getBoolean("DeleteAt");
+                Ke ke = new Ke(maKe, tenKe, loaiKe, deleteAt);
+                listKe.add(ke);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listKe;
+    }
+
     /**
      * Lấy tất cả kệ chưa bị xóa
      * @return Danh sách kệ
      */
-    public ArrayList<Ke> getAllKe() {
+    public ArrayList<Ke> getTatCaKeHoatDong() {
         ArrayList<Ke> listKe = new ArrayList<>();
         String sql = "SELECT * FROM KeThuoc WHERE DeleteAt = 0";
         try{

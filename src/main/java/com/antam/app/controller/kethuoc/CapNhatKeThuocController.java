@@ -183,7 +183,7 @@ public class CapNhatKeThuocController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        dsKeThuoc =  ke_DAO.getAllKe();
+        dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
         data.setAll(dsKeThuoc);
         tbKeThuoc.setItems(data);
 
@@ -191,7 +191,6 @@ public class CapNhatKeThuocController extends ScrollPane{
 
         tfMaKe.setEditable(false);
 
-        //Sự kiện khi chọn 1 hàng trong bảng
         tbKeThuoc.setOnMouseClicked(e -> {
             Ke ke = tbKeThuoc.getSelectionModel().getSelectedItem();
             if (ke == null) {
@@ -202,13 +201,12 @@ public class CapNhatKeThuocController extends ScrollPane{
             tfLoaiKe.setText(ke.getLoaiKe());
         });
 
-        //Sự kiện cho nút sửa kệ
         btnSuaKe.setOnAction(e -> {
             if (kiemTraHopLe()){
                 ke_DAO.suaKe(new Ke(tfMaKe.getText(), tfTenKe.getText(), tfLoaiKe.getText(), false));
                 showCanhBao("Thông báo","Cập nhật kệ thành công!");
                 //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getAllKe();
+                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
                 data.setAll(dsKeThuoc);
                 tbKeThuoc.setItems(data);
                 //Xoá trắng các trường nhập liệu
@@ -223,7 +221,7 @@ public class CapNhatKeThuocController extends ScrollPane{
                 ke_DAO.xoaKe(tfMaKe.getText());
                 showCanhBao("Thông báo","Xoá kệ thành công!");
                 //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getAllKe();
+                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
                 data.setAll(dsKeThuoc);
                 tbKeThuoc.setItems(data);
                 //Xoá trắng các trường nhập liệu
@@ -232,6 +230,23 @@ public class CapNhatKeThuocController extends ScrollPane{
                 tfLoaiKe.clear();
             }else{
                 showCanhBao("Lỗi xoá kệ","Vui lòng chọn kệ cần xoá!");
+            }
+        });
+
+        btnKhoiPhucKe.setOnAction(e -> {
+            if(!tfMaKe.getText().isEmpty()){
+                ke_DAO.khoiPhucKe(tfMaKe.getText());
+                showCanhBao("Thông báo","Khôi phục kệ thành công!");
+                //Cập nhật lại bảng
+                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
+                data.setAll(dsKeThuoc);
+                tbKeThuoc.setItems(data);
+                //Xoá trắng các trường nhập liệu
+                tfMaKe.clear();
+                tfTenKe.clear();
+                tfLoaiKe.clear();
+            }else{
+                showCanhBao("Lỗi khôi phục kệ","Vui lòng chọn kệ cần khôi phục!");
             }
         });
     }
