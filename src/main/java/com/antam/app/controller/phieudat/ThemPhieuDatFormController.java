@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javafx.geometry.Insets;
@@ -67,7 +69,6 @@ public class ThemPhieuDatFormController extends DialogPane{
     private ArrayList<KhachHang> dsKhach = khachHangDAO.getAllKhachHang();
     private KhuyenMai_DAO KhuyenMai_DAO = new KhuyenMai_DAO();
     private ArrayList<KhuyenMai> dsKhuyenMai = (ArrayList<KhuyenMai>) KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
-    private DonViTinh_DAO dvtDAO = new DonViTinh_DAO();
     private ChiTietThuoc_DAO chiTietThuoc_dao = new ChiTietThuoc_DAO();
     private HoaDon_DAO hoaDon_DAO = new HoaDon_DAO();
     private ObservableList<KhachHang> autoKhach = FXCollections.observableArrayList(dsKhach);
@@ -451,7 +452,7 @@ public class ThemPhieuDatFormController extends DialogPane{
 
         int soLuongdaChon = 0;
         for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
-            if (ct.getSoDangKy().getMaThuoc().equals(selectedThuoc.getMaThuoc())) {
+            if (ct.getChiTietThuoc().getMaThuoc().equals(selectedThuoc.getMaThuoc())) {
                 soLuongdaChon += ct.getSoLuong();
             }
         }
@@ -473,141 +474,166 @@ public class ThemPhieuDatFormController extends DialogPane{
     }
 
     /**
-     * Thêm thuốc vào bảng nếu đã tồn tại thì cộng dồn số lượng
+     * Thêm thuốc vào bảng nếu đã tồn tại thì cộng dồn số lượng, nếu chi tiết thiếu thì tạo thêm 1 dòng mới
      */
     private void addThuocVaoTable() {
-        ChiTietPhieuDatThuoc ctPDT = new ChiTietPhieuDatThuoc(cbTenThuoc.getSelectionModel().getSelectedItem(),
-                spSoLuong.getValue(),
-                cbDonVi.getSelectionModel().getSelectedItem());
-        txtDonGia.setText(dinhDangTien(ctPDT.getSoDangKy().getGiaBan()));
-        if (list.contains(ctPDT)){
-            int index = list.indexOf(ctPDT);
-            ChiTietPhieuDatThuoc existingCTPDT = list.get(index);
-            existingCTPDT.setSoLuong(existingCTPDT.getSoLuong() + ctPDT.getSoLuong());
-            list.set(index, existingCTPDT);
-            loadTable();
+
+        Thuoc thuoc = cbTenThuoc.getSelectionModel().getSelectedItem();
+        int soLuongCan = spSoLuong.getValue();
+        DonViTinh dvt = cbDonVi.getSelectionModel().getSelectedItem();
+
+        if (thuoc == null || soLuongCan <= 0) return;
+
+        // 1. Lấy các lô còn hạn, sắp theo hạn tăng dần
+        ArrayList<ChiTietThuoc> dsLo = chiTietThuoc_dao
+                .getAllChiTietThuocVoiMaChoCTPD(thuoc.getMaThuoc())
+                .stream()
+                .filter(ct -> ct.getHanSuDung().isAfter(LocalDate.now()))
+                .sorted(Comparator.comparing(ChiTietThuoc::getHanSuDung))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        int tongTon = dsLo.stream().mapToInt(ChiTietThuoc::getSoLuong).sum();
+        if (tongTon < soLuongCan) {
+            showMess("Không đủ tồn", "Kho chỉ còn " + tongTon);
             return;
         }
-        list.add(ctPDT);
+
+        // 2. Chia số lượng cho từng lô
+        for (ChiTietThuoc lo : dsLo) {
+            if (soLuongCan <= 0) break;
+
+            int lay = Math.min(lo.getSoLuong(), soLuongCan);
+            soLuongCan -= lay;
+
+            ChiTietPhieuDatThuoc ct = new ChiTietPhieuDatThuoc(lo, lay, dvt);
+
+            // 3. Nếu đã tồn tại cùng lô → cộng dồn
+            Optional<ChiTietPhieuDatThuoc> existing = list.stream()
+                    .filter(x -> x.getChiTietThuoc().getMaCTT() == lo.getMaCTT())
+                    .findFirst();
+
+            if (existing.isPresent()) {
+                ChiTietPhieuDatThuoc old = existing.get();
+                old.setSoLuong(old.getSoLuong() + lay);
+            } else {
+                list.add(ct);
+            }
+        }
+
+        // 4. Update UI
         loadTable();
         loadTongTien();
+
+        txtDonGia.setText(dinhDangTien(thuoc.getGiaBan()));
     }
 
     private void themPhieuDat() {
-        // Kiểm tra nhân viên
-        String hashPD = getHashPD();
-        NhanVien nguoiDat = PhienNguoiDung.getMaNV();
 
+        // ===== 1. NHÂN VIÊN =====
+        NhanVien nguoiDat = PhienNguoiDung.getMaNV();
         if (nguoiDat == null) {
-            showMess("Lỗi người dùng", "Không tìm thấy thông tin người đặt.");
+            showMess("Lỗi", "Không xác định được nhân viên.");
             return;
         }
 
-        // Lấy thông tin khách nhập vào
+        // ===== 2. KHÁCH HÀNG =====
         String ten = txtTenKhach.getText().trim();
         String sdt = txtSoDienThoai.getText().trim();
+
         if (ten.isEmpty() || sdt.isEmpty()) {
-            showMess("Lỗi khách hàng", "Vui lòng nhập đầy đủ tên và số điện thoại khách hàng.");
+            showMess("Thiếu thông tin", "Vui lòng nhập tên và SĐT khách hàng.");
             return;
         }
 
-        // ===== XÁC ĐỊNH KHÁCH HÀNG =====
-
         KhachHang khach;
-
         if (isKhachHangMoi()) {
-            //khách mới
-            khach = new KhachHang(getMaKhachMoi());
-            khach.setTenKH(ten);
-            khach.setSoDienThoai(sdt);
-
+            khach = new KhachHang(getMaKhachMoi(), ten, sdt, false);
             khachHangDAO.insertKhachHang(khach);
-
         } else {
-            //khách cũ: tìm theo SĐT
             khach = dsKhach.stream()
                     .filter(k -> k.getSoDienThoai().equals(sdt))
                     .findFirst()
                     .orElse(null);
 
             if (khach == null) {
-                showMess("Lỗi khách hàng", "Không tìm thấy thông tin khách hàng cũ.");
+                showMess("Lỗi", "Không tìm thấy khách hàng.");
                 return;
             }
         }
 
-        // ===== KIỂM TRA BẢNG THUỐC =====
+        // ===== 3. KIỂM TRA THUỐC =====
         if (tbChonThuoc.getItems().isEmpty()) {
-            showMess("Lỗi dữ liệu", "Vui lòng chọn ít nhất một loại thuốc.");
+            showMess("Lỗi", "Chưa chọn thuốc.");
             return;
         }
 
-        // ===== XỬ LÝ KHUYẾN MÃI =====
+        // ===== 4. KHUYẾN MÃI =====
         KhuyenMai km = cbKhuyenMai.getSelectionModel().getSelectedItem();
-        if (km != null && km.getTenKM().equals("Không áp dụng")) {
+        if (km != null && "Không áp dụng".equals(km.getTenKM())) {
             km = null;
         }
 
-        // ===== TÍNH TỔNG TIỀN =====
-        double tongTien = tinhTongTien();
-
-        // ===== TẠO PHIẾU ĐẶT =====
+        // ===== 5. TẠO PHIẾU =====
         PhieuDatThuoc phieu = new PhieuDatThuoc(
-                hashPD,
+                getHashPD(),
                 LocalDate.now(),
                 false,
                 nguoiDat,
                 khach,
                 km,
-                tongTien
+                tinhTongTien()
         );
 
-        PhieuDat_DAO.themPhieuDatThuocVaoDBS(phieu);
+        // Lưu vào dbs
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            con.setAutoCommit(false); // TRANSACTION
 
-        // ===== TẠO CHI TIẾT =====
-        for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
+            // 6.1 Thêm phiếu
+            PhieuDat_DAO.themPhieuDatThuocVaoDBS(phieu);
 
-            // 1. Lấy danh sách lô thuốc theo hạn sử dụng giảm dần
-            ArrayList<ChiTietThuoc> dsChiTietThuoc =
-                    chiTietThuoc_dao.getChiTietThuocHanSuDungGiamDan(ct.getSoDangKy().getMaThuoc());
-            // Lọc bỏ lô đã hết hạn
-            dsChiTietThuoc = dsChiTietThuoc.stream()
-                    .filter(ctt -> ctt.getHanSuDung().isAfter(LocalDate.now()))
-                    .sorted(Comparator.comparing(ChiTietThuoc::getHanSuDung))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            // 2. Thêm vào bảng ChiTietPhieuDat
-            ChiTietPhieuDat_DAO.themChiTietPhieuDatVaoDBS(
-                    new ChiTietPhieuDatThuoc(phieu, ct.getSoDangKy(), ct.getSoLuong(), ct.getDonViTinh())
-            );
+            // 6.2 Thêm chi tiết + trừ kho
+            for (ChiTietPhieuDatThuoc ct : tbChonThuoc.getItems()) {
 
-            // 3. Trừ tồn kho theo từng lô
-            int soLuongCanTru = ct.getSoLuong();
+                ChiTietThuoc lo = ct.getChiTietThuoc();
+                int soLuongDat = ct.getSoLuong();
 
-            for (ChiTietThuoc ctt : dsChiTietThuoc) {
-                if (soLuongCanTru <= 0) break;
-
-                int tonKho = ctt.getSoLuong();
-
-                if (tonKho >= soLuongCanTru) {
-                    // Lô đủ để trừ
-                    int soMoi = tonKho - soLuongCanTru;
-                    chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), soMoi);
-                    soLuongCanTru = 0; // Hoàn thành
-                } else {
-                    // Lô không đủ → trừ hết lô và chuyển sang lô sau
-                    chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), 0);
-                    soLuongCanTru -= tonKho;
+                if (lo.getSoLuong() < soLuongDat) {
+                    throw new RuntimeException("Không đủ tồn kho cho lô " + lo.getMaCTT());
                 }
+
+                // Thêm chi tiết phiếu
+                ChiTietPhieuDat_DAO.themChiTietPhieuDatVaoDBS(
+                        new ChiTietPhieuDatThuoc(
+                                phieu,
+                                lo,
+                                soLuongDat,
+                                ct.getDonViTinh()
+                        )
+                );
+
+                // Trừ kho đúng lô
+                chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(
+                        lo.getMaCTT(),
+                        lo.getSoLuong() - soLuongDat
+                );
             }
 
-            // 4. Nếu hết tồn mà vẫn thiếu → cảnh báo (tuỳ bạn xử lý)
-            if (soLuongCanTru > 0) {
-                System.err.println("Cảnh báo: Tồn kho không đủ cho thuốc " + ct.getSoDangKy().getMaThuoc());
+            con.commit(); // OK
+            showMess("Thành công", "Tạo phiếu đặt thuốc thành công.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                ConnectDB.getConnection().rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+            showMess("Lỗi", "Không thể tạo phiếu đặt. Dữ liệu đã được hoàn tác.");
         }
-
-
     }
+
 
     /**
      * Tạo mã khách hàng mới với đinh dạng KHxxxxxxxxx (x là số bất kì, có 9 số)
@@ -657,7 +683,7 @@ public class ThemPhieuDatFormController extends DialogPane{
     public double tinhTongTien(){
         double tongTien = 0.0;
         for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
-            tongTien += e.getSoLuong() * e.getSoDangKy().getGiaBan();
+            tongTien += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan();
         }
         // Áp dụng khuyến mãi nếu có
         if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null &&
@@ -740,12 +766,12 @@ public class ThemPhieuDatFormController extends DialogPane{
      * Cài đặt các cột trong bảng
      */
     private void setupTable(){
-        colTenThuoc.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getSoDangKy().getTenThuoc()));
-        colDonVi.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getSoDangKy().getMaDVTCoSo().getTenDVT()));
+        colTenThuoc.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getChiTietThuoc().getMaThuoc().getTenThuoc()));
+        colDonVi.setCellValueFactory( cellData -> new SimpleStringProperty(cellData.getValue().getChiTietThuoc().getMaThuoc().getMaDVTCoSo().getTenDVT()));
         colSoLuong.setCellValueFactory( cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSoLuong())));
-        colDonGia.setCellValueFactory( cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getSoDangKy().getGiaBan())));
+        colDonGia.setCellValueFactory( cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getChiTietThuoc().getMaThuoc().getGiaBan())));
         colThanhTien.setCellValueFactory( cellData -> {
-            double thanhTien = cellData.getValue().getSoLuong() * cellData.getValue().getSoDangKy().getGiaBan();
+            double thanhTien = cellData.getValue().getSoLuong() * cellData.getValue().getChiTietThuoc().getMaThuoc().getGiaBan();
             return new SimpleStringProperty(dinhDangTien(thanhTien));
         } );
     }

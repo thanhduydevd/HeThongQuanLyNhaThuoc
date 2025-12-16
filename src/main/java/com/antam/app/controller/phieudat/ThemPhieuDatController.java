@@ -58,7 +58,7 @@ public class ThemPhieuDatController extends ScrollPane{
     private TableColumn<PhieuDatThuoc,String> colStatus = new TableColumn<>("Trạng thái");
     private TableColumn<PhieuDatThuoc,String> colTotal = new TableColumn<>("Tổng tiền");
 
-
+    public static PhieuDatThuoc selectedPhieuDatThuoc = null;
     private ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
     private ObservableList<PhieuDatThuoc> origin;
@@ -181,6 +181,8 @@ public class ThemPhieuDatController extends ScrollPane{
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
+
+        tvPhieuDat.setPlaceholder(new Label("Không tìm thấy phiếu đặt thuốc"));
         /** Sự kiện **/
 
         // tạo phiếu đặt mới
@@ -252,6 +254,9 @@ public class ThemPhieuDatController extends ScrollPane{
         return vb;
     }
 
+    /**
+     * Lọc dữ liệu trong bảng dựa trên các lựa chọn trong ComboBox và DatePicker
+     */
     private void setupListenerComboBox() {
         String gia = cbGia.getSelectionModel().getSelectedItem();
         String trangThai = cbTrangThai.getSelectionModel().getSelectedItem();
@@ -313,30 +318,62 @@ public class ThemPhieuDatController extends ScrollPane{
         }
 
         tvPhieuDat.setItems(filter);
-    }
+
+        //set phiếu đặt được chọn cho xem chi tiết
+        selectedPhieuDatThuoc = tvPhieuDat.getItems().getFirst();
+
+        tvPhieuDat.setOnMouseClicked(e -> {
+            PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+            if (e.getClickCount() == 2) {
 
 
-    private void setupListenerFind() {
-        txtFind.textProperty().addListener( (obj, oldT ,newT) ->{
-            tvPhieuDat.getSelectionModel().clearSelection();
-            if(newT.isBlank()){
-                tvPhieuDat.setItems(filter);
-                return ;
-            }
-            ObservableList<PhieuDatThuoc> filter1 = FXCollections.observableArrayList(filter);
-            String key = newT.toLowerCase();
-            for (PhieuDatThuoc e : listPDT){
-                if (e.getMaPhieu().toLowerCase().contains(key)
-                        ||e.getKhachHang().getTenKH().toLowerCase().contains(key)){
-                    filter1.add(e);
-                }else{
-                    filter1.remove(e);
+                // Kiểm tra có chọn dòng nào không
+
+                if (selected != null) {
+                    selectedPhieuDatThuoc = selected; // lưu lại để truyền qua form chi tiết
+                    XemChiTietPhieuDatFormController xemDialog = new XemChiTietPhieuDatFormController();
+
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết phiếu đặt");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+
+                    dialog.showAndWait();
+                    loadDataVaoBang();
                 }
             }
-            tvPhieuDat.setItems(filter1);
         });
     }
 
+    /**
+     * Tìm kiếm phiếu đặt theo mã phiếu hoặc tên khách hàng
+     */
+    private void setupListenerFind() {
+        txtFind.textProperty().addListener((obs, oldT, newT) -> {
+
+            tvPhieuDat.getSelectionModel().clearSelection();
+
+            String key = newT.trim().toLowerCase();
+
+            if (key.isEmpty()) {
+                tvPhieuDat.setItems(origin);
+                return;
+            }
+
+            ObservableList<PhieuDatThuoc> filtered =
+                    origin.filtered(p ->
+                            p.getMaPhieu().toLowerCase().contains(key)
+                                    || p.getKhachHang().getTenKH().toLowerCase().contains(key)
+                    );
+
+            tvPhieuDat.setItems(filtered);
+        });
+    }
+
+
+    /**
+     * Cài đặt các cột cho bảng
+     */
     private void setupBang() {
         colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));
         colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
@@ -346,6 +383,9 @@ public class ThemPhieuDatController extends ScrollPane{
         colStatus.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().isThanhToan() ? "Đã thanh toán":"Chưa thanh toán"));
         colTotal.setCellValueFactory(t -> new SimpleStringProperty( dinhDangTien(t.getValue().getTongTien()) ));
     }
+    /**
+     * Định dạng tiền thành chuỗi cho hiển thị UI
+     */
     private String dinhDangTien(double tien){
         DecimalFormat df = new DecimalFormat("#,### đ");
         return df.format(tien);
@@ -378,6 +418,11 @@ public class ThemPhieuDatController extends ScrollPane{
         cbTrangThai.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Hộp thông báo đơn giản
+     * @param tieuDe - tên hợpo thông báo
+     * @param vanBan - nội dung hiển thị
+     */
     public void showMess(String tieuDe, String vanBan){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(tieuDe);

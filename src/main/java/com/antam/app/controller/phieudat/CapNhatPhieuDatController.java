@@ -5,8 +5,13 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.connect.ConnectDB;
+import com.antam.app.dao.ChiTietPhieuDat_DAO;
+import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
+import com.antam.app.entity.ChiTietPhieuDatThuoc;
+import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuDatThuoc;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -19,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -26,6 +32,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 
+import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +40,7 @@ import java.util.ArrayList;
 
 public class CapNhatPhieuDatController extends ScrollPane{
     
-    private Button btnThanhToan;
+    private Button btnThanhToan,btnXoaPD;
 
     private ComboBox<NhanVien> cbNhanVien = new ComboBox<>();
 
@@ -59,11 +66,12 @@ public class CapNhatPhieuDatController extends ScrollPane{
     private TableColumn<PhieuDatThuoc,String> colTotal = new TableColumn<>("Tổng tiền");
 
     public static PhieuDatThuoc selectedPDT;
+    public ChiTietThuoc_DAO ctThuoc_dao = new ChiTietThuoc_DAO();
 
-    ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
-    ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
-    ObservableList<PhieuDatThuoc> origin;
-    ObservableList<PhieuDatThuoc> filter= FXCollections.observableArrayList();
+    private ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
+    private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
+    private ObservableList<PhieuDatThuoc> origin;
+    private ObservableList<PhieuDatThuoc> filter= FXCollections.observableArrayList();
 
     public CapNhatPhieuDatController() {
         this.setFitToHeight(true);
@@ -83,11 +91,13 @@ public class CapNhatPhieuDatController extends ScrollPane{
         HBox header = new HBox(5);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Text title = new Text("Cập nhật phiếu đặt");
+        Text title = new Text("Thanh toán phiếu đặt");
         title.setFill(Color.web("#1e3a8a"));
         title.setFont(Font.font("System",30));
 
         Pane spacer = new Pane();
+
+        HBox hbButton = new HBox(10);
 
         FontAwesomeIcon iconAdd = new FontAwesomeIcon();
         iconAdd.setFill(Color.WHITE);
@@ -96,8 +106,15 @@ public class CapNhatPhieuDatController extends ScrollPane{
         btnThanhToan.setGraphic(iconAdd);
         btnThanhToan.getStyleClass().add("btn-them");
 
+        btnXoaPD = new Button("Hủy phiếu đặt");
+        btnXoaPD.setPrefSize(102, 40);
+        btnXoaPD.setStyle("-fx-background-color: red; -fx-background-radius: 5px;");
+        btnXoaPD.setTextFill(Color.WHITE);
+
+        hbButton.getChildren().addAll(btnXoaPD,btnThanhToan);
+
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        header.getChildren().addAll(title, spacer, btnThanhToan);
+        header.getChildren().addAll(title, spacer, hbButton);
 
         // Filters
         FlowPane filters = new FlowPane(5, 5);
@@ -166,7 +183,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
 
         tvPhieuDat.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        Button hint = new Button("Nhấn 2 lần chuột trái vào bảng để chỉnh sửa");
+        Button hint = new Button("Nhấn 2 lần chuột trái vào bảng để thanh toán nhanh");
         hint.setMaxWidth(Double.MAX_VALUE);
         hint.getStyleClass().add("pane-huongdan");
         hint.setTextFill(Color.web("#2563eb"));
@@ -175,6 +192,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         infoIcon.setFill(Color.web("#2563eb"));
         hint.setGraphic(infoIcon);
 
+        tvPhieuDat.setPlaceholder(new Label("Không có phiếu đặt thuốc nào được tìm thấy"));
         tableWrapper.getChildren().addAll(tvPhieuDat, hint);
 
         // Add tất cả vào giao diện
@@ -182,7 +200,10 @@ public class CapNhatPhieuDatController extends ScrollPane{
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
+
+
         /** Sự kiện **/
+
         this.btnThanhToan.setOnAction((e) -> {
             if (tvPhieuDat.getSelectionModel().getSelectedItem() == null){
                 showMess("Cảnh báo","Hãy chọn một phiếu đặt thuốc");
@@ -207,9 +228,23 @@ public class CapNhatPhieuDatController extends ScrollPane{
         //set phiếu đặt được chọn cho xem chi tiết
 
         tvPhieuDat.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+            PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
 
+            if (selected.isThanhToan()) {
+                btnThanhToan.setDisable(true);
+            } else {
+                btnThanhToan.setDisable(false);
+            }
+
+            if (selected == null) {
+                btnXoaPD.setDisable(true);
+                return;
+            }
+
+            btnXoaPD.setDisable(selected.isThanhToan());
+
+            if (e.getClickCount() == 2 &&
+                e.getButton() == MouseButton.PRIMARY) {
                 // Kiểm tra có chọn dòng nào không
                 if (selected != null) {
                     selectedPDT = selected;
@@ -220,23 +255,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
                     dialog.setTitle("Chi tiết phiếu đặt");
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.showAndWait();
-                }
-                loadDataVaoBang();
-            }
-
-        });
-
-
-        //sự kiện nút tìm kiếm phiếu đặt
-        btnFind.setOnAction(e->{
-            if(!txtFind.getText().isBlank()){
-                tvPhieuDat.setItems(origin);
-                for (PhieuDatThuoc a : tvPhieuDat.getItems()){
-                    if (a.getMaPhieu().toLowerCase().contains(txtFind.getText().toLowerCase())
-                            ||a.getKhachHang().getTenKH().toLowerCase().contains(txtFind.getText().toLowerCase())){
-                        tvPhieuDat.getSelectionModel().select(a);
-                        tvPhieuDat.scrollTo(a);
-                    }
+                    loadDataVaoBang();
                 }
             }
         });
@@ -252,6 +271,23 @@ public class CapNhatPhieuDatController extends ScrollPane{
             loadDataVaoBang();
         });
 
+        //sự kiện nút tìm kiếm phiếu đặt
+        btnFind.setOnAction(e -> {
+            String keyword = txtFind.getText().trim().toLowerCase();
+            if (keyword.isEmpty()) {
+                tvPhieuDat.setItems(origin);
+                return;
+            }
+
+            ObservableList<PhieuDatThuoc> filtered =
+                    origin.filtered(p ->
+                            p.getMaPhieu().toLowerCase().contains(keyword)
+                                    || p.getKhachHang().getTenKH().toLowerCase().contains(keyword)
+                    );
+            tvPhieuDat.setItems(filtered);
+        });
+
+
         //sự kiện lọc
         setupListenerFind();
         cbGia.setOnAction(e -> setupListenerComboBox());
@@ -259,6 +295,71 @@ public class CapNhatPhieuDatController extends ScrollPane{
         cbNhanVien.setOnAction(e -> setupListenerComboBox());
         dpstart.setOnAction(e-> setupListenerComboBox());
         dpend.setOnAction(e->setupListenerComboBox());
+
+        //sự kiện hủy phiếu đặt
+        btnXoaPD.setOnAction(e -> {
+
+            PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+
+            if (selected == null) {
+                showMess("Cảnh báo", "Hãy chọn một phiếu đặt thuốc để xoá");
+                return;
+            }
+
+            if (selected.isThanhToan()) {
+                showMess("Cảnh báo", "Phiếu đã thanh toán, không thể xoá");
+                return;
+            }
+
+            if (!canhBao("Xác nhận",
+                    "Bạn có chắc muốn xoá phiếu " + selected.getMaPhieu() + " không?")) {
+                return;
+            }
+
+            try {
+                // 1. Lấy chi tiết
+                ArrayList<ChiTietPhieuDatThuoc> chiTietList =
+                        ChiTietPhieuDat_DAO.getChiTietTheoPhieu(selected.getMaPhieu());
+
+                // 2. Hoàn kho
+                for (ChiTietPhieuDatThuoc ct : chiTietList) {
+                    ChiTietThuoc ctt =
+                            ctThuoc_dao.getChiTietThuoc(ct.getChiTietThuoc().getMaCTT());
+
+                    int soMoi = ctt.getSoLuong() + ct.getSoLuong();
+
+                    boolean ok =
+                            ctThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), soMoi);
+
+                    if (!ok) {
+                        showMess("Lỗi", "Hoàn kho thất bại cho lô " + ctt.getMaCTT());
+                        return;
+                    }
+                }
+
+                // 3. Huỷ chi tiết
+                if (!ChiTietPhieuDat_DAO.huyChiTietPhieu(selected.getMaPhieu())) {
+                    showMess("Lỗi", "Huỷ chi tiết phiếu thất bại");
+                    return;
+                }
+
+                // 4. Xoá phiếu
+                if (!PhieuDat_DAO.xoaPhieuDatThuocTrongDBS(selected.getMaPhieu())) {
+                    showMess("Lỗi", "Xoá phiếu thất bại");
+                    return;
+                }
+
+                showMess("Thành công", "Xoá phiếu đặt thuốc thành công");
+                loadDataVaoBang();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                showMess("Lỗi", "Có lỗi xảy ra khi xoá phiếu");
+            }
+        });
+
+
+
     }
 
     private VBox createFilterVBox(String label, Control control) {
@@ -275,6 +376,25 @@ public class CapNhatPhieuDatController extends ScrollPane{
         return vb;
     }
 
+    /**
+     * Hiển thị cảnh báo xác nhận
+     * @param tieuDe
+     * @param noidung
+     * @return
+     */
+    private boolean canhBao(String tieuDe, String noidung){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+
+        ButtonType buttonTypeYes = new ButtonType("Có", ButtonBar.ButtonData.YES);
+        ButtonType buttonTypeNo = new ButtonType("Không", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+        return alert.showAndWait().orElse(buttonTypeNo) == buttonTypeYes;
+    }
 
     private void showMess(String tieude, String noidung) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -350,25 +470,27 @@ public class CapNhatPhieuDatController extends ScrollPane{
 
 
     private void setupListenerFind() {
-        txtFind.textProperty().addListener( (obj, oldT ,newT) ->{
+        txtFind.textProperty().addListener((obs, oldT, newT) -> {
+
             tvPhieuDat.getSelectionModel().clearSelection();
-            if(newT.isBlank()){
-                tvPhieuDat.setItems(filter);
-                return ;
+
+            String key = newT.trim().toLowerCase();
+
+            if (key.isEmpty()) {
+                tvPhieuDat.setItems(origin);
+                return;
             }
-            ObservableList<PhieuDatThuoc> filter1 = FXCollections.observableArrayList(filter);
-            String key = newT.toLowerCase();
-            for (PhieuDatThuoc e : listPDT){
-                if (e.getMaPhieu().toLowerCase().contains(key)
-                        ||e.getKhachHang().getTenKH().toLowerCase().contains(key)){
-                    filter1.add(e);
-                }else{
-                    filter1.remove(e);
-                }
-            }
-            tvPhieuDat.setItems(filter1);
+
+            ObservableList<PhieuDatThuoc> filtered =
+                    origin.filtered(p ->
+                            p.getMaPhieu().toLowerCase().contains(key)
+                                    || p.getKhachHang().getTenKH().toLowerCase().contains(key)
+                    );
+
+            tvPhieuDat.setItems(filtered);
         });
     }
+
 
     private void setupBang() {
         colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));
@@ -379,6 +501,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         colStatus.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().isThanhToan() ? "Đã thanh toán":"Chưa thanh toán"));
         colTotal.setCellValueFactory(t -> new SimpleStringProperty( dinhDangTien(t.getValue().getTongTien()) ));
     }
+
     private String dinhDangTien(double tien){
         DecimalFormat df = new DecimalFormat("#,### đ");
         return df.format(tien);

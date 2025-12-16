@@ -157,6 +157,7 @@ public class ThemKhuyenMaiController extends ScrollPane{
                 colSo, colSoLuongToiDa, colTinhTrang
         );
         tableKhuyenMai.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableKhuyenMai.setPlaceholder(new Label("Không có khuyến mãi"));
 
         // Add tất cả vào root
         root.getChildren().addAll(titleBox, flow, searchBox, tableKhuyenMai);
@@ -219,19 +220,6 @@ public class ThemKhuyenMaiController extends ScrollPane{
         txtTiemKiemKhuyenMai.setOnKeyReleased(e -> fiterAndSearch());
         // su kien xoa rong
         btnclear.setOnAction(e -> clearFilters());
-
-        tableKhuyenMai.setRowFactory(tv -> {
-            TableRow<KhuyenMai> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    KhuyenMai selectKM  = row.getItem();
-                    // Mở dialog
-
-                    updateTableKhuyenMai();
-                }
-            });
-            return row;
-        });
     }
 
     private VBox createLabeledBox(String label, Control field) {

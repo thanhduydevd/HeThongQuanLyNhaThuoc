@@ -23,6 +23,15 @@ public class PhieuDatThuoc {
     private KhachHang khachHang;
     private KhuyenMai khuyenMai;
     private double tongTien;
+    private boolean daXoa;
+
+    public boolean isDaXoa() {
+        return daXoa;
+    }
+
+    public void setDaXoa(boolean daXoa) {
+        this.daXoa = daXoa;
+    }
 
     public PhieuDatThuoc() {
         this.maPhieu = "";
@@ -41,6 +50,17 @@ public class PhieuDatThuoc {
         this.khachHang = maKH;
         this.khuyenMai = maKM;
         this.tongTien = tongTien;
+    }
+
+    public PhieuDatThuoc(String maPhieu, LocalDate ngayTao, boolean isThanhToan, NhanVien nhanVien, KhachHang maKH, KhuyenMai maKM, double tongTien,boolean daXoa) {
+        this.maPhieu = maPhieu;
+        setNgayTao(ngayTao);
+        this.isThanhToan = isThanhToan;
+        this.nhanVien = nhanVien;
+        this.khachHang = maKH;
+        this.khuyenMai = maKM;
+        this.tongTien = tongTien;
+        this.daXoa = daXoa;
     }
 
     public String getMaPhieu() {

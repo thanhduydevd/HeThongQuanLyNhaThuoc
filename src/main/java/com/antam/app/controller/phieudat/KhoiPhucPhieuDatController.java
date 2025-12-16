@@ -5,12 +5,18 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.connect.ConnectDB;
+import com.antam.app.dao.ChiTietPhieuDat_DAO;
+import com.antam.app.dao.ChiTietThuoc_DAO;
 import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
+import com.antam.app.entity.ChiTietPhieuDatThuoc;
+import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuDatThuoc;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,6 +29,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.sql.Connection;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class KhoiPhucPhieuDatController extends ScrollPane{
@@ -55,6 +65,7 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
     public static PhieuDatThuoc selectedPDT;
 
     ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
+    public ChiTietThuoc_DAO ctThuoc_dao = new ChiTietThuoc_DAO();
     ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
     ObservableList<PhieuDatThuoc> origin;
     ObservableList<PhieuDatThuoc> filter= FXCollections.observableArrayList();
@@ -174,7 +185,100 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
+
+        tvPhieuDat.setPlaceholder(new Label("Chưa có phiếu đặt thuốc nào bị hủy"));
         /** Sự kiện **/
+
+        setupBang();
+        loadDataVaoBang();
+        loadDataComboBox();
+        setupListenerComboBox();
+        setupListenerFind();
+        btnXoaRong.setOnAction( e->{
+            cbGia.getSelectionModel().selectFirst();
+            cbNhanVien.getSelectionModel().selectFirst();
+            cbTrangThai.getSelectionModel().selectFirst();
+            dpstart.setValue(null);
+            dpend.setValue(null);
+            txtFind.setText("");
+            loadDataVaoBang();
+        });
+        btnKhoiPhuc.setOnAction(e -> {
+
+            PhieuDatThuoc selected =
+                    tvPhieuDat.getSelectionModel().getSelectedItem();
+
+            if (selected == null) {
+                showMess("Chưa chọn phiếu đặt",
+                        "Vui lòng chọn phiếu đặt để khôi phục");
+                return;
+            }
+
+            if (!canhBao(
+                    "Xác nhận khôi phục",
+                    "Bạn có chắc muốn khôi phục phiếu đặt "
+                            + selected.getMaPhieu() + " không?"
+            )) return;
+
+            try {
+                ConnectDB.getInstance().connect();
+                Connection con = ConnectDB.getConnection();
+                con.setAutoCommit(false); // TRANSACTION
+
+                // 1. Khôi phục phiếu
+                boolean kqPhieu =
+                        PhieuDat_DAO.khoiPhucPhieuDat(selected.getMaPhieu());
+
+                if (!kqPhieu) {
+                    throw new RuntimeException("Không thể khôi phục phiếu đặt");
+                }
+
+                // 2. Lấy chi tiết phiếu
+                ArrayList<ChiTietPhieuDatThuoc> chiTietList =
+                        ChiTietPhieuDat_DAO.getChiTietTheoPhieu(selected.getMaPhieu());
+
+                // 3. Trừ kho lại & khôi phục chi tiết
+                for (ChiTietPhieuDatThuoc ct : chiTietList) {
+
+                    ChiTietThuoc ctt =
+                            ctThuoc_dao.getChiTietThuoc(
+                                    ct.getChiTietThuoc().getMaCTT()
+                            );
+
+                    if (ctt.getSoLuong() < ct.getSoLuong()) {
+                        throw new RuntimeException(
+                                "Không đủ tồn kho để khôi phục thuốc "
+                                        + ctt.getMaThuoc().getTenThuoc()
+                        );
+                    }
+
+                    int soMoi = ctt.getSoLuong() - ct.getSoLuong();
+                    ctThuoc_dao.CapNhatSoLuongChiTietThuoc(
+                            ctt.getMaCTT(), soMoi
+                    );
+                }
+
+                // 4. Khôi phục trạng thái chi tiết
+                ChiTietPhieuDat_DAO.khoiPhucChiTietPhieu(
+                        selected.getMaPhieu()
+                );
+
+                con.commit();
+
+                showMess("Khôi phục thành công",
+                        "Phiếu đặt đã được khôi phục thành công");
+                loadDataVaoBang();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                try {
+                    ConnectDB.getConnection().rollback();
+                } catch (Exception ignore) {}
+                showMess("Lỗi",
+                        "Khôi phục phiếu đặt thất bại. Dữ liệu đã được hoàn tác.");
+            }
+        });
+
     }
 
     private VBox createFilterVBox(String label, Control control) {
@@ -189,5 +293,163 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
 
         vb.getChildren().addAll(txt, control);
         return vb;
+    }
+
+    /**
+     * Hiển thị cảnh báo xác nhận
+     * @param tieuDe
+     * @param noidung
+     * @return
+     */
+    private boolean canhBao(String tieuDe, String noidung){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+
+        ButtonType buttonTypeYes = new ButtonType("Có", ButtonBar.ButtonData.YES);
+        ButtonType buttonTypeNo = new ButtonType("Không", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+        return alert.showAndWait().orElse(buttonTypeNo) == buttonTypeYes;
+    }
+
+    private void showMess(String tieude, String noidung) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(tieude);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
+    }
+
+
+    private void setupListenerComboBox() {
+        String gia = cbGia.getSelectionModel().getSelectedItem();
+        String trangThai = cbTrangThai.getSelectionModel().getSelectedItem();
+        NhanVien nv = cbNhanVien.getSelectionModel().getSelectedItem();
+        LocalDate start = dpstart.getValue();
+        LocalDate end = dpend.getValue();
+
+        // Nếu tất cả đều là "Tất cả" hoặc chưa chọn gì => hiển thị gốc
+        if ((gia == null || gia.equals("Tất cả")) &&
+                (trangThai == null || trangThai.equals("Tất cả")) &&
+                (nv == null || nv.getHoTen().equals("Tất cả")) &&
+                (start == null && end == null)) {
+            loadDataVaoBang();
+            return;
+        }
+
+        // Xác định khoảng giá
+        double min, max;
+        switch (gia) {
+            case "Dưới 500.000đ": min = 0; max = 500000; break;
+            case "Từ 500.000đ đến 1.000.000đ": min = 500000; max = 1000000; break;
+            case "Từ 1.000.000đ đến 2.000.000đ": min = 1000000; max = 2000000; break;
+            case "Trên 2.000.000đ": min = 2000000; max = Double.MAX_VALUE; break;
+            default: min = 0; max = Double.MAX_VALUE;
+        }
+
+        // Trạng thái
+        Boolean filStatus = null;
+        if ("Đã thanh toán".equals(trangThai)) filStatus = true;
+        else if ("Chưa thanh toán".equals(trangThai)) filStatus = false;
+
+        // Bắt đầu lọc
+        ObservableList<PhieuDatThuoc> filter = FXCollections.observableArrayList();
+
+        for (PhieuDatThuoc e : origin) {
+            boolean match = true;
+
+            // Giá
+            if (!(e.getTongTien() >= min && e.getTongTien() <= max))
+                match = false;
+
+            // Nhân viên
+            if (nv != null && nv.getHoTen() != null &&
+                    !nv.getHoTen().equals("Tất cả") &&
+                    !e.getNhanVien().getMaNV().equals(nv.getMaNV()))
+                match = false;
+
+            // Trạng thái
+            if (filStatus != null && e.isThanhToan() != filStatus)
+                match = false;
+
+            // Ngày
+            if (start != null && e.getNgayTao().isBefore(start))
+                match = false;
+            if (end != null && e.getNgayTao().isAfter(end))
+                match = false;
+
+            if (match) filter.add(e);
+        }
+
+        tvPhieuDat.setItems(filter);
+    }
+
+
+    private void setupListenerFind() {
+        txtFind.textProperty().addListener((obs, oldT, newT) -> {
+
+            tvPhieuDat.getSelectionModel().clearSelection();
+
+            String key = newT.trim().toLowerCase();
+
+            if (key.isEmpty()) {
+                tvPhieuDat.setItems(origin);
+                return;
+            }
+
+            ObservableList<PhieuDatThuoc> filtered =
+                    origin.filtered(p ->
+                            p.getMaPhieu().toLowerCase().contains(key)
+                                    || p.getKhachHang().getTenKH().toLowerCase().contains(key)
+                    );
+
+            tvPhieuDat.setItems(filtered);
+        });
+    }
+
+
+    private void setupBang() {
+        colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));
+        colNgay.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        colKhach.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getTenKH()));
+        colSDT.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getKhachHang().getSoDienThoai()));
+        colNhanVien.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getNhanVien().getHoTen()));
+        colStatus.setCellValueFactory(t -> new SimpleStringProperty("Đã xóa"));
+        colTotal.setCellValueFactory(t -> new SimpleStringProperty( dinhDangTien(t.getValue().getTongTien()) ));
+    }
+    private String dinhDangTien(double tien){
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        return df.format(tien);
+    }
+
+    private void loadDataVaoBang() {
+        listPDT = PhieuDat_DAO.getAllPhieuDatThuocDaXoa();
+        origin = FXCollections.observableArrayList(listPDT);
+        filter = FXCollections.observableArrayList(origin);
+        tvPhieuDat.setItems(filter);
+        tvPhieuDat.refresh();
+    }
+
+
+    public void loadDataComboBox(){
+        NhanVien all = new NhanVien("Tất cả",false);
+        cbNhanVien.getItems().add(all);
+        for (NhanVien e : listNV){
+            cbNhanVien.getItems().add(e);
+        }
+        cbTrangThai.getItems().add("Tất cả");
+        cbTrangThai.getItems().add("Chưa thanh toán");
+        cbTrangThai.getItems().add("Đã thanh toán");
+        cbGia.getItems().add("Tất cả");
+        cbGia.getItems().add("Dưới 500.000đ");
+        cbGia.getItems().add("Từ 500.000đ đến 1.000.000đ");
+        cbGia.getItems().add("Từ 1.000.000đ đến 2.000.000đ");
+        cbGia.getItems().add("Trên 2.000.000đ");
+        cbGia.getSelectionModel().selectFirst();
+        cbNhanVien.getSelectionModel().selectFirst();
+        cbTrangThai.getSelectionModel().selectFirst();
     }
 }

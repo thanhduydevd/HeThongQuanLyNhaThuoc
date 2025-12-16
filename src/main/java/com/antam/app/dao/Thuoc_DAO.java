@@ -80,6 +80,62 @@ public class Thuoc_DAO {
     }
 
     /**
+     * Phương thức thao tác với bảng Thuoc trong CSDL
+     * return: ArrayList<Thuoc> - danh sách thuốc
+     */
+    public ArrayList<Thuoc> getAllThuocDaXoa() {
+        ArrayList<Thuoc> listThuoc = new ArrayList<>();
+        String sql = """
+            SELECT t.MaThuoc, t.TenThuoc,
+                   t.HamLuong, t.GiaBan, t.GiaGoc, t.Thue, t.MaDVTCoso, t.deleteAt,
+                   ddc.MaDDC, ddc.TenDDC,
+                   k.MaKe, k.TenKe, k.LoaiKe
+            FROM Thuoc t
+            JOIN DangDieuChe ddc ON t.DangDieuChe = ddc.MaDDC
+            JOIN KeThuoc k ON t.MaKe = k.MaKe
+            WHERE t.deleteAt = 1
+        """;
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        try  {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            Statement state = con.createStatement();
+            ResultSet rs = state.executeQuery(sql);
+
+            while (rs.next()) {
+                String maThuoc = rs.getString("MaThuoc");
+                String tenThuoc = rs.getString("TenThuoc");
+                String hamLuong = rs.getString("HamLuong");
+                double giaBan = rs.getDouble("GiaBan");
+                double giaGoc = rs.getDouble("GiaGoc");
+                float thue = rs.getFloat("Thue");
+                int maDonViTinhCoSo = rs.getInt("MaDVTCoso");
+                boolean deleteAt = rs.getBoolean("deleteAt");
+
+                // Tạo object DDC và Ke với đủ thông tin
+                DangDieuChe ddc = new DangDieuChe(rs.getInt("MaDDC"), rs.getString("TenDDC"));
+                Ke ke = new Ke(rs.getString("MaKe"), rs.getString("TenKe"), rs.getString("LoaiKe"), false);
+                DonViTinh dvt = new DonViTinh(maDonViTinhCoSo);
+
+                Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, hamLuong, giaBan, giaGoc, thue,
+                        deleteAt, ddc, dvt, ke);
+                listThuoc.add(thuoc);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listThuoc;
+    }
+
+    /**
      * Lấy thông tin thuốc theo mã thuốc
      * @param ma
      * @return Thuoc
@@ -198,6 +254,33 @@ public class Thuoc_DAO {
      */
     public boolean xoaThuocTheoMa(String ma) {
         String sql = "UPDATE Thuoc SET DeleteAt = 1 WHERE MaThuoc = ?";
+        PreparedStatement statement = null;
+        int n = 0;
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            statement = con.prepareStatement(sql);
+            statement.setString(1, ma);
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+
+    public boolean khoiPhucThuocTheoMa(String ma) {
+        String sql = "UPDATE Thuoc SET DeleteAt = 0 WHERE MaThuoc = ?";
         PreparedStatement statement = null;
         int n = 0;
         try {

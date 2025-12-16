@@ -42,32 +42,32 @@ import javafx.scene.paint.Color;
 
 public class ThongKeDoanhThuController extends ScrollPane {
 
-     private Button btnXuatBaoCao;
-     private ComboBox<String> cmbThoiGian;
-     private ComboBox<String> cmbNhanVien;
+    private Button btnXuatBaoCao;
+    private ComboBox<String> cmbThoiGian;
+    private ComboBox<String> cmbNhanVien;
 
-     private Text txtDoanhThuKy;
-     private Text txtSoDonHang;
-     private Text txtDonHangTB;
-     private Text txtSoKhachHang;
+    private Text txtDoanhThuKy;
+    private Text txtSoDonHang;
+    private Text txtDonHangTB;
+    private Text txtSoKhachHang;
 
-     private Button btnDoanhThuChange;
-     private Button btnDonHangChange;
-     private Button btnDonHangTBChange;
-     private Button btnKhachHangChange;
+    private Button btnDoanhThuChange;
+    private Button btnDonHangChange;
+    private Button btnDonHangTBChange;
+    private Button btnKhachHangChange;
 
-     private LineChart<String, Number> chartDoanhThu;
-     private BarChart<String, Number> chartTopSanPham;
+    private LineChart<String, Number> chartDoanhThu;
+    private BarChart<String, Number> chartTopSanPham;
 
-     private TableView<ThongKeDoanhThu> tableChiTiet;
-     private TableColumn<ThongKeDoanhThu, LocalDate> colNgay;
-     private TableColumn<ThongKeDoanhThu, Integer> colSoDonHang;
-     private TableColumn<ThongKeDoanhThu, Double> colDoanhThu;
-     private TableColumn<ThongKeDoanhThu, Double> colDonHangTB;
-     private TableColumn<ThongKeDoanhThu, Integer> colKhachHangMoi;
-     private TableColumn<ThongKeDoanhThu, String> colNhanVienBan;
+    private TableView<ThongKeDoanhThu> tableChiTiet;
+    private TableColumn<ThongKeDoanhThu, LocalDate> colNgay;
+    private TableColumn<ThongKeDoanhThu, Integer> colSoDonHang;
+    private TableColumn<ThongKeDoanhThu, Double> colDoanhThu;
+    private TableColumn<ThongKeDoanhThu, Double> colDonHangTB;
+    private TableColumn<ThongKeDoanhThu, Integer> colKhachHangMoi;
+    private TableColumn<ThongKeDoanhThu, String> colNhanVienBan;
 
-     private Button btnRefresh;
+    private Button btnRefresh;
 
     private ThongKeDoanhThu_DAO thongKeDAO;
     private ThongKeTrangChinh_DAO thongKeTrangChinhDAO;
@@ -429,13 +429,13 @@ public class ThongKeDoanhThuController extends ScrollPane {
         }
     }
 
-    
+
     private void locTheoThoiGian(ActionEvent event) {
         calculateDefaultTimeRange();
         loadData();
     }
 
-    
+
     private void locTheoNhanVien(ActionEvent event) {
         String selected = cmbNhanVien.getValue();
         if (selected != null && !selected.equals("Tất cả")) {
@@ -446,7 +446,7 @@ public class ThongKeDoanhThuController extends ScrollPane {
         loadData();
     }
 
-    
+
     private void refreshData() {
         loadData();
     }
@@ -480,8 +480,8 @@ public class ThongKeDoanhThuController extends ScrollPane {
     }
 
     /*
-    * Tính phần trăm thay đổi so với kỳ trước và cập nhật nút tương ứng
-    * */
+     * Tính phần trăm thay đổi so với kỳ trước và cập nhật nút tương ứng
+     * */
     private void calculateChange() {
         // Tính kỳ trước
         long days = java.time.temporal.ChronoUnit.DAYS.between(tuNgay, denNgay) + 1;
@@ -500,14 +500,14 @@ public class ThongKeDoanhThuController extends ScrollPane {
         updateChangeButton(btnDoanhThuChange, doanhThuHienTai, doanhThuTruoc);
         updateChangeButton(btnDonHangChange, donHangHienTai, donHangTruoc);
         updateChangeButton(btnDonHangTBChange,
-            donHangHienTai > 0 ? doanhThuHienTai / donHangHienTai : 0,
-            donHangTruoc > 0 ? doanhThuTruoc / donHangTruoc : 0);
+                donHangHienTai > 0 ? doanhThuHienTai / donHangHienTai : 0,
+                donHangTruoc > 0 ? doanhThuTruoc / donHangTruoc : 0);
         updateChangeButton(btnKhachHangChange, khachHangHienTai, khachHangTruoc);
     }
 
     /*
-    *  Cập nhật nút thay đổi với phần trăm và màu sắc tương ứng
-    * */
+     *  Cập nhật nút thay đổi với phần trăm và màu sắc tương ứng
+     * */
     private void updateChangeButton(Button btn, double current, double previous) {
         if (previous == 0) {
             btn.setText("N/A");
@@ -545,11 +545,11 @@ public class ThongKeDoanhThuController extends ScrollPane {
         series.setName("Doanh thu");
 
         DateTimeFormatter dateFormatter = hienThiTheoThang
-            ? DateTimeFormatter.ofPattern("MM/yyyy")
-            : DateTimeFormatter.ofPattern("dd/MM");
+                ? DateTimeFormatter.ofPattern("MM/yyyy")
+                : DateTimeFormatter.ofPattern("dd/MM");
         DateTimeFormatter fullDateFormatter = hienThiTheoThang
-            ? DateTimeFormatter.ofPattern("'Tháng' MM/yyyy")
-            : DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                ? DateTimeFormatter.ofPattern("'Tháng' MM/yyyy")
+                : DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         if (hienThiTheoThang) {
             // Hiển thị theo tháng - tạo đầy đủ các tháng trong khoảng thời gian
@@ -587,20 +587,20 @@ public class ThongKeDoanhThuController extends ScrollPane {
                 ThongKeDoanhThu tk = displayMap.get(data.getXValue());
                 if (tk != null) {
                     Tooltip tooltip = new Tooltip(
-                        tk.getNgay().format(fullDateFormatter) + "\n" +
-                        "Doanh thu: " + formatter.format(data.getYValue().doubleValue()) + " đ\n" +
-                        "Số đơn hàng: " + tk.getSoDonHang() + "\n" +
-                        "Đơn hàng TB: " + formatter.format(tk.getDonHangTB()) + " đ\n" +
-                        "Khách hàng: " + tk.getKhachHangMoi()
+                            tk.getNgay().format(fullDateFormatter) + "\n" +
+                                    "Doanh thu: " + formatter.format(data.getYValue().doubleValue()) + " đ\n" +
+                                    "Số đơn hàng: " + tk.getSoDonHang() + "\n" +
+                                    "Đơn hàng TB: " + formatter.format(tk.getDonHangTB()) + " đ\n" +
+                                    "Khách hàng: " + tk.getKhachHangMoi()
                     );
 
                     tooltip.setShowDelay(javafx.util.Duration.millis(100));
                     tooltip.setStyle(
-                        "-fx-font-size: 12px; " +
-                        "-fx-background-color: rgba(30, 58, 138, 0.95); " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 8px; " +
-                        "-fx-background-radius: 6px;"
+                            "-fx-font-size: 12px; " +
+                                    "-fx-background-color: rgba(30, 58, 138, 0.95); " +
+                                    "-fx-text-fill: white; " +
+                                    "-fx-padding: 8px; " +
+                                    "-fx-background-radius: 6px;"
                     );
 
                     javafx.scene.Node node = data.getNode();
@@ -609,9 +609,9 @@ public class ThongKeDoanhThuController extends ScrollPane {
 
                         node.setOnMouseEntered(e -> {
                             node.setStyle(
-                                "-fx-cursor: hand; " +
-                                "-fx-background-color: #059669; " +
-                                "-fx-background-radius: 8px;"
+                                    "-fx-cursor: hand; " +
+                                            "-fx-background-color: #059669; " +
+                                            "-fx-background-radius: 8px;"
                             );
                             node.setScaleX(1.5);
                             node.setScaleY(1.5);
@@ -655,20 +655,20 @@ public class ThongKeDoanhThuController extends ScrollPane {
                 ThongKeDoanhThu tk = displayMap.get(data.getXValue());
                 if (tk != null) {
                     Tooltip tooltip = new Tooltip(
-                        "Ngày: " + tk.getNgay().format(fullDateFormatter) + "\n" +
-                        "Doanh thu: " + formatter.format(data.getYValue().doubleValue()) + " đ\n" +
-                        "Số đơn hàng: " + tk.getSoDonHang() + "\n" +
-                        "Đơn hàng TB: " + formatter.format(tk.getDonHangTB()) + " đ\n" +
-                        "Khách hàng: " + tk.getKhachHangMoi()
+                            "Ngày: " + tk.getNgay().format(fullDateFormatter) + "\n" +
+                                    "Doanh thu: " + formatter.format(data.getYValue().doubleValue()) + " đ\n" +
+                                    "Số đơn hàng: " + tk.getSoDonHang() + "\n" +
+                                    "Đơn hàng TB: " + formatter.format(tk.getDonHangTB()) + " đ\n" +
+                                    "Khách hàng: " + tk.getKhachHangMoi()
                     );
 
                     tooltip.setShowDelay(javafx.util.Duration.millis(100));
                     tooltip.setStyle(
-                        "-fx-font-size: 12px; " +
-                        "-fx-background-color: rgba(30, 58, 138, 0.95); " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 8px; " +
-                        "-fx-background-radius: 6px;"
+                            "-fx-font-size: 12px; " +
+                                    "-fx-background-color: rgba(30, 58, 138, 0.95); " +
+                                    "-fx-text-fill: white; " +
+                                    "-fx-padding: 8px; " +
+                                    "-fx-background-radius: 6px;"
                     );
 
                     javafx.scene.Node node = data.getNode();
@@ -677,9 +677,9 @@ public class ThongKeDoanhThuController extends ScrollPane {
 
                         node.setOnMouseEntered(e -> {
                             node.setStyle(
-                                "-fx-cursor: hand; " +
-                                "-fx-background-color: #059669; " +
-                                "-fx-background-radius: 8px;"
+                                    "-fx-cursor: hand; " +
+                                            "-fx-background-color: #059669; " +
+                                            "-fx-background-radius: 8px;"
                             );
                             node.setScaleX(1.5);
                             node.setScaleY(1.5);
@@ -784,8 +784,8 @@ public class ThongKeDoanhThuController extends ScrollPane {
         tableChiTiet.setItems(data);
     }
 
-    
-//    Xuất báo cáo thống kê doanh thu ra file CSV
+
+    //    Xuất báo cáo thống kê doanh thu ra file CSV
     private void xuatBaoCao() {
         try {
             // Tạo FileChooser để chọn nơi lưu file
@@ -822,7 +822,7 @@ public class ThongKeDoanhThuController extends ScrollPane {
         }
     }
 
-//    Xuất dữ liệu thống kê doanh thu ra file CSV
+    //    Xuất dữ liệu thống kê doanh thu ra file CSV
     private void exportToCSV(File file) throws IOException {
         // Kiểm tra xem có phải hiển thị theo tháng không
         String thoiGian = cmbThoiGian.getValue();
@@ -874,8 +874,8 @@ public class ThongKeDoanhThuController extends ScrollPane {
 
             // Ghi dữ liệu chi tiết
             DateTimeFormatter dateFormatter = hienThiTheoThang
-                ? DateTimeFormatter.ofPattern("MM/yyyy")
-                : DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    ? DateTimeFormatter.ofPattern("MM/yyyy")
+                    : DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
             for (ThongKeDoanhThu tk : dsThongKe) {
                 writer.append(tk.getNgay().format(dateFormatter)).append(",");
@@ -902,7 +902,7 @@ public class ThongKeDoanhThuController extends ScrollPane {
         }
     }
 
-//    Định dạng số tiền với đơn vị K, M, B
+    //    Định dạng số tiền với đơn vị K, M, B
     private String formatCurrency(double amount) {
         if (amount >= 1_000_000_000) {
             return percentFormatter.format(amount / 1_000_000_000) + "B";

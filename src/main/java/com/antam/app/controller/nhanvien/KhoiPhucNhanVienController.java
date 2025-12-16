@@ -4,6 +4,7 @@ import com.antam.app.dao.NhanVien_DAO;
 import com.antam.app.entity.NhanVien;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -14,17 +15,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class KhoiPhucNhanVienController extends ScrollPane{
 
-    private TableView<NhanVien> tbNhanVien;
-    private Button btnFindNV,btnXoaTrang, btnKhoiPhuc;
-    private TextField txtFindNV;
-    private TableColumn<NhanVien, String> colMaNV, colHoTen, colChucVu, colSDT, colDiaChi, colEmail;
-    private TableColumn<NhanVien, String> colLuong;
-    private ComboBox<String> cbChucVu, cbLuongCB;
-    ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
+    private final TableView<NhanVien> tbNhanVien;
+    private final Button btnFindNV;
+    private final Button btnXoaTrang;
+    private final Button btnKhoiPhuc;
+    private final TextField txtFindNV;
+    private final TableColumn<NhanVien, String> colMaNV;
+    private final TableColumn<NhanVien, String> colHoTen;
+    private final TableColumn<NhanVien, String> colChucVu;
+    private final TableColumn<NhanVien, String> colSDT;
+    private final TableColumn<NhanVien, String> colDiaChi;
+    private final TableColumn<NhanVien, String> colEmail;
+    private final TableColumn<NhanVien, String> colLuong;
+    private final ComboBox<String> cbChucVu;
+    private final ComboBox<String> cbLuongCB;
+    private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
 
     private ObservableList<NhanVien> TVNhanVien;
     private final ObservableList<NhanVien> filteredList = FXCollections.observableArrayList();
@@ -133,9 +143,220 @@ public class KhoiPhucNhanVienController extends ScrollPane{
         tbNhanVien.getColumns().addAll(colMaNV, colHoTen, colChucVu, colSDT, colDiaChi, colEmail, colLuong);
         tbNhanVien.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        root.getChildren().addAll(titleBox, filterPane, searchBox, tbNhanVien);
+        VBox tableBox = new VBox(5);
+        Button guide = new Button("Nhấn 2 lần chuột trái vào bảng để khôi phục nhanh");
+        guide.getStyleClass().add("pane-huongdan");
+        guide.setMaxWidth(Double.MAX_VALUE);
+        guide.setPadding(new Insets(10));
+        FontAwesomeIcon infoIcon = new FontAwesomeIcon(); infoIcon.setGlyphName("INFO"); infoIcon.setFill(Color.web("#2563eb"));
+        guide.setGraphic(infoIcon);
+
+        tableBox.getChildren().addAll(tbNhanVien, guide);
+
+        root.getChildren().addAll(titleBox, filterPane, searchBox, tableBox);
 
         this.setContent(root);
         /** Sự kiện **/
+
+        // setup bảng nhân viên
+        loadNhanVien();
+        setupTableNhanVien();
+        loadComboBox();
+        setupListener();
+
+        //sự kiện tìm kiến
+        btnFindNV.setOnAction(e -> timNhanVien());
+
+        // sự kiện xóa các điều kiện
+        btnXoaTrang.setOnAction(e -> {
+            txtFindNV.clear();
+            cbChucVu.getSelectionModel().selectFirst();
+            cbLuongCB.getSelectionModel().selectFirst();
+            tbNhanVien.setItems(TVNhanVien);
+        });
+
+        //sự kiện khôi phục
+        btnKhoiPhuc.setOnAction(e -> {
+            nhanVienSelected = tbNhanVien.getSelectionModel().getSelectedItem();
+            if (nhanVienSelected == null) {
+                showError("Chưa chọn nhân viên", "Vui lòng chọn nhân viên cần khôi phục.");
+            }else{
+                boolean success = NhanVien_DAO.khoiPhucNhanVien(nhanVienSelected.getMaNV());
+                if (success) {
+                    showSuccess("Khôi phục thành công", "Nhân viên đã được khôi phục thành công.");
+                    loadNhanVien();
+                    filterNhanVien();
+                } else {
+                    showError("Khôi phục thất bại", "Đã có lỗi xảy ra trong quá trình khôi phục nhân viên.");
+                }
+            }
+        } );
+
+        // Sự kiện double click để khôi phục nhanh
+        tbNhanVien.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                nhanVienSelected = tbNhanVien.getSelectionModel().getSelectedItem();
+
+                if (nhanVienSelected == null) return;
+
+                if (canhBao("Xác nhận khôi phục", "Bạn có chắc muốn khôi phục nhân viên " + nhanVienSelected.getHoTen() + " không?")) {
+                    if (nhanVienSelected != null) {
+                        boolean success = NhanVien_DAO.khoiPhucNhanVien(nhanVienSelected.getMaNV());
+                        if (success) {
+                            showSuccess("Khôi phục thành công", "Nhân viên đã được khôi phục thành công.");
+                            loadNhanVien();
+                            filterNhanVien();
+                        } else {
+                            showError("Khôi phục thất bại", "Đã có lỗi xảy ra trong quá trình khôi phục nhân viên.");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Hiển thị cảnh báo xác nhận
+     * @param tieuDe
+     * @param noidung
+     * @return
+     */
+    private boolean canhBao(String tieuDe, String noidung){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+
+        ButtonType buttonTypeYes = new ButtonType("Có", ButtonBar.ButtonData.YES);
+        ButtonType buttonTypeNo = new ButtonType("Không", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+        return alert.showAndWait().orElse(buttonTypeNo) == buttonTypeYes;
+    }
+
+    /**
+     * Hiển thị hộp thoại thông báo
+     * @param tieuDe
+     * @param noidung
+     */
+    private void showSuccess(String tieuDe, String noidung) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
+    }
+
+    /**
+     * Hiển thị hộp thoại lỗi
+     * @param tieuDe
+     * @param noidung
+     */
+    private void showError(String tieuDe, String noidung) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noidung);
+        alert.showAndWait();
+    }
+
+    private void loadNhanVien() {
+        listNV = NhanVien_DAO.getDsNhanVienformDBS();
+        TVNhanVien = FXCollections.observableArrayList(
+                listNV.stream()
+                        .filter(nv -> nv.isDeleteAt())
+                        .toList()
+        );
+        tbNhanVien.setItems(TVNhanVien);
+    }
+
+    private void setupTableNhanVien() {
+        colMaNV.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaNV()));
+        colHoTen.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getHoTen()));
+        colChucVu.setCellValueFactory(t -> new SimpleStringProperty(
+                t.getValue().isQuanLy() ? "Nhân viên quản lý" : "Nhân viên"));
+        colSDT.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getSoDienThoai()));
+        colDiaChi.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getDiaChi()));
+        colEmail.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getEmail()));
+        colLuong.setCellValueFactory(t -> new SimpleStringProperty(dinhDangTien(t.getValue().getLuongCoBan())));
+    }
+
+    private void loadComboBox() {
+        cbChucVu.setItems(FXCollections.observableArrayList(
+                "Tất cả", "Nhân viên", "Nhân viên quản lý"));
+        cbChucVu.getSelectionModel().selectFirst();
+        cbLuongCB.setItems(FXCollections.observableArrayList(
+                "Tất cả", "Dưới 5 triệu", "Từ 5 triệu đến 10 triệu", "Trên 10 triệu"));
+        cbLuongCB.getSelectionModel().selectFirst();
+    }
+
+    private void setupListener() {
+        // Khi người dùng gõ tìm kiếm
+        txtFindNV.textProperty().addListener((ob, oldT, newT) -> filterNhanVien());
+
+        // Khi chọn chức vụ
+        cbChucVu.setOnAction(e -> filterNhanVien());
+
+        // Khi chọn mức lương
+        cbLuongCB.setOnAction(e -> filterNhanVien());
+    }
+
+    /**
+     * Lọc nhân viên theo nhiều điều kiện: tìm kiếm, chức vụ và mức lương
+     */
+    private void filterNhanVien() {
+        filteredList.clear();
+
+        String keyword = txtFindNV.getText() == null ? "" : txtFindNV.getText().toLowerCase();
+        String chucVu = cbChucVu.getSelectionModel().getSelectedItem();
+        String luongCB = cbLuongCB.getSelectionModel().getSelectedItem();
+
+        for (NhanVien nv : TVNhanVien) {
+            boolean matchKeyword = keyword.isBlank() ||
+                    nv.getMaNV().toLowerCase().contains(keyword) ||
+                    nv.getHoTen().toLowerCase().contains(keyword);
+
+            boolean matchChucVu =
+                    chucVu.equals("Tất cả") ||
+                            (chucVu.equals("Nhân viên") && !nv.isQuanLy()) ||
+                            (chucVu.equals("Nhân viên quản lý") && nv.isQuanLy());
+
+            double l = nv.getLuongCoBan();
+            boolean matchLuong =
+                    luongCB.equals("Tất cả") ||
+                            (luongCB.equals("Dưới 5 triệu") && l < 5_000_000) ||
+                            (luongCB.equals("Từ 5 triệu đến 10 triệu") && l >= 5_000_000 && l <= 10_000_000) ||
+                            (luongCB.equals("Trên 10 triệu") && l > 10_000_000);
+
+            if (matchKeyword && matchChucVu && matchLuong) {
+                filteredList.add(nv);
+            }
+        }
+
+        tbNhanVien.setItems(filteredList.isEmpty() && !keyword.isBlank() ? FXCollections.observableArrayList() : filteredList);
+        if (filteredList.isEmpty() && keyword.isBlank() && chucVu.equals("Tất cả") && luongCB.equals("Tất cả")) {
+            tbNhanVien.setItems(TVNhanVien);
+        }
+    }
+
+
+    private void timNhanVien() {
+        String x = txtFindNV.getText().trim().toLowerCase();
+        if (x.isEmpty()) return;
+
+        for (NhanVien a : tbNhanVien.getItems()) {
+            if (a.getMaNV().toLowerCase().contains(x) ||
+                    a.getHoTen().toLowerCase().contains(x)) {
+                tbNhanVien.getSelectionModel().select(a);
+                tbNhanVien.scrollTo(a);
+                break;
+            }
+        }
+    }
+
+    private String dinhDangTien(double tien) {
+        DecimalFormat df = new DecimalFormat("#,### đ");
+        return df.format(tien);
     }
 }
