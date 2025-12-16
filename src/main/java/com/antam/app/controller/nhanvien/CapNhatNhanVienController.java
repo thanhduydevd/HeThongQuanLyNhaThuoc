@@ -133,7 +133,17 @@ public class CapNhatNhanVienController extends ScrollPane{
         tbNhanVien.getColumns().addAll(colMaNV, colHoTen, colChucVu, colSDT, colDiaChi, colEmail, colLuong);
         tbNhanVien.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        root.getChildren().addAll(titleBox, filterPane, searchBox, tbNhanVien);
+        VBox tableBox = new VBox(5);
+        Button guide = new Button("Nhấn 2 lần chuột trái vào bảng để cập nhật nhân viên nhanh");
+        guide.getStyleClass().add("pane-huongdan");
+        guide.setMaxWidth(Double.MAX_VALUE);
+        guide.setPadding(new Insets(10));
+        FontAwesomeIcon infoIcon = new FontAwesomeIcon(); infoIcon.setGlyphName("INFO"); infoIcon.setFill(Color.web("#2563eb"));
+        guide.setGraphic(infoIcon);
+
+        tableBox.getChildren().addAll(tbNhanVien, guide);
+
+        root.getChildren().addAll(titleBox, filterPane, searchBox, tableBox);
 
         this.setContent(root);
         /** Sự kiện **/

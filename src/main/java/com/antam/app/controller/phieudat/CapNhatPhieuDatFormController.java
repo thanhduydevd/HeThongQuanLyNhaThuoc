@@ -5,6 +5,7 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.dao.ChiTietPhieuDat_DAO;
 import com.antam.app.dao.HoaDon_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.ChiTietPhieuDatThuoc;
@@ -28,7 +29,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import static com.antam.app.controller.phieudat.CapNhatPhieuDatController.selectedPDT;
-import static com.antam.app.controller.phieudat.TimPhieuDatController.selectedPhieuDatThuoc;
 
 public class CapNhatPhieuDatFormController extends DialogPane{
     
@@ -43,7 +43,7 @@ public class CapNhatPhieuDatFormController extends DialogPane{
     private TableView<ChiTietPhieuDatThuoc> tbThuoc;
 
     private PhieuDatThuoc select = selectedPDT;
-    private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = PhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
+    private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = ChiTietPhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
     private HoaDon_DAO hoaDon_dao = new HoaDon_DAO();
 
     public CapNhatPhieuDatFormController() {
@@ -213,12 +213,13 @@ public class CapNhatPhieuDatFormController extends DialogPane{
     }
 
     private void showMess(String tieude, String noidung) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(tieude);
         alert.setHeaderText(null);
         alert.setContentText(noidung);
         alert.showAndWait();
     }
+
     private void loadContent() {
         txtMa.setText("Mã phiếu đặt: " + select.getMaPhieu());
         txtNgay.setText("Ngày đặt: "+ select.getNgayTao().toString());
@@ -240,9 +241,9 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
     private void setupTable() {
         colSTT.setCellValueFactory(cellData -> new SimpleIntegerProperty(listChiTiet.indexOf(cellData.getValue()) + 1).asObject());
-        colTenThuoc.setCellValueFactory(cellData ->new SimpleStringProperty(cellData.getValue().getSoDangKy().getTenThuoc()));
+        colTenThuoc.setCellValueFactory(cellData ->new SimpleStringProperty(cellData.getValue().getChiTietThuoc().getMaThuoc().getTenThuoc()));
         colSoLuong.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getSoLuong()).asObject());
-        colDonGia.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getSoDangKy().getGiaBan())));
+        colDonGia.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getChiTietThuoc().getMaThuoc().getGiaBan())));
         colThanhTien.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getThanhTien())));
     }
 

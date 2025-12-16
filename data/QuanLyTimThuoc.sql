@@ -172,7 +172,7 @@ CREATE TABLE ChiTietHoaDon (
     MaDVT INT NOT NULL,
     TinhTrang NVARCHAR(20),
 	ThanhTien FLOAT NOT NULL CHECK (ThanhTien > 0),
-    CONSTRAINT PK_CTHD PRIMARY KEY (MaHD, MaCTT),
+    CONSTRAINT PK_CTHD PRIMARY KEY (MaHD, MaCTT, TinhTrang),
     CONSTRAINT FK_CTHD_HoaDon FOREIGN KEY (MaHD) REFERENCES HoaDon(MaHD),
     CONSTRAINT FK_CTHD_ChiTietThuoc FOREIGN KEY (MaCTT) REFERENCES ChiTietThuoc(MaCTT),
     CONSTRAINT FK_CTHD_DonVi FOREIGN KEY (MaDVT) REFERENCES DonViTinh(MaDVT)
@@ -200,14 +200,14 @@ CREATE TABLE PhieuDatThuoc (
 -- ===============================
 CREATE TABLE ChiTietPhieuDatThuoc (
     MaPDT NVARCHAR(10) NOT NULL,
-    MaThuoc NVARCHAR(20) NOT NULL,
+    MaCTT INT NOT NULL,
     SoLuong INT CHECK (SoLuong > 0),
     MaDVT INT NOT NULL,
     TinhTrang NVARCHAR(20),
-	ThanhTien FLOAT NOT NULL CHECK (ThanhTien > 0),
-    CONSTRAINT PK_CTPDT PRIMARY KEY (MaPDT, MaThuoc),
+    ThanhTien FLOAT NOT NULL CHECK (ThanhTien > 0),
+    CONSTRAINT PK_CTPDT PRIMARY KEY (MaPDT, MaCTT),
     CONSTRAINT FK_CTPDT_PDT FOREIGN KEY (MaPDT) REFERENCES PhieuDatThuoc(MaPDT),
-    CONSTRAINT FK_CTPDT_Thuoc FOREIGN KEY (MaThuoc) REFERENCES Thuoc(MaThuoc),
+    CONSTRAINT FK_CTPDT_ChiTietThuoc FOREIGN KEY (MaCTT) REFERENCES ChiTietThuoc(MaCTT),
     CONSTRAINT FK_CTPDT_DonVi FOREIGN KEY (MaDVT) REFERENCES DonViTinh(MaDVT)
 );
 GO
@@ -521,15 +521,15 @@ INSERT INTO HoaDon (MaHD, NgayTao, MaKH, MaNV, MaKM, TongTien) VALUES
 -- 13) ChiTietHoaDon (10)
 INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES
 ('HD001','1',10,1, N'Bán', 21000),
-('HD002','2',20,1, N'Bán', 73500),
-('HD003','3',15,1, N'Bán', 82500),
-('HD004','4',12,1, N'Bán', 31500),
-('HD005','5',18,1, N'Bán', 138600),
-('HD006','6',25,1, N'Bán', 233750),
-('HD007','7',30,1, N'Bán', 214500),
-('HD008','8',10,1, N'Bán', 26250),
-('HD009','9',8,1, N'Bán', 18480),
-('HD010','10',15,1, N'Bán', 47250);
+('HD002','3',20,1, N'Bán', 73500),
+('HD003','5',15,1, N'Bán', 82500),
+('HD004','6',12,1, N'Bán', 31500),
+('HD005','7',18,1, N'Bán', 138600),
+('HD006','8',25,1, N'Bán', 233750),
+('HD007','9',30,1, N'Bán', 214500),
+('HD008','10',10,1, N'Bán', 26250),
+('HD009','11',8,1, N'Bán', 18480),
+('HD010','12',15,1, N'Bán', 47250);
 
 -- 14) PhieuDatThuoc (10)
 INSERT INTO PhieuDatThuoc (MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTien) VALUES
@@ -545,16 +545,17 @@ INSERT INTO PhieuDatThuoc (MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTi
 ('PDT010', '2025-05-09', 1, 'KH000000001', 'NV00010', NULL, 26250);
 
 -- 15) ChiTietPhieuDatThuoc (10+)
-INSERT INTO ChiTietPhieuDatThuoc (MaPDT, MaThuoc, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES
-('PDT001','VN-10024-01',2,1,N'Đặt',17600),
-('PDT001','VN-10025-01',1,1,N'Đặt',9900),
-('PDT002','VN-10001-01',5,1,N'Đặt',10500),
-('PDT003','VN-10003-01',10,1,N'Đặt',55000),
-('PDT004','VN-10005-01',3,1,N'Đặt',7875),
-('PDT005','VN-10007-01',4,1,N'Đặt',28280),
-('PDT006','VN-10010-01',2,1,N'Đặt',6300),
-('PDT007','VN-10009-01',1,1,N'Đặt',2310),
-('PDT008','VN-10039-01',1,1,N'Đặt',2940),
-('PDT009','VN-10031-01',1,1,N'Đặt',26250);
+INSERT INTO ChiTietPhieuDatThuoc VALUES
+('PDT001', 26, 2, 1, N'Đặt', 17600),
+('PDT001', 27, 1, 1, N'Đặt', 9900),
+('PDT002', 1, 5, 1, N'Đặt', 10500),
+('PDT003', 5, 10, 1, N'Đặt', 55000),
+('PDT004', 7, 3, 1, N'Đặt', 7875),
+('PDT005', 9, 4, 1, N'Đặt', 28280),
+('PDT006', 12, 2, 1, N'Đặt', 6300),
+('PDT007', 11, 1, 1, N'Đặt', 2310),
+('PDT008', 41, 1, 1, N'Đặt', 2940),
+('PDT009', 33, 1, 1, N'Đặt', 26250)
+GO
 
-select * from DonViTinh
+select * from ChiTietHoaDon
