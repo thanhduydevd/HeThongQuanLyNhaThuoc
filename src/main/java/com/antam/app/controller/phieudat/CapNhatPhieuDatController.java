@@ -230,7 +230,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         tvPhieuDat.setOnMouseClicked(e -> {
             PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
 
-            if (selected.isThanhToan()) {
+            if (selected.isThanhToan() && selected != null) {
                 btnThanhToan.setDisable(true);
             } else {
                 btnThanhToan.setDisable(false);
