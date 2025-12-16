@@ -361,4 +361,37 @@ public class NhanVien_DAO {
         }
         return str;
     }
+    /**
+     * Khooi phục nhân viên đã xóa trong DBS sử dụng mã nhân viên.
+     * @param maNV - mã nhân viên
+     * @return true nếu có nhân viên bị khôi phục ở dbs. false nếu không có nhân viên nào khôi phục trạng thái.
+     */
+    public static boolean khoiPhucNhanVien(String maNV){
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        PreparedStatement state = null;
+        Connection con = ConnectDB.getConnection();
+        String sql = "Update [NhanVien] set DeleteAt = 0 where MaNV = ?";
+        int kq =0;
+        try {
+            state = con.prepareStatement(sql);
+            state.setString(1,maNV);
+            kq = state.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (state != null) {
+                    state.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return kq > 0;
+    }
 }

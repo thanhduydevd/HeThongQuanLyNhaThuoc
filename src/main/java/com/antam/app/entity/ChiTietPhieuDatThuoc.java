@@ -6,6 +6,8 @@
 
 package com.antam.app.entity;
 
+import java.util.Objects;
+
 /*
  * @description
  * @author: Duong Nguyen
@@ -14,7 +16,7 @@ package com.antam.app.entity;
  */
 public class ChiTietPhieuDatThuoc {
     private PhieuDatThuoc maPhieu;
-    private Thuoc maThuoc;
+    private ChiTietThuoc maThuoc;
     private int soLuong;
     private DonViTinh donViTinh;
     private double thanhTien;
@@ -22,13 +24,13 @@ public class ChiTietPhieuDatThuoc {
 
     public ChiTietPhieuDatThuoc() {
         this.maPhieu = new PhieuDatThuoc();
-        this.maThuoc = new Thuoc();
+        this.maThuoc = new ChiTietThuoc();
         this.soLuong = 0;
         this.donViTinh = new DonViTinh();
         this.thanhTien = 0;
     }
 
-    public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, Thuoc maThuoc, int soLuong, DonViTinh donViTinh) {
+    public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, ChiTietThuoc maThuoc, int soLuong, DonViTinh donViTinh) {
         this.maPhieu = maPhieu;
         this.maThuoc = maThuoc;
         setSoLuong(soLuong);
@@ -37,15 +39,15 @@ public class ChiTietPhieuDatThuoc {
     }
 
     //Constructor cho lúc khởi tạo mẫu chi tiết phiếu đặt
-    public ChiTietPhieuDatThuoc(Thuoc thuoc, int soLuong, DonViTinh dvt){
+    public ChiTietPhieuDatThuoc(ChiTietThuoc thuoc, int soLuong, DonViTinh dvt){
         this.maPhieu = new PhieuDatThuoc();
         this.maThuoc = thuoc;
         this.soLuong = soLuong;
         this.donViTinh = dvt;
-        this.thanhTien = soLuong * thuoc.getGiaBan() * (1 + thuoc.getThue());
+        this.thanhTien = soLuong * thuoc.getMaThuoc().getGiaBan() * (1 + thuoc.getMaThuoc().getThue());
     }
 
-    public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, Thuoc maThuoc, int soLuong, DonViTinh donViTinh, double thanhTien) {
+    public ChiTietPhieuDatThuoc(PhieuDatThuoc maPhieu, ChiTietThuoc maThuoc, int soLuong, DonViTinh donViTinh, double thanhTien) {
         this.maPhieu = maPhieu;
         this.maThuoc = maThuoc;
         setSoLuong(soLuong);
@@ -59,11 +61,11 @@ public class ChiTietPhieuDatThuoc {
     public void setMaPhieu(PhieuDatThuoc maPhieu) {
         this.maPhieu = maPhieu;
     }
-    public Thuoc getSoDangKy() {
+    public ChiTietThuoc getChiTietThuoc() {
         return maThuoc;
     }
-    public void setSoDangKy(Thuoc soDangKy) {
-        this.maThuoc = soDangKy;
+    public void setChiTietThuoc(ChiTietThuoc ctt) {
+        this.maThuoc = ctt;
     }
     public int getSoLuong() {
         return soLuong;
@@ -88,8 +90,8 @@ public class ChiTietPhieuDatThuoc {
         this.thanhTien = tinhThanhTien();
     }
     public double tinhThanhTien() {
-        double giaBan = maThuoc.getGiaBan();
-        float thue = maThuoc.getThue();
+        double giaBan = maThuoc.getMaThuoc().getGiaBan();
+        float thue = maThuoc.getMaThuoc().getThue();
         return soLuong * giaBan * (1 + thue);
     }
 
@@ -111,22 +113,34 @@ public class ChiTietPhieuDatThuoc {
         isThanhToan = thanhToan;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        ChiTietPhieuDatThuoc that = (ChiTietPhieuDatThuoc) o;
+//
+//        return this.maThuoc.getMaThuoc().equals(that.maThuoc.getMaThuoc())
+//                && this.donViTinh.getMaDVT() == that.donViTinh.getMaDVT();
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = maThuoc.getMaThuoc().hashCode();
+//        result = 31 * result + donViTinh.getMaDVT();  // maDVT là int → dùng trực tiếp
+//        return result;
+//    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ChiTietPhieuDatThuoc that = (ChiTietPhieuDatThuoc) o;
-
-        return this.maThuoc.getMaThuoc().equals(that.maThuoc.getMaThuoc())
-                && this.donViTinh.getMaDVT() == that.donViTinh.getMaDVT();
+        return Objects.equals(maThuoc, that.maThuoc) && Objects.equals(donViTinh, that.donViTinh);
     }
 
     @Override
     public int hashCode() {
-        int result = maThuoc.getMaThuoc().hashCode();
-        result = 31 * result + donViTinh.getMaDVT();  // maDVT là int → dùng trực tiếp
-        return result;
+        return Objects.hash(maThuoc, donViTinh);
     }
-
 }

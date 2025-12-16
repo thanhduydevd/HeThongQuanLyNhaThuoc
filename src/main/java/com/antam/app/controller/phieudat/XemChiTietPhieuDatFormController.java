@@ -5,6 +5,7 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.dao.ChiTietPhieuDat_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
 import com.antam.app.entity.ChiTietPhieuDatThuoc;
 import com.antam.app.entity.PhieuDatThuoc;
@@ -12,7 +13,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
@@ -44,7 +44,7 @@ public class XemChiTietPhieuDatFormController extends DialogPane{
     private TableView<ChiTietPhieuDatThuoc> tbThuoc;
 
     private PhieuDatThuoc select = selectedPhieuDatThuoc;
-    private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = PhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
+    private ArrayList<ChiTietPhieuDatThuoc> listChiTiet = ChiTietPhieuDat_DAO.getChiTietTheoPhieu(select.getMaPhieu());
 
     public XemChiTietPhieuDatFormController() {
         this.setPrefSize(800, 662);
@@ -195,9 +195,9 @@ public class XemChiTietPhieuDatFormController extends DialogPane{
 
     private void setupTable() {
         colSTT.setCellValueFactory(cellData -> new SimpleIntegerProperty(listChiTiet.indexOf(cellData.getValue()) + 1).asObject());
-        colTenThuoc.setCellValueFactory(cellData ->new SimpleStringProperty(cellData.getValue().getSoDangKy().getTenThuoc()));
+        colTenThuoc.setCellValueFactory(cellData ->new SimpleStringProperty(cellData.getValue().getChiTietThuoc().getMaThuoc().getTenThuoc()));
         colSoLuong.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getSoLuong()).asObject());
-        colDonGia.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getSoDangKy().getGiaBan())));
+        colDonGia.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getChiTietThuoc().getMaThuoc().getGiaBan())));
         colThanhTien.setCellValueFactory(cellData -> new SimpleStringProperty(dinhDangTien(cellData.getValue().getThanhTien())));
     }
 

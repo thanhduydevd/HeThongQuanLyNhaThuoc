@@ -260,4 +260,53 @@ public class ChiTietThuoc_DAO {
         }
         return tong;
     }
+
+    public ArrayList<ChiTietThuoc> getAllChiTietThuocVoiMaChoCTPD(String maThuoc) {
+
+        ArrayList<ChiTietThuoc> ds = new ArrayList<>();
+
+        String sql = """
+        SELECT *
+        FROM ChiTietThuoc
+        WHERE MaThuoc = ?
+          AND TonKho > 0
+          AND HanSuDung > GETDATE()
+        ORDER BY HanSuDung ASC
+    """;
+
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+
+            Thuoc thuoc = new Thuoc_DAO().getThuocTheoMa(maThuoc);
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, maThuoc);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+
+                        ChiTietThuoc ctt = new ChiTietThuoc(
+                                rs.getInt("MaCTT"),
+                                new PhieuNhap(rs.getString("MaPN")),
+                                thuoc,
+                                rs.getInt("TonKho"),
+                                rs.getDate("HanSuDung").toLocalDate(),
+                                rs.getDate("NgaySanXuat").toLocalDate()
+                        );
+
+                        ds.add(ctt);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ds;
+    }
+
 }

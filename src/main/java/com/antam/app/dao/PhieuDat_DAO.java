@@ -40,7 +40,66 @@ public class PhieuDat_DAO {
 
         Connection con = ConnectDB.getConnection();
 
-        String sql = "SELECT MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTien FROM PhieuDatThuoc";
+        String sql = "SELECT MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTien FROM PhieuDatThuoc where DeleteAt =0";
+
+        try (
+                PreparedStatement state = con.prepareStatement(sql);
+                ResultSet kq = state.executeQuery()
+        ) {
+            ArrayList<NhanVien> nvList = NhanVien_DAO.getDsNhanVienformDBS();
+            ArrayList<KhachHang> khList = KhachHang_DAO.loadBanFromDB();
+            List<KhuyenMai> kmList = KhuyenMai_DAO.getAllKhuyenMaiConHieuLuc();
+
+            Map<String, NhanVien> mapNV = nvList.stream()
+                    .collect(Collectors.toMap(NhanVien::getMaNV, x -> x));
+
+            Map<String, KhachHang> mapKH = khList.stream()
+                    .collect(Collectors.toMap(KhachHang::getMaKH, x -> x));
+
+            Map<String, KhuyenMai> mapKM = kmList.stream()
+                    .collect(Collectors.toMap(KhuyenMai::getMaKM, x -> x));
+
+            while (kq.next()) {
+                String ma = kq.getString("MaPDT");
+                LocalDate ngay = kq.getDate("NgayTao").toLocalDate();
+                boolean isThanhToan = kq.getBoolean("IsThanhToan");
+                String maKhach = kq.getString("MaKH");
+                String maNV = kq.getString("MaNV");
+                String maKM = kq.getString("MaKM");
+                double total = kq.getDouble("TongTien");
+
+                PhieuDatThuoc e = new PhieuDatThuoc(
+                        ma,
+                        ngay,
+                        isThanhToan,
+                        mapNV.get(maNV),
+                        mapKH.get(maKhach),
+                        mapKM.get(maKM),
+                        total
+                );
+
+                ds.add(e);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return ds;
+    }
+
+    public static ArrayList<PhieuDatThuoc> getAllPhieuDatThuocDaXoa() {
+        ArrayList<PhieuDatThuoc> ds = new ArrayList<>();
+
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        Connection con = ConnectDB.getConnection();
+
+        String sql = "SELECT MaPDT, NgayTao, IsThanhToan, MaKH, MaNV, MaKM, TongTien FROM PhieuDatThuoc where DeleteAt =1";
 
         try (
                 PreparedStatement state = con.prepareStatement(sql);
@@ -131,23 +190,30 @@ public class PhieuDat_DAO {
      * @param maPDT mã phiếu đặt thuốc
      * @return true nếu cập nhật thành công. false nếu không thể cập nhật.
      */
-    public static boolean xoaPhieuDatThuocTrongDBS(String maPDT){
+    public static boolean xoaPhieuDatThuocTrongDBS(String maPDT) {
         try {
             ConnectDB.getInstance().connect();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        Connection con = ConnectDB.getConnection();
 
-        try {
-            String sql = "update PhieuDatThuoc set DeleteAt = 1 where MaPDT = ?";
-            PreparedStatement state = con.prepareStatement(sql);
-            state.setString(1,maPDT);
+        String sql = "UPDATE PhieuDatThuoc SET DeleteAt = ? WHERE MaPDT = ?";
+
+        try (Connection con = ConnectDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setBoolean(1, true);
+            ps.setString(2, maPDT);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
-        return true;
     }
+
 
     /**
      * Lấy mã hash lớn nhẩt trong database
@@ -186,7 +252,7 @@ public class PhieuDat_DAO {
             String updateSQL = "insert into ChiTietPhieuDatThuoc values(?,?,?,?,?,?)";
             PreparedStatement state = con.prepareStatement(updateSQL);
             state.setString(1,ctPDT.getMaPhieu().getMaPhieu());
-            state.setString(2,ctPDT.getSoDangKy().getMaThuoc());
+            state.setString(2,ctPDT.getChiTietThuoc().getMaThuoc().getMaThuoc());
             state.setInt(3,ctPDT.getSoLuong());
             state.setInt(4,ctPDT.getDonViTinh().getMaDVT());
             state.setString(5,"Đặt");
@@ -197,52 +263,6 @@ public class PhieuDat_DAO {
         }
     }
 
-    public static ArrayList<ChiTietPhieuDatThuoc> getChiTietTheoPhieu(String maPDT) {
-        ArrayList<ChiTietPhieuDatThuoc> dsChiTiet = new ArrayList<>();
-
-        try {
-            ConnectDB.getInstance().connect();
-            Connection con = ConnectDB.getConnection();
-
-            String sql = """
-            SELECT MaPDT, MaThuoc, SoLuong, MaDVT, TinhTrang, ThanhTien
-            FROM ChiTietPhieuDatThuoc
-            WHERE MaPDT = ?
-        """;
-
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, maPDT);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                String maThuoc = rs.getString("MaThuoc");
-                int soLuong = rs.getInt("SoLuong");
-                String maDVT = rs.getString("MaDVT");
-                String tinhTrang = rs.getString("TinhTrang");
-                double thanhTien = rs.getDouble("ThanhTien");
-                String phieuDatMa = rs.getString("MaPDT");
-
-                // Gọi thuốc để lấy đối tượng chi tiết
-                Thuoc thuoc = thuoc_dao.getThuocTheoMa(maThuoc);
-                DonViTinh donVi = thuoc.getMaDVTCoSo();
-                PhieuDatThuoc phieu = list.stream()
-                        .filter(p -> p.getMaPhieu().equalsIgnoreCase(phieuDatMa))
-                        .findFirst()
-                        .orElse(null);
-
-                ChiTietPhieuDatThuoc ct = new ChiTietPhieuDatThuoc();
-                ct.setMaPhieu(phieu);
-                ct.setSoDangKy(thuoc);
-                ct.setSoLuong(soLuong);
-                ct.setDonViTinh(donVi);
-                ct.setThanhToan(!tinhTrang.equalsIgnoreCase("Đặt"));
-                dsChiTiet.add(ct);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return dsChiTiet;
-    }
 
     public static boolean capNhatThanhToanPhieuDat(String maPDT) {
         try {
@@ -263,5 +283,31 @@ public class PhieuDat_DAO {
         return true;
     }
 
+    public static PhieuDatThuoc getPhieuDatByMaFromDBS(String maPDT) {
+        for (PhieuDatThuoc pdt : list) {
+            if (pdt.getMaPhieu().equalsIgnoreCase(maPDT)) {
+                return pdt;
+            }
+        }
+        return null;
+    }
 
+    public static boolean khoiPhucPhieuDat(String maPhieu) {
+        try {
+            ConnectDB.getInstance().connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Connection con = ConnectDB.getConnection();
+
+        try {
+            String sql = "update PhieuDatThuoc set DeleteAt = 0 where MaPDT = ?";
+            PreparedStatement state = con.prepareStatement(sql);
+            state.setString(1,maPhieu);
+            int kq = state.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
 }

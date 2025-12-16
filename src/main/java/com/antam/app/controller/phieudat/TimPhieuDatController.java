@@ -325,25 +325,27 @@ public class TimPhieuDatController extends ScrollPane{
 
 
     private void setupListenerFind() {
-        txtFind.textProperty().addListener( (obj, oldT ,newT) ->{
+        txtFind.textProperty().addListener((obs, oldT, newT) -> {
+
             tvPhieuDat.getSelectionModel().clearSelection();
-            if(newT.isBlank()){
-                tvPhieuDat.setItems(filter);
-                return ;
+
+            String key = newT.trim().toLowerCase();
+
+            if (key.isEmpty()) {
+                tvPhieuDat.setItems(origin);
+                return;
             }
-            ObservableList<PhieuDatThuoc> filter1 = FXCollections.observableArrayList(filter);
-            String key = newT.toLowerCase();
-            for (PhieuDatThuoc e : listPDT){
-                if (e.getMaPhieu().toLowerCase().contains(key)
-                ||e.getKhachHang().getTenKH().toLowerCase().contains(key)){
-                    filter1.add(e);
-                }else{
-                    filter1.remove(e);
-                }
-            }
-            tvPhieuDat.setItems(filter1);
+
+            ObservableList<PhieuDatThuoc> filtered =
+                    origin.filtered(p ->
+                            p.getMaPhieu().toLowerCase().contains(key)
+                                    || p.getKhachHang().getTenKH().toLowerCase().contains(key)
+                    );
+
+            tvPhieuDat.setItems(filtered);
         });
     }
+
 
     private void setupBang() {
         colMaPhieu.setCellValueFactory(t -> new SimpleStringProperty(t.getValue().getMaPhieu()));

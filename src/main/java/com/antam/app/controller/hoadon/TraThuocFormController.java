@@ -191,6 +191,7 @@ public class TraThuocFormController extends DialogPane{
 
         this.setContent(contentRoot);
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
+
         /** Sự kiện **/
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Xác nhận trả thuốc", ButtonData.APPLY);
