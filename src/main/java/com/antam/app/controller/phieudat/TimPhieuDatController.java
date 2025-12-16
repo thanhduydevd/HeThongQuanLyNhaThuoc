@@ -172,6 +172,8 @@ public class TimPhieuDatController extends ScrollPane{
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
+
+        tvPhieuDat.setPlaceholder(new Label("Không tìm thấy phiếu đặt thuốc"));
         /** Sự kiện **/
         //cài đặt và load data vào giao diện
         loadDataComboBox();

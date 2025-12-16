@@ -91,7 +91,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         HBox header = new HBox(5);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Text title = new Text("Cập nhật phiếu đặt");
+        Text title = new Text("Thanh toán phiếu đặt");
         title.setFill(Color.web("#1e3a8a"));
         title.setFont(Font.font("System",30));
 
@@ -192,6 +192,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         infoIcon.setFill(Color.web("#2563eb"));
         hint.setGraphic(infoIcon);
 
+        tvPhieuDat.setPlaceholder(new Label("Không có phiếu đặt thuốc nào được tìm thấy"));
         tableWrapper.getChildren().addAll(tvPhieuDat, hint);
 
         // Add tất cả vào giao diện

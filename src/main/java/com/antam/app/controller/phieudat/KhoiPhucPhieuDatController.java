@@ -185,6 +185,8 @@ public class KhoiPhucPhieuDatController extends ScrollPane{
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
+
+        tvPhieuDat.setPlaceholder(new Label("Chưa có phiếu đặt thuốc nào bị hủy"));
         /** Sự kiện **/
 
         setupBang();
