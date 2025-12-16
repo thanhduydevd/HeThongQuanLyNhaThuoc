@@ -17,20 +17,28 @@ import java.util.Objects;
 public class DangDieuChe {
     private final int MaDDC;
     private String TenDDC;
+    private boolean deleteAt;
 
     public DangDieuChe() {
         MaDDC = 0;
         TenDDC = "";
+        deleteAt = false;
     }
 
     public DangDieuChe(String tenDDC) {
         MaDDC = 0;
         setTenDDC(tenDDC);
     }
-
     public DangDieuChe(int maDDC, String tenDDC) {
         MaDDC = maDDC;
         setTenDDC(tenDDC);
+    }
+
+
+    public DangDieuChe(int maDDC, String tenDDC, boolean deleteAt) {
+        MaDDC = maDDC;
+        setTenDDC(tenDDC);
+        this.deleteAt = deleteAt;
     }
 
     public int getMaDDC() {
@@ -46,6 +54,13 @@ public class DangDieuChe {
             throw new IllegalArgumentException("Tên dạng điều chế không được để trống");
         }
         TenDDC = tenDDC;
+    }
+
+    public boolean isDeleteAt() {
+        return deleteAt;
+    }
+    public void setDeleteAt(boolean deleteAt) {
+        this.deleteAt = deleteAt;
     }
 
     @Override

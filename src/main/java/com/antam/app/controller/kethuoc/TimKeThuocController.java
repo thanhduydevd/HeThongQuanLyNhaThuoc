@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -171,7 +170,7 @@ public class TimKeThuocController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        dsKeThuoc =  ke_DAO.getAllKe();
+        dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
         data.setAll(dsKeThuoc);
         tbKeThuoc.setItems(data);
 

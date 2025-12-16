@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class PhieuNhap_DAO {
     /* Duy- Huỷ phiếu nhập */
@@ -38,6 +37,21 @@ public class PhieuNhap_DAO {
             ps.setString(2, pn.getDiaChi());
             ps.setString(3, pn.getLyDo());
             ps.setString(4, pn.getMaPhieuNhap());
+            int kq = ps.executeUpdate();
+            return kq > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /* Duy- Cập nhật trạng thái phiếu nhập */
+    public boolean suaTrangThaiPhieuNhap(String maPhieuNhap){
+        String sql = "UPDATE PhieuNhap SET DeleteAt = 0 WHERE MaPhieuNhap = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, maPhieuNhap);
             int kq = ps.executeUpdate();
             return kq > 0;
         } catch (SQLException e) {
@@ -106,10 +120,38 @@ public class PhieuNhap_DAO {
         return false;
     }
 
-    /* Lấy danh sách phiếu nhập */
+    /* Duy - Lấy danh sách phiếu nhập */
     public ArrayList<PhieuNhap> getDanhSachPhieuNhap(){
         ArrayList<PhieuNhap> list = new ArrayList<>();
-        String sql = "SELECT * FROM PhieuNhap as P JOIN NhanVien as N on N.MaNV = P.MaNV WHERE P.DeleteAt = 0";
+        String sql = "SELECT * FROM PhieuNhap as P JOIN NhanVien as N on N.MaNV = P.MaNV ORDER BY P.MaPhieuNhap DESC";
+
+        try{
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                String maPhieuNhap = rs.getString("MaPhieuNhap");
+                String nhaCungCap = rs.getString("NhaCungCap");
+                LocalDate ngayNhap = rs.getDate("NgayNhap").toLocalDate();
+                String diaChi = rs.getString("DiaChi");
+                String maNhanVien = rs.getString("MaNV");
+                String tenNhanVien = rs.getString("HoTen");
+                String lyDo = rs.getString("LyDo");
+                double tongTien = rs.getDouble("TongTien");
+                boolean deleteAt = rs.getBoolean("DeleteAt");
+                PhieuNhap pn = new PhieuNhap(maPhieuNhap, nhaCungCap, ngayNhap, diaChi, lyDo, new NhanVien(maNhanVien, tenNhanVien), tongTien, deleteAt);
+                list.add(pn);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    /* Duy - Lấy danh sách phiếu nhập theo trạng thái */
+    public ArrayList<PhieuNhap> getDanhSachPhieuNhapTheoTrangThai(Boolean isDeleted){
+        ArrayList<PhieuNhap> list = new ArrayList<>();
+        String sql = "SELECT * FROM PhieuNhap as P JOIN NhanVien as N on N.MaNV = P.MaNV WHERE P.DeleteAt = " + (isDeleted ? "1" : "0") + " ORDER BY P.MaPhieuNhap DESC";
 
         try{
             Connection con = ConnectDB.getConnection();

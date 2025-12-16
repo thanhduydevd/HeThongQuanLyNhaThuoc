@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -162,7 +161,7 @@ public class ThemKeThuocController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        dsKeThuoc =  ke_DAO.getAllKe();
+        dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
         data.setAll(dsKeThuoc);
         tbKeThuoc.setItems(data);
 
@@ -178,7 +177,7 @@ public class ThemKeThuocController extends ScrollPane{
                 ke_DAO.themKe(new Ke(tfMaKe.getText(), tfTenKe.getText(), tfLoaiKe.getText(), false));
                 showCanhBao("Thêm kệ thành công","Bạn đã thêm kệ thuốc thành công!");
                 //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getAllKe();
+                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
                 data.setAll(dsKeThuoc);
                 tbKeThuoc.setItems(data);
                 //Tạo mã kệ tự động mới

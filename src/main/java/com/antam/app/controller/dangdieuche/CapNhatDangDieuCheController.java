@@ -177,7 +177,7 @@ public class CapNhatDangDieuCheController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        dsDangDieuCheThuoc =  DangDieuChe_DAO.getAllDDC();
+        dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
         data.setAll(dsDangDieuCheThuoc);
         tbDangDieuChe.setItems(data);
 
@@ -201,7 +201,7 @@ public class CapNhatDangDieuCheController extends ScrollPane{
                 DangDieuChe_DAO.suaDangDieuChe(new DangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()), tfTenDangDieuChe.getText()));
                 showCanhBao("Thông báo","Cập nhật dạng điều chế thành công!");
                 //Cập nhật lại bảng
-                dsDangDieuCheThuoc =  DangDieuChe_DAO.getAllDDC();
+                dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
                 data.setAll(dsDangDieuCheThuoc);
                 tbDangDieuChe.setItems(data);
                 //Xoá trắng các trường nhập liệu
@@ -215,7 +215,7 @@ public class CapNhatDangDieuCheController extends ScrollPane{
                 DangDieuChe_DAO.xoaDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
                 showCanhBao("Thông báo","Xoá dạng điều chế thành công!");
                 //Cập nhật lại bảng
-                dsDangDieuCheThuoc =  DangDieuChe_DAO.getAllDDC();
+                dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
                 data.setAll(dsDangDieuCheThuoc);
                 tbDangDieuChe.setItems(data);
                 //Xoá trắng các trường nhập liệu
@@ -223,6 +223,22 @@ public class CapNhatDangDieuCheController extends ScrollPane{
                 tfTenDangDieuChe.clear();
             }else{
                 showCanhBao("Lỗi","Vui lòng chọn dạng điều chế cần xoá!");
+            }
+        });
+
+        btnKhoiPhuc.setOnAction(e -> {
+            if(!tfMaDangDieuChe.getText().isEmpty()){
+                DangDieuChe_DAO.khoiPhucDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
+                showCanhBao("Thông báo","Khôi phục dạng điều chế thành công!");
+                //Cập nhật lại bảng
+                dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
+                data.setAll(dsDangDieuCheThuoc);
+                tbDangDieuChe.setItems(data);
+                //Xoá trắng các trường nhập liệu
+                tfMaDangDieuChe.clear();
+                tfTenDangDieuChe.clear();
+            }else{
+                showCanhBao("Lỗi","Vui lòng chọn dạng điều chế cần khôi phục!");
             }
         });
     }
@@ -236,7 +252,25 @@ public class CapNhatDangDieuCheController extends ScrollPane{
         TableColumn<DangDieuChe, String> colTenDangDieuChe = new TableColumn<>("Tên Dạng Điều Chế");
         colTenDangDieuChe.setCellValueFactory(new PropertyValueFactory<>("TenDDC"));
 
-        tbDangDieuChe.getColumns().addAll(colMaDangDieuChe, colTenDangDieuChe);
+        TableColumn<DangDieuChe, Boolean> colTrangThai = new TableColumn<>("Trạng Thái");
+        colTrangThai.setCellValueFactory(new PropertyValueFactory<>("deleteAt"));
+        colTrangThai.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    if (!item) {
+                        setText("Hoạt Động");
+                    } else {
+                        setText("Đã Xoá");
+                    }
+                }
+            }
+        });
+
+        tbDangDieuChe.getColumns().addAll(colMaDangDieuChe, colTenDangDieuChe, colTrangThai);
     }
 
     public boolean kiemTraHopLe(){

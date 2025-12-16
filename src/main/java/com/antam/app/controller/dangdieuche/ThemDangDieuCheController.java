@@ -12,7 +12,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -21,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -144,7 +142,7 @@ public class ThemDangDieuCheController extends ScrollPane{
             throw new RuntimeException(e);
         }
 
-        dsDangDieuChe =  dangDieuChe_DAO.getAllDDC();
+        dsDangDieuChe =  dangDieuChe_DAO.getTatCaDangDieuChe();
         data.setAll(dsDangDieuChe);
         tbDangDieuChe.setItems(data);
 
@@ -157,10 +155,10 @@ public class ThemDangDieuCheController extends ScrollPane{
         //Sự kiện click thêm
         btnThem.setOnAction(e ->{
             if (kiemTraHopLe()){
-                dangDieuChe_DAO.themDDC(new DangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()), tfTenDangDieuChe.getText()));
+                dangDieuChe_DAO.themDDC(new DangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()), tfTenDangDieuChe.getText(), false));
                 showCanhBao("Thêm dạng điều chế","Thêm dạng điều chế thành công!");
                 //Cập nhật lại bảng
-                dsDangDieuChe =  dangDieuChe_DAO.getAllDDC();
+                dsDangDieuChe =  dangDieuChe_DAO.getTatCaDangDieuChe();
                 data.setAll(dsDangDieuChe);
                 tbDangDieuChe.setItems(data);
                 //Tạo mã kệ tự động mới
@@ -181,7 +179,25 @@ public class ThemDangDieuCheController extends ScrollPane{
         TableColumn<DangDieuChe, String> colTenDangDieuChe = new TableColumn<>("Tên Dạng Điều Chế");
         colTenDangDieuChe.setCellValueFactory(new PropertyValueFactory<>("TenDDC"));
 
-        tbDangDieuChe.getColumns().addAll(colMaDangDieuChe, colTenDangDieuChe);
+        TableColumn<DangDieuChe, Boolean> colTrangThai = new TableColumn<>("Trạng Thái");
+        colTrangThai.setCellValueFactory(new PropertyValueFactory<>("deleteAt"));
+        colTrangThai.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    if (!item) {
+                        setText("Hoạt Động");
+                    } else {
+                        setText("Đã Xoá");
+                    }
+                }
+            }
+        });
+
+        tbDangDieuChe.getColumns().addAll(colMaDangDieuChe, colTenDangDieuChe, colTrangThai);
     }
 
     public boolean kiemTraHopLe(){

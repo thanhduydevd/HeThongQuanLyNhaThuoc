@@ -283,7 +283,7 @@ public class ThemThuocController extends ScrollPane{
     // them value vao combobox ke
     public void addComBoBoxKe() {
         ke_dao = new Ke_DAO();
-        ArrayList<Ke> arrayKe = ke_dao.getAllKe();
+        ArrayList<Ke> arrayKe = ke_dao.getTatCaKeHoatDong();
         cbKe.getItems().clear();
         Ke tatCa = new Ke("KE0001", "Tất cả", "Tất cả", false);
         cbKe.getItems().add(tatCa);
@@ -296,7 +296,7 @@ public class ThemThuocController extends ScrollPane{
     // them value vao combobox dang dieu che
     public void addComBoBoxDDC() {
         ddc_dao = new DangDieuChe_DAO();
-        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getAllDDC();
+        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getDangDieuCheHoatDong();
         cbDangDieuChe.getItems().clear();
         DangDieuChe Tatca = new DangDieuChe(-1, "Tất cả");
         cbDangDieuChe.getItems().add(Tatca);

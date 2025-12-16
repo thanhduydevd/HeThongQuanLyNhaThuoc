@@ -14,8 +14,6 @@ import com.antam.app.entity.DangDieuChe;
 import com.antam.app.entity.DonViTinh;
 import com.antam.app.entity.Ke;
 import com.antam.app.entity.Thuoc;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -31,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
@@ -379,7 +376,7 @@ public class ThemThuocFormController extends DialogPane{
     // them value vao combobox ke
     public void addComBoBoxKe() {
         ke_dao = new Ke_DAO();
-        ArrayList<Ke> arrayKe = ke_dao.getAllKe();
+        ArrayList<Ke> arrayKe = ke_dao.getTatCaKeHoatDong();
         cbAddKe.getItems().clear();
         for (Ke ke : arrayKe) {
             cbAddKe.getItems().add(ke);
@@ -390,7 +387,7 @@ public class ThemThuocFormController extends DialogPane{
     // Them value vao combobox dang dieu che
     public void addComBoBoxDDC() {
         ddc_dao = new DangDieuChe_DAO();
-        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getAllDDC();
+        ArrayList<DangDieuChe> arrayDDC = ddc_dao.getDangDieuCheHoatDong();
         cbAddDangDieuChe.getItems().clear();
         for (DangDieuChe ddc : arrayDDC){
             cbAddDangDieuChe.getItems().add(ddc);

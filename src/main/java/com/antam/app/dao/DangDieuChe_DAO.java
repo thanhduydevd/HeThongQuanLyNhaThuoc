@@ -8,7 +8,6 @@ package com.antam.app.dao;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.entity.DangDieuChe;
-import com.antam.app.entity.Ke;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,6 +19,20 @@ import java.util.ArrayList;
  * version: 1.0
  */
 public class DangDieuChe_DAO {
+    /* Duy - Khôi phục dạng điều chế */
+    public boolean khoiPhucDangDieuChe(int maDDC) {
+        String sql = "UPDATE DangDieuChe SET DeleteAt = 0 WHERE MaDDC = ?";
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement state = con.prepareStatement(sql);
+            state.setInt(1, maDDC);
+            int rowsUpdated = state.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /* Duy - Cap nhat delete at dang dieu che */
     public boolean xoaDangDieuChe(int maDDC) {
         String sql = "UPDATE DangDieuChe SET DeleteAt = 1 WHERE MaDDC = ?";
@@ -33,7 +46,6 @@ public class DangDieuChe_DAO {
             throw new RuntimeException(e);
         }
     }
-
 
     /* Duy - Sửa dang điều chế */
     public boolean suaDangDieuChe(DangDieuChe ddc) {
@@ -51,11 +63,12 @@ public class DangDieuChe_DAO {
     }
     /* Duy - Thêm dạng điều chế */
     public boolean themDDC(DangDieuChe ddc) {
-        String sql = "INSERT INTO DangDieuChe (TenDDC) VALUES (?)";
+        String sql = "INSERT INTO DangDieuChe (TenDDC,DeleteAt) VALUES (?,?)";
         try {
             Connection con = ConnectDB.getConnection();
             PreparedStatement state = con.prepareStatement(sql);
             state.setString(1, ddc.getTenDDC());
+            state.setBoolean(2, ddc.isDeleteAt());
             int rowsInserted = state.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
@@ -79,11 +92,33 @@ public class DangDieuChe_DAO {
         }
         return maDDC;
     }
+
+    /* Duy - Lấy tất cả dạng điều chế */
+    public ArrayList<DangDieuChe> getTatCaDangDieuChe() {
+        ArrayList<DangDieuChe> listDDC = new ArrayList<>();
+        String sql = "SELECT * FROM DangDieuChe ORDER BY MaDDC DESC";
+        try{
+            Connection con = ConnectDB.getConnection();
+            Statement state = con.createStatement();
+            ResultSet rs = state.executeQuery(sql);
+            while (rs.next()) {
+                int maDDC = rs.getInt("MaDDC");
+                String tenDDC = rs.getString("TenDDC");
+                Boolean deleteAt = rs.getBoolean("DeleteAt");
+                DangDieuChe ke = new DangDieuChe(maDDC, tenDDC, deleteAt);
+                listDDC.add(ke);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listDDC;
+    }
+
     /**
      * Lấy tất cả dạng điều chế từ database
      * @return danh sách dạng điều chế
      */
-    public ArrayList<DangDieuChe> getAllDDC() {
+    public ArrayList<DangDieuChe> getDangDieuCheHoatDong() {
         ArrayList<DangDieuChe> listDDC = new ArrayList<>();
         String sql = "SELECT * FROM DangDieuChe WHERE DeleteAt = 0";
         try{
