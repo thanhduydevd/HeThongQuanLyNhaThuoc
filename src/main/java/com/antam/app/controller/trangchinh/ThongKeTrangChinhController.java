@@ -60,7 +60,9 @@ public class ThongKeTrangChinhController extends ScrollPane{
         /** Giao diện **/
         this.setFitToHeight(true);
         this.setFitToWidth(true);
-        this.setPrefSize(900, 730);
+        // Make the ScrollPane flexible so it can resize to the parent container
+        this.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+        this.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         AnchorPane.setTopAnchor(this, 0.0);
         AnchorPane.setBottomAnchor(this, 0.0);
         AnchorPane.setLeftAnchor(this, 0.0);
@@ -113,7 +115,9 @@ public class ThongKeTrangChinhController extends ScrollPane{
 
     private StackPane createCard(FontAwesomeIcons icon, Text valueText, String label) {
         StackPane card = new StackPane();
+        // allow cards to size naturally but remain constrained
         card.setPrefSize(250, 121);
+        card.setMaxSize(250, 121);
         card.setStyle("-fx-background-color: white; -fx-background-radius: 20px;");
 
         DropShadow shadow = new DropShadow();
@@ -181,7 +185,9 @@ public class ThongKeTrangChinhController extends ScrollPane{
 
     private VBox createChartBox(String titleText) {
         VBox box = new VBox(10);
-        box.setPrefWidth(500);
+        // prefer flexible width so charts can grow/shrink with the layout
+        box.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        box.setMaxWidth(Double.MAX_VALUE);
         box.setStyle("-fx-background-color: white; -fx-background-radius: 10px;");
         box.setPadding(new Insets(10));
 
@@ -202,7 +208,8 @@ public class ThongKeTrangChinhController extends ScrollPane{
 
     private VBox createDataBox(String titleText) {
         VBox box = new VBox(10);
-        box.setPrefWidth(500);
+        box.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        box.setMaxWidth(Double.MAX_VALUE);
         box.setStyle("-fx-background-color: white; -fx-background-radius: 10px;");
         box.setPadding(new Insets(10));
 

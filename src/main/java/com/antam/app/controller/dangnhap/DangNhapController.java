@@ -112,6 +112,7 @@ public class DangNhapController extends StackPane {
         this.getStyleClass().add("page");
 
         /** Sự kiện **/
+
         btnLogin.setOnAction(e -> {
             onLoginButtonClick();
         });
@@ -127,8 +128,12 @@ public class DangNhapController extends StackPane {
         if (checklogin()) {
             if (checktnhanvien()) {
                 PhienNguoiDung.setMaNV(nv_dao.getNhanVienTaiKhoan(txtname_login.getText()));
-
-                Scene scene = new Scene(new KhungChinhController(), 1920, 1080);
+                // rào cho trường hợp đăng xuất xong đăng nhập lại
+                if (PhienNguoiDung.getMaNV() == null){
+                    notification_login.setText("Tài khoản không hợp lệ");
+                    return;
+                }
+                Scene scene = new Scene(new KhungChinhController());
                 Stage stage = (Stage) this.getScene().getWindow();
                 stage.setScene(scene);
                 stage.setMaximized(true);

@@ -3,6 +3,7 @@ package com.antam.app.controller.khungchinh;
 import com.antam.app.controller.caidattaikhoan.CaiDatTaiKhoanController;
 import com.antam.app.controller.dangdieuche.CapNhatDangDieuCheController;
 import com.antam.app.controller.dangdieuche.ThemDangDieuCheController;
+import com.antam.app.controller.dangnhap.DangNhapController;
 import com.antam.app.controller.donvitinh.CapNhatDonViTinhController;
 import com.antam.app.controller.donvitinh.ThemDonViTinhController;
 import com.antam.app.controller.hoadon.CapNhatHoaDonController;
@@ -36,13 +37,15 @@ import com.antam.app.controller.thuoc.KhoiPhucThuocController;
 import com.antam.app.controller.thuoc.ThemThuocController;
 import com.antam.app.controller.thuoc.TimThuocController;
 import com.antam.app.controller.trangchinh.ThongKeTrangChinhController;
+import com.antam.app.entity.NhanVien;
+import com.antam.app.entity.PhienNguoiDung;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -52,6 +55,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class KhungChinhController extends BorderPane {
@@ -62,13 +67,13 @@ public class KhungChinhController extends BorderPane {
     private VBox subMenuHoaDon, subMenuPhieuDat, subMenuThuoc, subMenuKeThuoc, subMenuDangDieuChe,
             subMenuDonViTinh, subMenuKhuyenMai, subMenuPhieuNhap, subMenuKhachHang, subMenuNhanVien, subMenuCaiDat;
 
-    private AnchorPane paneContent;
+    private StackPane paneContent = new StackPane();
 
     public KhungChinhController() {
         /** Giao diện **/
         HBox topMenu = new HBox();
         topMenu.setAlignment(Pos.CENTER);
-        topMenu.setPrefHeight(70);
+        topMenu.setMinHeight(70);;
         topMenu.setSpacing(5);
         topMenu.getStyleClass().add("top-page");
 
@@ -124,6 +129,8 @@ public class KhungChinhController extends BorderPane {
 
         ScrollPane scroll = new ScrollPane(leftMenu);
         scroll.setFitToWidth(true);
+        // ensure left menu scroll does not force center content size and allows proper layout
+        scroll.setFitToHeight(true);
 
 
         btnTrangChinh = createMainButton(FontAwesomeIcons.valueOf("HOME"), "Trang chính");
@@ -182,16 +189,50 @@ public class KhungChinhController extends BorderPane {
                 btnCaiDat, subMenuCaiDat
         );
 
-        paneContent = new AnchorPane();
-
         this.getStylesheets().addAll(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setTop(topMenu);
         this.setLeft(scroll);
         this.setCenter(paneContent);
+        // allow center content to resize with the window
+        paneContent.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        paneContent.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         this.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
         this.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         loadView("Trang chính");
+
+        // sự kiện đăng xuất
+        btnDangXuat.setOnAction(e -> {
+            // Xử lý đăng xuất. Nhảy ra màn hình đăng nhập
+            if (canhBaoDangXuat()){
+                PhienNguoiDung.setMaNV(null);
+
+                Scene scene = new Scene(new DangNhapController());
+                Stage stage = (Stage) this.getScene().getWindow();
+
+                stage.setScene(scene);
+                stage.setMaximized(true);
+                stage.setWidth(Double.MAX_VALUE);
+                stage.setHeight(Double.MAX_VALUE);
+                stage.show();
+
+//                System.out.println(PhienNguoiDung.getMaNV());
+            }
+        });
     }
+
+    private boolean canhBaoDangXuat() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận đăng xuất");
+        alert.setHeaderText(null);
+        alert.setContentText("Mọi tiến trình đang thực hiện sẽ bị huỷ bỏ.");
+
+        ButtonType btnCo = new ButtonType("Có", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnKhong = new ButtonType("Không", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(btnCo, btnKhong);
+
+        return alert.showAndWait().orElse(btnKhong) == btnCo;
+    }
+
 
     private Button createMainButton(FontAwesomeIcons iconName, String text) {
         FontAwesomeIcon icon = new FontAwesomeIcon();
@@ -405,7 +446,22 @@ public class KhungChinhController extends BorderPane {
 
         if (nodePageLoad != null) {
             paneContent.getChildren().clear();
-            paneContent.getChildren().add(nodePageLoad);
+            // If the loaded node is a Region, allow it to resize with paneContent
+            if (nodePageLoad instanceof Region) {
+                Region r = (Region) nodePageLoad;
+                r.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                try { // unbind any previous bindings
+                    r.prefWidthProperty().unbind();
+                    r.prefHeightProperty().unbind();
+                } catch (Exception ignored) {}
+                r.prefWidthProperty().bind(paneContent.widthProperty());
+                r.prefHeightProperty().bind(paneContent.heightProperty());
+            }
+
+            // ensure loaded node is aligned to top-left inside the StackPane
+            StackPane.setAlignment(nodePageLoad, Pos.TOP_LEFT);
+
+            paneContent.getChildren().setAll(nodePageLoad);
         }
     }
 }
