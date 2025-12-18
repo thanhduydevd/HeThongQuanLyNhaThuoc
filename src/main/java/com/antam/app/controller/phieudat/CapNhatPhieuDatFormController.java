@@ -5,13 +5,12 @@
 
 package com.antam.app.controller.phieudat;
 
+import com.antam.app.dao.ChiTietHoaDon_DAO;
 import com.antam.app.dao.ChiTietPhieuDat_DAO;
 import com.antam.app.dao.HoaDon_DAO;
 import com.antam.app.dao.PhieuDat_DAO;
-import com.antam.app.entity.ChiTietPhieuDatThuoc;
-import com.antam.app.entity.HoaDon;
-import com.antam.app.entity.PhienNguoiDung;
-import com.antam.app.entity.PhieuDatThuoc;
+import com.antam.app.entity.*;
+import com.antam.app.helper.XuatHoaDonPDF;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -19,19 +18,27 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.text.Text;
+
+import java.io.File;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.stage.Window;
 
 import static com.antam.app.controller.phieudat.CapNhatPhieuDatController.selectedPDT;
 
 public class CapNhatPhieuDatFormController extends DialogPane{
-    
+
     private Text txtMa,txtNgay,txtSDT,txtStatus,txtTongTien,txtKM;
     
     private TableColumn<ChiTietPhieuDatThuoc,Integer> colSTT;
@@ -164,6 +171,15 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(anchor);
         /** Sự kiện **/
+
+        if (select.getKhuyenMai()==null || select.getKhuyenMai().getTenKM().equals("") ){
+            txtKM.setText("Phiếu đặt thuốc không áp dụng khuyến mãi");
+        }else{
+            txtKM.setText("Áp dụng khuyến mãi: "+select.getKhuyenMai().getTenKM());
+        }
+
+
+
         ButtonType cancelButton = new ButtonType("Huỷ", ButtonData.CANCEL_CLOSE);
         ButtonType applyButton = new ButtonType("Thanh Toán", ButtonData.APPLY);
         this.getButtonTypes().add(cancelButton);
@@ -171,6 +187,7 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         loadContent();
         setupTable();
         loadBangChiTiet();
+        loadTien();
 
         Button btnThanhToan = (Button) this.lookupButton(applyButton);
         btnThanhToan.setOnAction(event -> {
@@ -180,6 +197,17 @@ public class CapNhatPhieuDatFormController extends DialogPane{
                 thanhToanPhieuDat();
             }
         });
+
+        Button btnHuy =  (Button) this.lookupButton(cancelButton);
+
+        btnHuy.setOnAction(event -> {
+                showMess("Cảnh báo","Hủy thanh toán");
+        });
+    }
+
+    private void loadTien() {
+        double tongTien = select.getTongTien();
+        txtTongTien.setText(dinhDangTien(tongTien));
     }
 
     private void thanhToanPhieuDat() {
@@ -199,7 +227,20 @@ public class CapNhatPhieuDatFormController extends DialogPane{
                 ,select.getTongTien()
                 , false);
         if (hoaDon_dao.insertHoaDon(hoaDon)) {
-            showMess("Thành công","Thanh toán phiếu đặt thuốc thành công");
+            ChiTietHoaDon_DAO chiTietHoaDonDao = new ChiTietHoaDon_DAO();
+            ArrayList<ChiTietHoaDon> list = new ArrayList<>();
+            for (ChiTietPhieuDatThuoc e : tbThuoc.getItems()){
+                ChiTietHoaDon i = new ChiTietHoaDon();
+                i.setMaHD(hoaDon);
+                i.setMaCTT(e.getChiTietThuoc());
+                i.setThanhTien(e.getThanhTien());
+                i.setMaDVT(e.getDonViTinh());
+                i.setSoLuong(e.getSoLuong());
+                i.setTinhTrang("Bán");
+                chiTietHoaDonDao.themChiTietHoaDon(i);
+                list.add(i);
+            }
+            thongBaoVaXuatHoaDon(list);
         }else {
             showMess("Lỗi","Thanh toán phiếu đặt thuốc thất bại");
         }
@@ -212,13 +253,27 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         return hash;
     }
 
-    private void showMess(String tieude, String noidung) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(tieude);
-        alert.setHeaderText(null);
-        alert.setContentText(noidung);
-        alert.showAndWait();
+    public void showMess(String tieuDe, String vanBan) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            // Try to set an owner so dialogs don't appear behind other windows.
+            Window owner = (this.getScene() != null) ? this.getScene().getWindow() : null;
+            if (owner == null) {
+                // fallback: find any showing window
+                for (Window w : Window.getWindows()) {
+                    if (w.isShowing()) { owner = w; break; }
+                }
+            }
+            if (owner != null) {
+                alert.initOwner(owner);
+            }
+            alert.setTitle(tieuDe);
+            alert.setHeaderText(null);
+            alert.setContentText(vanBan);
+            alert.showAndWait();
+        });
     }
+
 
     private void loadContent() {
         txtMa.setText("Mã phiếu đặt: " + select.getMaPhieu());
@@ -256,4 +311,62 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         DecimalFormat df = new DecimalFormat("#,### đ");
         return df.format(tien);
     }
-}
+
+    private void thongBaoVaXuatHoaDon(ArrayList<ChiTietHoaDon> listCTHD) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            // Try to set owner for the alert
+            Window owner = (this.getScene() != null) ? this.getScene().getWindow() : null;
+            if (owner == null) {
+                for (Window w : Window.getWindows()) { if (w.isShowing()) { owner = w; break; } }
+            }
+            if (owner != null) alert.initOwner(owner);
+
+            alert.setTitle("Thành công");
+            alert.setHeaderText(null);
+            alert.setContentText("Thanh toán phiếu đặt thuốc thành công.\nBạn có muốn xuất hóa đơn?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    FileChooser chooser = new FileChooser();
+                    chooser.setTitle("Lưu hóa đơn PDF");
+                    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+                    File file;
+                    if (owner instanceof Stage) {
+                        file = chooser.showSaveDialog((Stage) owner);
+                    } else {
+                        // fallback
+                        file = chooser.showSaveDialog(null);
+                    }
+                    if (file == null) return;
+
+                    XuatHoaDonPDF.xuatFilePDF(
+                            file,
+                            listCTHD,
+                            tinhThue(),
+                            selectedPDT.getTongTien()
+                    );
+
+                    showMess("Thành công", "Xuất hóa đơn PDF thành công!");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    showMess("Lỗi", "Không thể xuất hóa đơn PDF");
+                }
+            }
+        });
+    }
+
+    private double tinhThue() {
+        double thue = 0.0;
+        if (listChiTiet==null || listChiTiet.isEmpty()) {
+            return thue;
+        }
+        for (ChiTietPhieuDatThuoc e : listChiTiet){
+            thue += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan()* e.getChiTietThuoc().getMaThuoc().getThue();
+        }
+        return thue;
+    }}

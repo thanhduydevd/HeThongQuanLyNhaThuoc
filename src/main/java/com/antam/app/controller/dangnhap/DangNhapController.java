@@ -140,6 +140,7 @@ public class DangNhapController extends StackPane {
                 stage.show();
             }
         }
+        //Dùng để tắt chức năng đăng nhập
 //        try {
 //            FXMLLoader fxmlLoader = new FXMLLoader(GiaoDienChinh.class.getResource("/com/antam/app/views/dashboard.fxml"));
 //            Parent root = (Parent) fxmlLoader.load();

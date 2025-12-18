@@ -13,6 +13,7 @@ import com.antam.app.entity.ChiTietPhieuDatThuoc;
 import com.antam.app.entity.ChiTietThuoc;
 import com.antam.app.entity.NhanVien;
 import com.antam.app.entity.PhieuDatThuoc;
+import com.antam.app.helper.XuatHoaDonPDF;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,13 +30,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class CapNhatPhieuDatController extends ScrollPane{
     
@@ -63,6 +68,8 @@ public class CapNhatPhieuDatController extends ScrollPane{
     private TableColumn<PhieuDatThuoc,String> colNhanVien = new TableColumn<>("Nhân viên");
     private TableColumn<PhieuDatThuoc,String> colStatus = new TableColumn<>("Trạng thái");
     private TableColumn<PhieuDatThuoc,String> colTotal = new TableColumn<>("Tổng tiền");
+    private ArrayList<ChiTietPhieuDatThuoc> listChiTiet;
+
 
     public static PhieuDatThuoc selectedPDT;
     public ChiTietThuoc_DAO ctThuoc_dao = new ChiTietThuoc_DAO();
@@ -200,7 +207,6 @@ public class CapNhatPhieuDatController extends ScrollPane{
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(mainVBox);
 
-
         /** Sự kiện **/
 
         this.btnThanhToan.setOnAction((e) -> {
@@ -210,7 +216,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
             else {
                 selectedPDT = tvPhieuDat.getSelectionModel().getSelectedItem();
                 CapNhatPhieuDatFormController capNhatDialog = new CapNhatPhieuDatFormController();
-                Dialog<Void> dialog = new Dialog<>();
+                Dialog<DialogPane> dialog = new Dialog<>();
                 dialog.setDialogPane(capNhatDialog);
                 dialog.setTitle("Chi tiết phiếu đặt");
                 dialog.initModality(Modality.APPLICATION_MODAL);
@@ -229,7 +235,7 @@ public class CapNhatPhieuDatController extends ScrollPane{
         tvPhieuDat.setOnMouseClicked(e -> {
             PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
 
-            if (selected.isThanhToan() && selected != null) {
+            if (selected != null && selected.isThanhToan()  ) {
                 btnThanhToan.setDisable(true);
             } else {
                 btnThanhToan.setDisable(false);
@@ -246,15 +252,19 @@ public class CapNhatPhieuDatController extends ScrollPane{
                 e.getButton() == MouseButton.PRIMARY) {
                 // Kiểm tra có chọn dòng nào không
                 if (selected != null) {
-                    selectedPDT = selected;
-                    // lưu lại để truyền qua form chi tiết
-                    CapNhatPhieuDatFormController capNhatDialog = new CapNhatPhieuDatFormController();
-                    Dialog<Void> dialog = new Dialog<>();
-                    dialog.setDialogPane(capNhatDialog);
-                    dialog.setTitle("Chi tiết phiếu đặt");
-                    dialog.initModality(Modality.APPLICATION_MODAL);
-                    dialog.showAndWait();
-                    loadDataVaoBang();
+                    if (selected.isThanhToan()){
+                        showMess("Cảnh báo", "Phiếu đặt thuốc đã được thanh toán");
+                    }else{
+                        selectedPDT = selected;
+                        // lưu lại để truyền qua form chi tiết
+                        CapNhatPhieuDatFormController capNhatDialog = new CapNhatPhieuDatFormController();
+                        Dialog<DialogPane> dialog = new Dialog<>();
+                        dialog.setDialogPane(capNhatDialog);
+                        dialog.setTitle("Chi tiết phiếu đặt");
+                        dialog.initModality(Modality.APPLICATION_MODAL);
+                        dialog.showAndWait();
+                        loadDataVaoBang();
+                    }
                 }
             }
         });

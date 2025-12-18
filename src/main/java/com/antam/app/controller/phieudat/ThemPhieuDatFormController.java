@@ -306,7 +306,7 @@ public class ThemPhieuDatFormController extends DialogPane{
         dsDonViTinh = donViTinh_dao.getTatCaDonViTinh();
         dsThuoc = thuoc_dao.getAllThuoc();
         cbDonVi.getItems().addAll(FXCollections.observableArrayList(dsDonViTinh));
-
+        cbDonVi.getSelectionModel().selectFirst();
         // load comboBox thuốc
         cbTenThuoc.getItems().addAll(FXCollections.observableArrayList(dsThuoc));
 

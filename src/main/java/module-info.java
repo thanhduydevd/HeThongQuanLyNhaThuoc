@@ -6,6 +6,7 @@ module com.antam.app {
     requires javafx.controls;
     requires fontawesomefx;
     requires jbcrypt;
+    requires itextpdf;
 
     // cho FXML
     opens com.antam.app.controller.hoadon to javafx.fxml;

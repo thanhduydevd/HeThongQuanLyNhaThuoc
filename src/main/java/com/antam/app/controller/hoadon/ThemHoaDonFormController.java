@@ -7,6 +7,8 @@ package com.antam.app.controller.hoadon;
 
 import com.antam.app.dao.*;
 import com.antam.app.entity.*;
+import com.antam.app.helper.XuatHoaDonPDF;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -21,11 +23,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.antam.app.controller.phieudat.CapNhatPhieuDatController.selectedPDT;
 
 public class ThemHoaDonFormController extends DialogPane{
     private TextField txtMaHoaDon;
@@ -804,6 +814,65 @@ public class ThemHoaDonFormController extends DialogPane{
         // Loại bỏ ký tự không phải số và không phải dấu chấm thập phân
         String numericString = currencyString.replaceAll("[^0-9]", "");
         return Double.parseDouble(numericString);
+    }
+
+    /**
+     * dùng để xuất hóa đơn. chỉ cần gọi hàm và truyền tham số ArrayList trong phương thức , thuế và tiền trong code là ok.
+     */
+    private void thongBaoVaXuatHoaDon(ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            // Try to set owner for the alert
+            Window owner = (this.getScene() != null) ? this.getScene().getWindow() : null;
+            if (owner == null) {
+                for (Window w : Window.getWindows()) { if (w.isShowing()) { owner = w; break; } }
+            }
+            if (owner != null) alert.initOwner(owner);
+
+            alert.setTitle("Thành công");
+            alert.setHeaderText(null);
+            alert.setContentText("Thanh toán phiếu đặt thuốc thành công.\nBạn có muốn xuất hóa đơn?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    FileChooser chooser = new FileChooser();
+                    chooser.setTitle("Lưu hóa đơn PDF");
+                    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+                    File file;
+                    if (owner instanceof Stage) {
+                        file = chooser.showSaveDialog((Stage) owner);
+                    } else {
+                        // fallback
+                        file = chooser.showSaveDialog(null);
+                    }
+                    if (file == null) return;
+
+                    XuatHoaDonPDF.xuatFilePDF(
+                            file,
+                            listCTHD,
+                            thue,
+                            tongTien
+                    );
+
+                    showMess("Thành công", "Xuất hóa đơn PDF thành công!");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    showMess("Lỗi", "Không thể xuất hóa đơn PDF");
+                }
+            }
+        });
+    }
+
+    private void showMess(String tieuDe, String noiDung){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(tieuDe);
+        alert.setHeaderText(null);
+        alert.setContentText(noiDung);
+        alert.showAndWait();
     }
 }
 

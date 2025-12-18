@@ -277,6 +277,7 @@ public class NhanVien_DAO {
                 nhanVien.setTaiKhoan(rs.getString("TaiKhoan"));
                 nhanVien.setMatKhau(rs.getString("MatKhau"));
                 nhanVien.setQuanLy(rs.getBoolean("IsQuanLi"));
+                nhanVien.setDeleteAt(rs.getBoolean("DeleteAt"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

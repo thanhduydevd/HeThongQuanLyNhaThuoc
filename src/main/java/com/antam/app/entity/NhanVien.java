@@ -181,7 +181,7 @@ public class NhanVien {
         return isQuanLy;
     }
     public void setQuanLy(boolean quanLy) {
-        deleteAt = quanLy;
+        isQuanLy = quanLy;
     }
     public boolean isDeleteAt() {
         return deleteAt;
