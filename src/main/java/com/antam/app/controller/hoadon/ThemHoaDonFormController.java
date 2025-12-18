@@ -818,6 +818,7 @@ public class ThemHoaDonFormController extends DialogPane{
 
     /**
      * dùng để xuất hóa đơn. chỉ cần gọi hàm và truyền tham số ArrayList trong phương thức , thuế và tiền trong code là ok.
+     * dùng thì cứ gọi sao khi thanh toán thành công là được.
      */
     private void thongBaoVaXuatHoaDon(ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
         Platform.runLater(() -> {
