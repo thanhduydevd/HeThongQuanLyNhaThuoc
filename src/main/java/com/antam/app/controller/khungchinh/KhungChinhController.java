@@ -218,6 +218,39 @@ public class KhungChinhController extends BorderPane {
 //                System.out.println(PhienNguoiDung.getMaNV());
             }
         });
+
+        // Phân quyền người dùng
+        boolean isAdmin = PhienNguoiDung.getMaNV().isQuanLy();
+        System.out.println(isAdmin);
+        if (isAdmin){
+            batFullQuyenNguoiDung();
+        } else {
+            btnNhanVien.setVisible(false);
+            btnKeThuoc.setVisible(false);
+            btnDangDieuChe.setVisible(false);
+            btnDonViTinh.setVisible(false);
+
+            // tắt chiếm chỗ UI
+            btnNhanVien.setManaged(false);
+            btnKeThuoc.setManaged(false);
+            btnDangDieuChe .setManaged(false);
+            btnDonViTinh.setManaged(false);
+        }
+    }
+
+    private void batFullQuyenNguoiDung(){
+        btnCaiDat.setVisible(true);
+        btnTrangChinh.setVisible(true);
+        btnHoaDon.setVisible(true);
+        btnPhieuDat.setVisible(true);
+        btnThuoc.setVisible(true);
+        btnKeThuoc.setVisible(true);
+        btnDangDieuChe.setVisible(true);
+        btnDonViTinh.setVisible(true);
+        btnKhuyenMai.setVisible(true);
+        btnPhieuNhap.setVisible(true);
+        btnKhachHang.setVisible(true);
+        btnNhanVien.setVisible(true);
     }
 
     private boolean canhBaoDangXuat() {

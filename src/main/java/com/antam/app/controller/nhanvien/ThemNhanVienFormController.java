@@ -161,6 +161,7 @@ public class ThemNhanVienFormController extends DialogPane{
         btnThem.setOnAction(e -> {
             if (setupThemNhanVien() != null){
                 NhanVien_DAO.themNhanVien(setupThemNhanVien());
+                showAlert("Thêm nhân viên thành công!");
             }else{
 
             }
