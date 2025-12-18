@@ -13,11 +13,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.sql.Connection;
@@ -55,6 +57,7 @@ public class ThemPhieuDatFormController extends DialogPane{
     private Text txtTotal;
     private Text txtCanhBaoSDT = new Text();
     private Text txtCanhBaoKM = new Text();
+    private Text txtThue = new Text();
 
     private Thuoc_DAO thuoc_dao = new Thuoc_DAO();
     private  DonViTinh_DAO donViTinh_dao = new DonViTinh_DAO();
@@ -162,8 +165,9 @@ public class ThemPhieuDatFormController extends DialogPane{
         vbThuoc.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 6px; -fx-border-width: 2px;");
         vbThuoc.setPadding(new Insets(10));
 
-        HBox hbFirst = new HBox();
+        HBox hbFirst = new HBox(20);
         hbFirst.setPrefSize(720, 29);
+        hbFirst.setAlignment(Pos.CENTER_LEFT);
 
         VBox boxTen = new VBox();
         Text lblTenThuoc = new Text("Tên thuốc:");
@@ -223,28 +227,47 @@ public class ThemPhieuDatFormController extends DialogPane{
         colThanhTien.setPrefWidth(143.2);
 
         tbChonThuoc.getColumns().addAll(colTenThuoc, colDonVi, colSoLuong, colDonGia, colThanhTien);
-
         GridPane gridTotal = new GridPane();
-        gridTotal.setHgap(5);
-        gridTotal.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 8px;");
+        gridTotal.setHgap(10);
+        gridTotal.setVgap(5);
         gridTotal.setPadding(new Insets(10));
+        gridTotal.setStyle(
+                "-fx-background-color: #f8fafc;" +
+                        "-fx-background-radius: 8px;" +
+                        "-fx-border-color: #e5e7eb;" +
+                        "-fx-border-radius: 8px;"
+        );
 
-        ColumnConstraints tc1 = new ColumnConstraints();
-        tc1.setHgrow(Priority.SOMETIMES);
-        ColumnConstraints tc2 = new ColumnConstraints();
-        tc2.setHgrow(Priority.SOMETIMES);
-        gridTotal.getColumnConstraints().addAll(tc1, tc2);
+        /* Column trái - label */
+        ColumnConstraints colLeft = new ColumnConstraints();
+        colLeft.setHgrow(Priority.ALWAYS);
 
-        Text lblTong = new Text("Tổng tiền:");
-        lblTong.setFill(javafx.scene.paint.Color.web("#374151"));
-        lblTong.setFont(Font.font("System Bold", 18));
+        /* Column phải - tiền */
+        ColumnConstraints colRight = new ColumnConstraints();
+        colRight.setHgrow(Priority.ALWAYS);
+        colRight.setHalignment(HPos.RIGHT);
 
+        gridTotal.getColumnConstraints().addAll(colLeft, colRight);
+
+        /* Label Tổng tiền */
+        Text lblTong = new Text("");
+        lblTong.setFill(Color.web("#374151"));
+        lblTong.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+        /* Tổng tiền */
         txtTotal = new Text("0 đ");
-        txtTotal.setFill(javafx.scene.paint.Color.web("#374151"));
-        txtTotal.setFont(Font.font("System Bold", 18));
-        GridPane.setColumnIndex(txtTotal, 1);
+        txtTotal.setFill(Color.web("#111827"));
+        txtTotal.setFont(Font.font("System", FontWeight.BOLD, 18));
 
-        gridTotal.getChildren().addAll(lblTong, txtTotal);
+        /* Thuế */
+        txtThue = new Text("Thuế: 0 đ");
+        txtThue.setFill(Color.web("#6b7280"));
+        txtThue.setFont(Font.font(14));
+
+        /* Add vào grid */
+        gridTotal.add(lblTong, 0, 0);
+        gridTotal.add(txtTotal, 1, 0);
+        gridTotal.add(txtThue, 1, 1);
 
         root.getChildren().addAll(
                 gridTop,
@@ -337,6 +360,7 @@ public class ThemPhieuDatFormController extends DialogPane{
                 return;
             }
             LocalDate today = LocalDate.now();
+            int soDaSuDung = hoaDon_DAO.soHoaDonDaCoKhuyenMaiVoiMa(km.getMaKM());
             // Chưa đến ngày bắt đầu
             if (km.getNgayBatDau().isAfter(today)) {
                 txtCanhBaoKM.setText("Khuyến mãi chưa bắt đầu");
@@ -344,6 +368,9 @@ public class ThemPhieuDatFormController extends DialogPane{
             // Đã hết hạn
             else if (km.getNgayKetThuc().isBefore(today)) {
                 txtCanhBaoKM.setText("Khuyến mãi đã hết hạn");
+            }
+            else if (soDaSuDung >= km.getSoLuongToiDa()) {
+                    txtCanhBaoKM.setText("Khuyến mãi đã đạt số lượng tối đa");
             }
             // Hợp lệ
             else {
@@ -683,7 +710,9 @@ public class ThemPhieuDatFormController extends DialogPane{
     public double tinhTongTien(){
         double tongTien = 0.0;
         for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
-            tongTien += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan() * e.getChiTietThuoc().getMaThuoc().getThue();
+            tongTien += e.getSoLuong()
+                    * e.getChiTietThuoc().getMaThuoc().getGiaBan()
+                    * (1 - e.getChiTietThuoc().getMaThuoc().getThue());
         }
         // Áp dụng khuyến mãi nếu có
         if (cbKhuyenMai.getSelectionModel().getSelectedItem() != null &&
@@ -721,8 +750,21 @@ public class ThemPhieuDatFormController extends DialogPane{
      */
     private void loadTongTien(){
         double tongTien = tinhTongTien();
-        txtTotal.setText("Tổng tiền: " + decimalFormat.format(tongTien));
+        txtTotal.setText("Tổng tiền: " + dinhDangTien(tongTien));
+        txtThue.setText("Thuế: " + dinhDangTien(tinhThue()));
     }
+
+    private double tinhThue() {
+        double thue = 0.0;
+        if (tbChonThuoc.getItems().isEmpty()) {
+            return thue;
+        }
+        for (ChiTietPhieuDatThuoc e : tbChonThuoc.getItems()){
+            thue += e.getSoLuong() * e.getChiTietThuoc().getMaThuoc().getGiaBan()* e.getChiTietThuoc().getMaThuoc().getThue();
+        }
+        return thue;
+    }
+
     private boolean checkDuLieu() {
         if (txtTenKhach.getText().trim().isEmpty()) {
             showMess("Thiếu thông tin", "Vui lòng nhập tên khách hàng.");
