@@ -283,6 +283,7 @@ public class ThongKeDoanhThuController extends ScrollPane {
 
     }
 
+    //
     private StackPane createCard(String color, String icon, Text bigText, Text label, Button changeBtn) {
 
         StackPane card = new StackPane();

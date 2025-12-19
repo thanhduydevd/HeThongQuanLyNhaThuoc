@@ -21,7 +21,24 @@ import java.util.List;
 
 public class XuatHoaDonPDF {
 
-    private static final String FONT_PATH = "c:/windows/fonts/arial.ttf";
+    /**
+     * Lấy đường dẫn font phù hợp với hệ điều hành
+     */
+    private static String getFontPath() {
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.contains("win")) {
+            // Windows
+            return "c:/windows/fonts/arial.ttf";
+        } else if (os.contains("mac")) {
+            // macOS - sử dụng font system
+            return "/System/Library/Fonts/Helvetica.ttc";
+        } else {
+            // Linux/Unix
+            return "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf";
+        }
+    }
+
     /**
      * @description Phương thức xuất hóa đơn bán thuốc ra file PDF với ArrayList
      * @param file      File PDF đích
@@ -43,11 +60,22 @@ public class XuatHoaDonPDF {
         document.open();
 
         // ===== FONT =====
-        BaseFont bf = BaseFont.createFont(
-                FONT_PATH,
-                BaseFont.IDENTITY_H,
-                BaseFont.EMBEDDED
-        );
+        BaseFont bf;
+        try {
+            // Thử sử dụng font hệ thống trước
+            bf = BaseFont.createFont(
+                    getFontPath(),
+                    BaseFont.IDENTITY_H,
+                    BaseFont.EMBEDDED
+            );
+        } catch (Exception e) {
+            // Nếu không tìm thấy font hệ thống, sử dụng font built-in của iText
+            bf = BaseFont.createFont(
+                    BaseFont.HELVETICA,
+                    BaseFont.CP1252,
+                    BaseFont.NOT_EMBEDDED
+            );
+        }
 
         Font titleFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12);
@@ -144,6 +172,7 @@ public class XuatHoaDonPDF {
         table.addCell(c1);
         table.addCell(c2);
     }
+
 
 
     private static String formatTien(double tien) {

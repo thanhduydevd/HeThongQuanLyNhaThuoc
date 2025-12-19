@@ -12,8 +12,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -110,7 +108,21 @@ public class SuaKhachHangFormController extends DialogPane {
 
         root.getChildren().addAll(vbMaKH, vbTenKH, vbSDT, btnBox);
         this.setContent(root);
-        /** Sự kiện **/
+
+        // Xử lý sự kiện đóng cửa sổ (nút X)
+        this.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, window) -> {
+                    if (window != null) {
+                        window.setOnCloseRequest(ev -> {
+                            window.hide();
+                        });
+                    }
+                });
+            }
+        });
+
+        // Sự kiện
         // Khởi tạo DAO
         khachHangDAO = new KhachHang_DAO();
 

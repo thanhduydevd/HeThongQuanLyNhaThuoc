@@ -10,7 +10,6 @@ import com.antam.app.entity.*;
 import com.antam.app.helper.XuatHoaDonPDF;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -30,6 +29,7 @@ import javafx.stage.Window;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 import static com.antam.app.controller.phieudat.CapNhatPhieuDatController.selectedPDT;
 
-public class ThemHoaDonFormController extends DialogPane{
+public class ThemHoaDonFormController extends DialogPane {
     private TextField txtMaHoaDon;
     private TextField txtSoDienThoai;
     private TextField txtTenKhachHang;
@@ -61,6 +61,7 @@ public class ThemHoaDonFormController extends DialogPane{
 
     // Định dạng tiền tệ kiểu Việt Nam: 1.000đ, 10.000đ
     private static final DecimalFormat VND_FORMAT;
+
     static {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator('.');
@@ -273,6 +274,7 @@ public class ThemHoaDonFormController extends DialogPane{
             public String toString(Thuoc thuoc) {
                 return thuoc == null ? "" : thuoc.getTenThuoc();
             }
+
             @Override
             public Thuoc fromString(String s) {
                 return thuocList.stream().filter(t -> t.getTenThuoc().equals(s)).findFirst().orElse(null);
@@ -329,6 +331,7 @@ public class ThemHoaDonFormController extends DialogPane{
             public String toString(KhuyenMai km) {
                 return km == null ? "" : km.getTenKM();
             }
+
             @Override
             public KhuyenMai fromString(String s) {
                 return dsKhuyenMai.stream().filter(km -> km.getTenKM().equals(s)).findFirst().orElse(null);
@@ -449,7 +452,10 @@ public class ThemHoaDonFormController extends DialogPane{
                     TextField txtQuantity = (TextField) hbox.getChildren().get(2);
                     Thuoc thuoc = cb.getValue();
                     int soLuong = 0;
-                    try { soLuong = Integer.parseInt(txtQuantity.getText().trim()); } catch(Exception ex) {}
+                    try {
+                        soLuong = Integer.parseInt(txtQuantity.getText().trim());
+                    } catch (Exception ex) {
+                    }
                     if (thuoc != null && soLuong > 0) {
                         int tongTonKho = chiTietThuocDAO.getTongTonKhoTheoMaThuoc(thuoc.getMaThuoc());
                         if (tongTonKho < soLuong) {
@@ -504,11 +510,13 @@ public class ThemHoaDonFormController extends DialogPane{
             }
             // 5. Thêm chi tiết hoá đơn cho từng thuốc và trừ kho
             ChiTietHoaDon_DAO chiTietHoaDonDAO = new ChiTietHoaDon_DAO();
+            ArrayList<ChiTietHoaDon> listCTHD = new ArrayList<>(); // Danh sách chi tiết hóa đơn để truyền vào hàm xuất
 
             // Gộp các dòng cùng loại thuốc lại trước khi xử lý
             java.util.Map<String, Integer> thuocSoLuongMap = new java.util.HashMap<>();
             java.util.Map<String, Double> thuocDonGiaMap = new java.util.HashMap<>();
             java.util.Map<String, DonViTinh> thuocDVTMap = new java.util.HashMap<>();
+            java.util.Map<String, Thuoc> thuocObjMap = new java.util.HashMap<>(); // Thêm map để lưu đối tượng Thuoc
 
             for (var node : medicineRowsVBox.getChildren()) {
                 if (node instanceof HBox hbox) {
@@ -520,8 +528,14 @@ public class ThemHoaDonFormController extends DialogPane{
                     DonViTinh dvt = cbUnit.getValue();
                     int soLuong = 0;
                     double donGia = 0;
-                    try { soLuong = Integer.parseInt(txtQuantity.getText().trim()); } catch(Exception ex) {}
-                    try { donGia = parseCurrency(txtPrice.getText().trim()); } catch(Exception ex) {}
+                    try {
+                        soLuong = Integer.parseInt(txtQuantity.getText().trim());
+                    } catch (Exception ex) {
+                    }
+                    try {
+                        donGia = parseCurrency(txtPrice.getText().trim());
+                    } catch (Exception ex) {
+                    }
 
                     if (thuoc != null && dvt != null && soLuong > 0) {
                         String maThuoc = thuoc.getMaThuoc();
@@ -529,6 +543,7 @@ public class ThemHoaDonFormController extends DialogPane{
                         thuocSoLuongMap.put(maThuoc, thuocSoLuongMap.getOrDefault(maThuoc, 0) + soLuong);
                         thuocDonGiaMap.put(maThuoc, donGia);
                         thuocDVTMap.put(maThuoc, dvt);
+                        thuocObjMap.put(maThuoc, thuoc); // Lưu đối tượng Thuoc đầy đủ
                     }
                 }
             }
@@ -538,6 +553,7 @@ public class ThemHoaDonFormController extends DialogPane{
                 int tongSoLuong = thuocSoLuongMap.get(maThuoc);
                 double donGia = thuocDonGiaMap.get(maThuoc);
                 DonViTinh dvt = thuocDVTMap.get(maThuoc);
+                Thuoc thuocDayDu = thuocObjMap.get(maThuoc); // Lấy đối tượng Thuoc đầy đủ
 
                 // Lấy danh sách các lô ChiTietThuoc còn tồn kho cho thuốc này
                 List<ChiTietThuoc> listCTT = chiTietThuocDAO.getAllChiTietThuoc().stream()
@@ -551,21 +567,21 @@ public class ThemHoaDonFormController extends DialogPane{
                     int soLuongXuat = Math.min(ctt.getSoLuong(), soLuongConLai);
                     if (soLuongXuat <= 0) continue;
 
+                    // Đảm bảo ChiTietThuoc có đầy đủ thông tin Thuoc
+                    ctt.setMaThuoc(thuocDayDu);
+
                     ChiTietHoaDon cthd = new ChiTietHoaDon(new HoaDon(maHD), ctt, soLuongXuat, dvt, "Bán", soLuongXuat * donGia);
                     chiTietHoaDonDAO.themChiTietHoaDon(cthd);
+                    listCTHD.add(cthd); // Thêm vào danh sách để xuất PDF
                     // Trừ kho lô này
                     chiTietThuocDAO.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuongXuat);
                     soLuongConLai -= soLuongXuat;
                 }
             }
 
-            // Đóng dialog (nếu cần, có thể show alert thành công ở đây)
+            // Đóng dialog và hiển thị thông báo + xuất hóa đơn với đầy đủ tham số
             this.getScene().getWindow().hide();
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Tạo hoá đơn thành công");
-            successAlert.setHeaderText(null);
-            successAlert.setContentText("Hoá đơn đã được tạo thành công!");
-            successAlert.showAndWait();
+            thongBaoVaXuatHoaDon(hoaDon, listCTHD, tongTienThucTe, thueThucTe);
         });
 
     }
@@ -627,12 +643,12 @@ public class ThemHoaDonFormController extends DialogPane{
         txt_price.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         Button btnRemove = new Button("X");
         btnRemove.setStyle(
-            "-fx-padding: 5 8 5 8;" +
-            "-fx-background-color: #ef4444;" +
-            "-fx-background-radius: 50%;" +
-            "-fx-text-fill: white;" +
-            "-fx-font-size: 14px;" +
-            "-fx-font-weight: bold;"
+                "-fx-padding: 5 8 5 8;" +
+                        "-fx-background-color: #ef4444;" +
+                        "-fx-background-radius: 50%;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-weight: bold;"
         );
         btnRemove.setOnAction(e -> medicineRowsVBox.getChildren().remove(hbox));
         hbox.getChildren().addAll(cbMedicine, cb_unit, txtQuantity, txt_price, btnRemove);
@@ -655,6 +671,7 @@ public class ThemHoaDonFormController extends DialogPane{
             public String toString(Thuoc thuoc) {
                 return thuoc == null ? "" : thuoc.getTenThuoc();
             }
+
             @Override
             public Thuoc fromString(String s) {
                 return thuocList.stream().filter(t -> t.getTenThuoc().equals(s)).findFirst().orElse(null);
@@ -705,11 +722,13 @@ public class ThemHoaDonFormController extends DialogPane{
                 int quantity = 0;
                 try {
                     quantity = Integer.parseInt(txtQuantity.getText().trim());
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 double price = 0;
                 try {
                     price = parseCurrency(txt_price.getText().trim());
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 double taxPercent = 0;
                 Thuoc selectedThuoc = cbMedicine.getValue();
                 if (selectedThuoc != null) {
@@ -820,23 +839,36 @@ public class ThemHoaDonFormController extends DialogPane{
      * dùng để xuất hóa đơn. chỉ cần gọi hàm và truyền tham số hóa đơn, ArrayList trong phương thức , thuế và tiền trong code là ok.
      * dùng thì cứ gọi sao khi thanh toán thành công là được.
      */
-    private void thongBaoVaXuatHoaDon(HoaDon hoaDon,ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
+    private void thongBaoVaXuatHoaDon(HoaDon hoaDon, ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            // Hiển thị thông báo thành công
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Tạo hóa đơn thành công");
+            successAlert.setHeaderText("Hóa đơn " + hoaDon.getMaHD() + " đã được tạo thành công!");
+            successAlert.setContentText("Tổng tiền: " + VND_FORMAT.format(hoaDon.getTongTien()) + "đ\n" +
+                    "Khách hàng: " + hoaDon.getMaKH().getTenKH() + "\n" +
+                    "Ngày tạo: " + hoaDon.getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+            // Thêm nút xuất hóa đơn
+            ButtonType xuatHoaDonButton = new ButtonType("Xuất hóa đơn PDF", ButtonBar.ButtonData.YES);
+            ButtonType dongButton = new ButtonType("Đóng", ButtonBar.ButtonData.NO);
+            successAlert.getButtonTypes().setAll(xuatHoaDonButton, dongButton);
+
             // Try to set owner for the alert
             Window owner = (this.getScene() != null) ? this.getScene().getWindow() : null;
             if (owner == null) {
-                for (Window w : Window.getWindows()) { if (w.isShowing()) { owner = w; break; } }
+                for (Window w : Window.getWindows()) {
+                    if (w.isShowing()) {
+                        owner = w;
+                        break;
+                    }
+                }
             }
-            if (owner != null) alert.initOwner(owner);
+            if (owner != null) successAlert.initOwner(owner);
 
-            alert.setTitle("Thành công");
-            alert.setHeaderText(null);
-            alert.setContentText("Thanh toán phiếu đặt thuốc thành công.\nBạn có muốn xuất hóa đơn?");
+            Optional<ButtonType> result = successAlert.showAndWait();
 
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == xuatHoaDonButton) {
                 try {
                     FileChooser chooser = new FileChooser();
                     chooser.setTitle("Lưu hóa đơn PDF");
@@ -859,6 +891,34 @@ public class ThemHoaDonFormController extends DialogPane{
                             tongTien
                     );
 
+                    System.out.println("===== PREVIEW HÓA ĐƠN =====");
+                    System.out.println("Mã HD: " + hoaDon.getMaHD());
+                    System.out.println("Khách hàng: " + hoaDon.getMaKH().getTenKH());
+                    System.out.println("Ngày tạo: " + hoaDon.getNgayTao());
+                    System.out.println("Thuế: " + VND_FORMAT.format(thue) + "đ");
+                    System.out.println("Tổng tiền: " + VND_FORMAT.format(tongTien) + "đ");
+                    System.out.println("---------------------------");
+
+                    System.out.println("CHI TIẾT HÓA ĐƠN:");
+                    for (ChiTietHoaDon ct : listCTHD) {
+                        String tenThuoc = (ct.getMaCTT() != null && ct.getMaCTT().getMaThuoc() != null)
+                            ? ct.getMaCTT().getMaThuoc().getTenThuoc()
+                            : "N/A";
+                        String donVi = (ct.getMaDVT() != null)
+                            ? ct.getMaDVT().getTenDVT()
+                            : "N/A";
+                        System.out.println(
+                                String.format("- %s | Số lượng: %d | Đơn vị: %s | Thành tiền: %s",
+                                        tenThuoc,
+                                        ct.getSoLuong(),
+                                        donVi,
+                                        VND_FORMAT.format(ct.getThanhTien()) + "đ"
+                                )
+                        );
+                    }
+                    System.out.println("===== END PREVIEW =====");
+
+
                     showMess("Thành công", "Xuất hóa đơn PDF thành công!");
 
                 } catch (Exception ex) {
@@ -869,12 +929,12 @@ public class ThemHoaDonFormController extends DialogPane{
         });
     }
 
-    private void showMess(String tieuDe, String noiDung){
+    private void showMess(String tieuDe, String noiDung) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(tieuDe);
         alert.setHeaderText(null);
         alert.setContentText(noiDung);
         alert.showAndWait();
     }
-}
 
+}

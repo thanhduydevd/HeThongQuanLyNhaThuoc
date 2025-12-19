@@ -526,6 +526,8 @@ public class CapNhatKhachHangController extends ScrollPane {
             javafx.scene.control.Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
             dialog.setDialogPane(suaDialog);
             dialog.setTitle("Cập nhật khách hàng");
+
+
             dialog.showAndWait();
 
         } catch (Exception e) {
