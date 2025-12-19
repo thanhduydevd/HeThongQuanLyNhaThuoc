@@ -174,7 +174,10 @@ public class TimPhieuDatController extends ScrollPane{
         this.setContent(mainVBox);
 
         tvPhieuDat.setPlaceholder(new Label("Không tìm thấy phiếu đặt thuốc"));
+
+
         /** Sự kiện **/
+
         //cài đặt và load data vào giao diện
         loadDataComboBox();
         setupBang();
@@ -191,7 +194,7 @@ public class TimPhieuDatController extends ScrollPane{
                 // Kiểm tra có chọn dòng nào không
 
                 if (selected != null) {
-                    selectedPhieuDatThuoc = selected; // lưu lại để truyền qua form chi tiết
+                    selectedPhieuDatThuoc = selected;
                     XemChiTietPhieuDatFormController xemDialog = new XemChiTietPhieuDatFormController();
 
                     Dialog<Void> dialog = new Dialog<>();

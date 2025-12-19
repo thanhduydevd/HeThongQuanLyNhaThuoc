@@ -27,7 +27,7 @@ public class ThemDonViTinhController extends ScrollPane {
 
     private TextField txtMa,txtTen;
     private TableView<DonViTinh> tableThuoc;
-    private TableColumn<DonViTinh, String> colMaThuoc, colTenThuoc;
+    private TableColumn<DonViTinh, String> colMaThuoc, colTenThuoc,colTrangThai;
     private Button btnThem;
 
     DonViTinh_DAO donViTinh_dao = new DonViTinh_DAO();
@@ -116,8 +116,9 @@ public class ThemDonViTinhController extends ScrollPane {
 
         colMaThuoc = new TableColumn<>("Mã đơn vị tính");
         colTenThuoc = new TableColumn<>("Tên đơn vị tính");
+        colTrangThai = new TableColumn<>("Trạng thái");
 
-        tableThuoc.getColumns().addAll(colMaThuoc, colTenThuoc);
+        tableThuoc.getColumns().addAll(colMaThuoc, colTenThuoc,colTrangThai);
 
         tableThuoc.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -126,7 +127,9 @@ public class ThemDonViTinhController extends ScrollPane {
 
         this.getStylesheets().add(getClass().getResource("/com/antam/app/styles/dashboard_style.css").toExternalForm());
         this.setContent(root);
+
         /** Sự kiện **/
+
         btnThem.setOnAction( e-> {
             try {
                 String ma = txtMa.getText();
@@ -155,6 +158,7 @@ public class ThemDonViTinhController extends ScrollPane {
     private void setupTable() {
         colMaThuoc.setCellValueFactory( e -> new SimpleStringProperty(String.valueOf(e.getValue().getMaDVT())));
         colTenThuoc.setCellValueFactory( e -> new SimpleStringProperty(e.getValue().getTenDVT()));
+        colTrangThai.setCellValueFactory(e-> new SimpleStringProperty(e.getValue().isDelete()? "Đang hoạt động":"Đã xóa"));
     }
 
     private void loadTable() {

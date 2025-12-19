@@ -13,6 +13,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
@@ -24,7 +26,7 @@ import javafx.scene.text.Text;
 public class CapNhatDonViTinhController extends ScrollPane {
     private TextField txtMa,txtTen;
     private TableView<DonViTinh> tableThuoc;
-    private TableColumn<DonViTinh, String> colMaThuoc, colTenThuoc;
+    private TableColumn<DonViTinh, String> colMaThuoc, colTenThuoc,colTrangThai;
     private Button btnXoa,btnCapNhat, btnKhoiPhuc;
 
     DonViTinh_DAO donViTinh_dao = new DonViTinh_DAO();
@@ -143,6 +145,7 @@ public class CapNhatDonViTinhController extends ScrollPane {
 
         colMaThuoc = new TableColumn<>("Mã đơn vị tính");
         colTenThuoc = new TableColumn<>("Tên đơn vị tính");
+        colTrangThai = new TableColumn<>("Trạng thái");
 
         tableThuoc.getColumns().addAll(colMaThuoc, colTenThuoc);
         tableThuoc.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -195,18 +198,53 @@ public class CapNhatDonViTinhController extends ScrollPane {
                 txtTen.setText(selected.getTenDVT());
             }
         });
+
+        btnKhoiPhuc.setOnAction(e->{
+            DonViTinh selected = tableThuoc.getSelectionModel().getSelectedItem();
+            if (selected == null) return;
+
+            if (selected.isDelete()){
+                if (showConfirm()){
+                    String ma = txtMa.getText();
+                    int maInt = Integer.parseInt(ma);
+                    String ten = txtTen.getText();
+                    DonViTinh donViTinh = new DonViTinh(maInt, ten,false);
+                    donViTinh_dao.khoiPhucDonViTinh(donViTinh);
+                    loadTable();
+                }
+            }else{
+                showMess("Thông báo","Đơn vị tính đang hoạt động");
+            }
+        });
     }
+
+    private void showMess(String thôngBáo, String s) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(thôngBáo);
+        alert.setContentText(s);
+        alert.setHeaderText(null);
+        alert.showAndWait();
+    }
+
+    private boolean showConfirm() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận");
+        alert.setHeaderText(null);
+        alert.setContentText("Bạn có chắc chắn muốn thực hiện thao tác này?");
+        Optional<ButtonType> result = alert.showAndWait();
+
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
 
     private void setupTable() {
         colMaThuoc.setCellValueFactory( e -> new SimpleStringProperty(String.valueOf(e.getValue().getMaDVT())));
         colTenThuoc.setCellValueFactory( e -> new SimpleStringProperty(e.getValue().getTenDVT()));
+        colTrangThai.setCellValueFactory(e-> new SimpleStringProperty(e.getValue().isDelete()? "Đang hoạt động":"Đã xóa"));
     }
 
     private void loadTable() {
         listDVT = donViTinh_dao.getTatCaDonViTinh();
-
-        // Loại bỏ các đơn vị đã xóa
-        listDVT.removeIf(DonViTinh::isDelete);
 
         // Cập nhật dữ liệu cho TableView
         tableThuoc.getItems().setAll(listDVT);

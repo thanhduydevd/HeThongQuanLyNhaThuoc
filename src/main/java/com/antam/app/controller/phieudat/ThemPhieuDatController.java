@@ -58,7 +58,6 @@ public class ThemPhieuDatController extends ScrollPane{
     private TableColumn<PhieuDatThuoc,String> colStatus = new TableColumn<>("Trạng thái");
     private TableColumn<PhieuDatThuoc,String> colTotal = new TableColumn<>("Tổng tiền");
 
-    public static PhieuDatThuoc selectedPhieuDatThuoc = null;
     private ArrayList<PhieuDatThuoc> listPDT = PhieuDat_DAO.getAllPhieuDatThuocFromDBS();
     private ArrayList<NhanVien> listNV = NhanVien_DAO.getDsNhanVienformDBS();
     private ObservableList<PhieuDatThuoc> origin;
@@ -238,6 +237,30 @@ public class ThemPhieuDatController extends ScrollPane{
         cbNhanVien.setOnAction(e -> setupListenerComboBox());
         dpstart.setOnAction(e-> setupListenerComboBox());
         dpend.setOnAction(e->setupListenerComboBox());
+
+        //set phiếu đặt được chọn cho xem chi tiết
+        TimPhieuDatController.selectedPhieuDatThuoc = tvPhieuDat.getItems().getFirst();
+
+        tvPhieuDat.setOnMouseClicked(e -> {
+            PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
+            if (e.getClickCount() == 2) {
+
+                // Kiểm tra có chọn dòng nào không
+
+                if (selected != null) {
+                    TimPhieuDatController.selectedPhieuDatThuoc = selected; // lưu lại để truyền qua form chi tiết
+                    XemChiTietPhieuDatFormController xemDialog = new XemChiTietPhieuDatFormController();
+
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setDialogPane(xemDialog);
+                    dialog.setTitle("Chi tiết phiếu đặt");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+
+                    dialog.showAndWait();
+                    loadDataVaoBang();
+                }
+            }
+        });
     }
 
     private VBox createFilterVBox(String label, Control control) {
@@ -318,31 +341,6 @@ public class ThemPhieuDatController extends ScrollPane{
         }
 
         tvPhieuDat.setItems(filter);
-
-        //set phiếu đặt được chọn cho xem chi tiết
-        selectedPhieuDatThuoc = tvPhieuDat.getItems().getFirst();
-
-        tvPhieuDat.setOnMouseClicked(e -> {
-            PhieuDatThuoc selected = tvPhieuDat.getSelectionModel().getSelectedItem();
-            if (e.getClickCount() == 2) {
-
-
-                // Kiểm tra có chọn dòng nào không
-
-                if (selected != null) {
-                    selectedPhieuDatThuoc = selected; // lưu lại để truyền qua form chi tiết
-                    XemChiTietPhieuDatFormController xemDialog = new XemChiTietPhieuDatFormController();
-
-                    Dialog<Void> dialog = new Dialog<>();
-                    dialog.setDialogPane(xemDialog);
-                    dialog.setTitle("Chi tiết phiếu đặt");
-                    dialog.initModality(Modality.APPLICATION_MODAL);
-
-                    dialog.showAndWait();
-                    loadDataVaoBang();
-                }
-            }
-        });
     }
 
     /**

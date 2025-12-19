@@ -233,6 +233,27 @@ public class DonViTinh_DAO {
             return 0;
         }
     }
+
+    public int khoiPhucDonViTinh(DonViTinh dvt){
+        String sql = "UPDATE DonViTinh SET DeleteAt = ? WHERE MaDVT = ?";
+
+        try {
+            // Đảm bảo đã có kết nối tới DB
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+
+            try (PreparedStatement state = con.prepareStatement(sql)) {
+                state.setBoolean(1, false);
+                state.setInt(2, dvt.getMaDVT());
+
+                return state.executeUpdate(); // trả về số dòng bị ảnh hưởng (1 nếu thành công)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
 
 
