@@ -29,6 +29,7 @@ import javafx.stage.Window;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -872,8 +873,14 @@ public class ThemHoaDonFormController extends DialogPane {
                 try {
                     FileChooser chooser = new FileChooser();
                     chooser.setTitle("Lưu hóa đơn PDF");
-                    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
 
+                    // Gợi ý tên file mặc định
+                    String fileName = "HoaDon_"
+                            + hoaDon.getMaHD() + "_"
+                            + LocalDate.now() + ".pdf";
+                    chooser.setInitialFileName(fileName);
+
+                    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
                     File file;
                     if (owner instanceof Stage) {
                         file = chooser.showSaveDialog((Stage) owner);

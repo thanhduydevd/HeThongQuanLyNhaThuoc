@@ -334,6 +334,12 @@ public class CapNhatPhieuDatFormController extends DialogPane{
                 try {
                     FileChooser chooser = new FileChooser();
                     chooser.setTitle("Lưu hóa đơn PDF");
+                    // Gợi ý tên file mặc định
+                    String fileName = "HoaDon_"
+                            + hoaDon.getMaHD() + "_"
+                            + LocalDate.now() + ".pdf";
+                    chooser.setInitialFileName(fileName);
+
                     chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
 
                     File file;
