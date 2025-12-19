@@ -817,10 +817,10 @@ public class ThemHoaDonFormController extends DialogPane{
     }
 
     /**
-     * dùng để xuất hóa đơn. chỉ cần gọi hàm và truyền tham số ArrayList trong phương thức , thuế và tiền trong code là ok.
+     * dùng để xuất hóa đơn. chỉ cần gọi hàm và truyền tham số hóa đơn, ArrayList trong phương thức , thuế và tiền trong code là ok.
      * dùng thì cứ gọi sao khi thanh toán thành công là được.
      */
-    private void thongBaoVaXuatHoaDon(ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
+    private void thongBaoVaXuatHoaDon(HoaDon hoaDon,ArrayList<ChiTietHoaDon> listCTHD, double tongTien, double thue) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             // Try to set owner for the alert
@@ -853,6 +853,7 @@ public class ThemHoaDonFormController extends DialogPane{
 
                     XuatHoaDonPDF.xuatFilePDF(
                             file,
+                            hoaDon,
                             listCTHD,
                             thue,
                             tongTien

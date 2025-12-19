@@ -201,8 +201,9 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         Button btnHuy =  (Button) this.lookupButton(cancelButton);
 
         btnHuy.setOnAction(event -> {
-                showMess("Cảnh báo","Hủy thanh toán");
+
         });
+
     }
 
     private void loadTien() {
@@ -240,7 +241,8 @@ public class CapNhatPhieuDatFormController extends DialogPane{
                 chiTietHoaDonDao.themChiTietHoaDon(i);
                 list.add(i);
             }
-            thongBaoVaXuatHoaDon(list);
+            //xuất pdf phiếu dặt
+            thongBaoVaXuatHoaDon(hoaDon,list);
         }else {
             showMess("Lỗi","Thanh toán phiếu đặt thuốc thất bại");
         }
@@ -312,7 +314,7 @@ public class CapNhatPhieuDatFormController extends DialogPane{
         return df.format(tien);
     }
 
-    private void thongBaoVaXuatHoaDon(ArrayList<ChiTietHoaDon> listCTHD) {
+    private void thongBaoVaXuatHoaDon(HoaDon hoaDon,ArrayList<ChiTietHoaDon> listCTHD) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             // Try to set owner for the alert
@@ -345,6 +347,7 @@ public class CapNhatPhieuDatFormController extends DialogPane{
 
                     XuatHoaDonPDF.xuatFilePDF(
                             file,
+                            hoaDon,
                             listCTHD,
                             tinhThue(),
                             selectedPDT.getTongTien()

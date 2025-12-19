@@ -2,6 +2,7 @@ package com.antam.app.helper;
 
 import com.antam.app.entity.ChiTietHoaDon;
 import com.antam.app.entity.ChiTietPhieuDatThuoc;
+import com.antam.app.entity.HoaDon;
 import com.antam.app.entity.Thuoc;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -31,15 +32,17 @@ public class XuatHoaDonPDF {
      */
     public static void xuatFilePDF(
             File file,
+            HoaDon hoaDon,
             List<ChiTietHoaDon> dsThuoc,
             double thue,
             double tongTien
     ) throws Exception {
 
-        Document document = new Document(PageSize.A4);
+        Document document = new Document(PageSize.A4, 36, 36, 36, 36);
         PdfWriter.getInstance(document, new FileOutputStream(file));
         document.open();
 
+        // ===== FONT =====
         BaseFont bf = BaseFont.createFont(
                 FONT_PATH,
                 BaseFont.IDENTITY_H,
@@ -53,12 +56,28 @@ public class XuatHoaDonPDF {
         // ===== TIÊU ĐỀ =====
         Paragraph title = new Paragraph("HÓA ĐƠN BÁN THUỐC", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
+        title.setSpacingAfter(10);
         document.add(title);
 
-        document.add(new Paragraph("Ngày: " + LocalDate.now(), normalFont));
-        document.add(new Paragraph(" "));
+        // ===== THÔNG TIN HÓA ĐƠN =====
+        PdfPTable infoTable = new PdfPTable(2);
+        infoTable.setWidthPercentage(100);
+        infoTable.setSpacingAfter(15);
+        infoTable.setWidths(new float[]{1, 2});
 
-        // ===== BẢNG CHI TIẾT =====
+        addInfo(infoTable, "Mã hóa đơn:", hoaDon.getMaHD(), boldFont, normalFont);
+        addInfo(infoTable, "Ngày tạo:", hoaDon.getNgayTao().toString(), boldFont, normalFont);
+        addInfo(infoTable, "Nhân viên:", hoaDon.getMaNV().getHoTen(), boldFont, normalFont);
+        addInfo(infoTable, "Khách hàng:", hoaDon.getMaKH().getTenKH(), boldFont, normalFont);
+
+        String km = hoaDon.getMaKM() != null
+                ? hoaDon.getMaKM().getTenKM()
+                : "Không có";
+        addInfo(infoTable, "Khuyến mãi:", km, boldFont, normalFont);
+
+        document.add(infoTable);
+
+        // ===== BẢNG CHI TIẾT THUỐC =====
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
         table.setWidths(new float[]{1, 4, 2, 2, 2});
@@ -83,12 +102,20 @@ public class XuatHoaDonPDF {
 
         document.add(table);
 
+        // ===== TỔNG KẾT =====
         document.add(new Paragraph(" "));
         document.add(new Paragraph("Thuế: " + formatTien(thue), normalFont));
-        document.add(new Paragraph("TỔNG THANH TOÁN: " + formatTien(tongTien), titleFont));
+
+        Paragraph total = new Paragraph(
+                "TỔNG THANH TOÁN: " + formatTien(tongTien),
+                titleFont
+        );
+        total.setAlignment(Element.ALIGN_RIGHT);
+        document.add(total);
 
         document.close();
     }
+
 
     // ===== HỖ TRỢ =====
     private static void addHeader(PdfPTable table, String text, Font font) {
@@ -98,6 +125,26 @@ public class XuatHoaDonPDF {
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         table.addCell(cell);
     }
+
+    private static void addInfo(
+            PdfPTable table,
+            String label,
+            String value,
+            Font bold,
+            Font normal
+    ) {
+        PdfPCell c1 = new PdfPCell(new Phrase(label, bold));
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setPadding(5);
+
+        PdfPCell c2 = new PdfPCell(new Phrase(value, normal));
+        c2.setBorder(Rectangle.NO_BORDER);
+        c2.setPadding(5);
+
+        table.addCell(c1);
+        table.addCell(c2);
+    }
+
 
     private static String formatTien(double tien) {
         return String.format("%,.0f đ", tien);

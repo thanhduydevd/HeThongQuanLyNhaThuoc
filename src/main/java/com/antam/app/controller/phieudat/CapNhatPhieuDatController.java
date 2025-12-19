@@ -252,19 +252,15 @@ public class CapNhatPhieuDatController extends ScrollPane{
                 e.getButton() == MouseButton.PRIMARY) {
                 // Kiểm tra có chọn dòng nào không
                 if (selected != null) {
-                    if (selected.isThanhToan()){
-                        showMess("Cảnh báo", "Phiếu đặt thuốc đã được thanh toán");
-                    }else{
-                        selectedPDT = selected;
-                        // lưu lại để truyền qua form chi tiết
-                        CapNhatPhieuDatFormController capNhatDialog = new CapNhatPhieuDatFormController();
-                        Dialog<DialogPane> dialog = new Dialog<>();
-                        dialog.setDialogPane(capNhatDialog);
-                        dialog.setTitle("Chi tiết phiếu đặt");
-                        dialog.initModality(Modality.APPLICATION_MODAL);
-                        dialog.showAndWait();
-                        loadDataVaoBang();
-                    }
+                    selectedPDT = selected;
+                    // lưu lại để truyền qua form chi tiết
+                    CapNhatPhieuDatFormController capNhatDialog = new CapNhatPhieuDatFormController();
+                    Dialog<DialogPane> dialog = new Dialog<>();
+                    dialog.setDialogPane(capNhatDialog);
+                    dialog.setTitle("Chi tiết phiếu đặt");
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.showAndWait();
+                    loadDataVaoBang();
                 }
             }
         });
