@@ -481,7 +481,8 @@ public class ThongKeDoanhThuController extends ScrollPane {
     }
 
     /*
-     * Tính phần trăm thay đổi so với kỳ trước và cập nhật nút tương ứng
+     * Tính phần trăm thay đổi so với kỳ trước (thời gian) và cập nhật nút tương ứng
+     * ((Giá trị hiện tại - Giá trị trước) / Giá trị trước) × 100
      * */
     private void calculateChange() {
         // Tính kỳ trước
