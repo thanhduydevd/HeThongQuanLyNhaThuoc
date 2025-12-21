@@ -79,7 +79,7 @@ public class KhachHang {
     public void setSoDienThoai(String soDienThoai) {
         if (soDienThoai == null || soDienThoai.isEmpty()) {
             throw new IllegalArgumentException("Số điện thoại không được để trống");
-        } else if (!soDienThoai.matches("^0[35679]\\d{8}$")) {
+        } else if (!soDienThoai.matches("^\\d{9}$")) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ");
         }
         this.soDienThoai = soDienThoai;
