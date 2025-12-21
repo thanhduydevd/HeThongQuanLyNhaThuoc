@@ -200,7 +200,7 @@ public class CapNhatNhanVienFormController extends DialogPane{
 
         // Validation số điện thoại
         txtSDT.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.matches("^0[35679]\\d{8}$") || newText.isBlank())
+            if (newText.matches("^0\\d{9}$") || newText.isBlank())
                 txtSDT.setStyle("");
             else
                 txtSDT.setStyle("-fx-border-color: red; -fx-border-width: 2px;");

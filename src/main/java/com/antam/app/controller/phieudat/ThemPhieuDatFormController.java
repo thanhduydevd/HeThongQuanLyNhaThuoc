@@ -776,7 +776,7 @@ public class ThemPhieuDatFormController extends DialogPane{
             txtSoDienThoai.requestFocus();;
             return false;
         }
-        if (!txtSoDienThoai.getText().matches("^0[35679]\\d{8}$")){
+        if (!txtSoDienThoai.getText().matches("^0\\d{9}$")){
             showMess("Thông tin số điện thọai khách hàng không hợp lệ", "Số điện thoại khách hàng phải có 10 số và bắt đầu với 03, 05, 06, 07, 09.");
             txtSoDienThoai.requestFocus();;
             return false;

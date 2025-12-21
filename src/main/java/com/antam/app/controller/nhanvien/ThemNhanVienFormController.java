@@ -216,7 +216,7 @@ public class ThemNhanVienFormController extends DialogPane{
             System.out.println("Các field rỗng");
             return null;
         } else if (
-                !txtSDT.getText().matches("^0[35679]\\d{8}$") ||
+                !txtSDT.getText().matches("^0\\d{9}$") ||
                         !txtEmail.getText().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
         ) {
             System.out.println("Không đúng định dạng");
