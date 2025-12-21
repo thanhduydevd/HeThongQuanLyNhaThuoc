@@ -230,7 +230,7 @@ public class TraThuocFormController extends DialogPane{
                 }
 
                 for (ChiTietHoaDon ct : selectedItems) {
-                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả");
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả", ct.getSoLuong(), ct.getThanhTien());
 
                     switch (lyDoTra) {
                         // Các lý do KHÔNG cộng lại vào kho

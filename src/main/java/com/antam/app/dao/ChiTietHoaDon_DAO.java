@@ -153,21 +153,67 @@ public class ChiTietHoaDon_DAO {
      * @param tinhTrang trạng thái mới
      * @return true nếu xóa thành công, false nếu xóa thất bại
      */
-    public boolean xoaMemChiTietHoaDon(String maHD, int maCTT, String tinhTrang){
-        String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaCTT = ?";
+    public boolean xoaMemChiTietHoaDon(String maHD, int maCTT, String tinhTrang, int soLuong, double thanhTien){
+        String sql = "UPDATE ChiTietHoaDon SET TinhTrang = ? WHERE MaHD = ? AND MaCTT = ? AND TinhTrang <> N'Trả Khi Đổi'";
+        String checkSql = "SELECT SoLuong, ThanhTien FROM ChiTietHoaDon WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = N'Trả Khi Đổi'";
+        String updateSql = "UPDATE ChiTietHoaDon SET SoLuong = SoLuong + ?, ThanhTien = ThanhTien + ? WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = N'Trả Khi Đổi'";
+        int count = 0;
         try{
             Connection con = ConnectDB.getConnection();
             if (con == null || con.isClosed()) {
                 ConnectDB.getInstance().connect();
                 con = ConnectDB.getConnection();
             }
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, tinhTrang);
-            statement.setString(2, maHD);
-            statement.setInt(3, maCTT);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            // Kiểm tra xem đã tồn tại chưa
+            PreparedStatement checkStmt = con.prepareStatement(checkSql);
+            checkStmt.setString(1, maHD);
+            checkStmt.setInt(2, maCTT);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                count++;
+            }
+
+            if (count > 0) {
+                // Đã tồn tại -> UPDATE cộng thêm số lượng và thành tiền
+                PreparedStatement updateStmt = con.prepareStatement(updateSql);
+                updateStmt.setInt(1, soLuong);
+                updateStmt.setDouble(2, thanhTien);
+                updateStmt.setString(3, maHD);
+                updateStmt.setInt(4, maCTT);
+                int rowsAffected = updateStmt.executeUpdate();
+                return rowsAffected > 0;
+            } else {
+                PreparedStatement statement = con.prepareStatement(sql);
+                statement.setString(1, tinhTrang);
+                statement.setString(2, maHD);
+                statement.setInt(3, maCTT);
+                int rowsAffected = statement.executeUpdate();
+                return rowsAffected > 0;
+            }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean checkChiTietHoaDon(String maHD, int maCTT) {
+        String sql = "SELECT COUNT(*) AS count FROM ChiTietHoaDon WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = N'Trả Khi Đổi'";
+        try {
+            Connection con = ConnectDB.getConnection();
+            if (con == null || con.isClosed()) {
+                ConnectDB.getInstance().connect();
+                con = ConnectDB.getConnection();
+            }
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, maHD);
+            statement.setInt(2, maCTT);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0;
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -231,8 +277,6 @@ public class ChiTietHoaDon_DAO {
      */
 
     public boolean themChiTietHoaDon1(ChiTietHoaDon cthd) {
-        String countSql = "SELECT COUNT(*) AS cnt FROM ChiTietHoaDon WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = ?";
-        String updateSql = "UPDATE ChiTietHoaDon SET SoLuong = SoLuong + ?, ThanhTien = ThanhTien + ? WHERE MaHD = ? AND MaCTT = ? AND TinhTrang = ?";
         String insertSql = "INSERT INTO ChiTietHoaDon (MaHD, MaCTT, SoLuong, MaDVT, TinhTrang, ThanhTien) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
@@ -242,32 +286,6 @@ public class ChiTietHoaDon_DAO {
                 con = ConnectDB.getConnection();
             }
 
-            // 1️⃣ Đếm xem có bao nhiêu record "Trả Khi Đổi"
-            PreparedStatement countStmt = con.prepareStatement(countSql);
-            countStmt.setString(1, cthd.getMaHD().getMaHD());
-            countStmt.setInt(2, cthd.getMaCTT().getMaCTT());
-            countStmt.setString(3, "Trả Khi Đổi");
-
-            ResultSet rs = countStmt.executeQuery();
-            int count = 0;
-            if (rs.next()) {
-                count = rs.getInt("cnt");
-            }
-
-            // 2️⃣ Nếu đã có đúng 2 dòng → UPDATE (cộng dồn)
-            if (count == 2) {
-                PreparedStatement updateStmt = con.prepareStatement(updateSql);
-                updateStmt.setInt(1, cthd.getSoLuong());
-                updateStmt.setDouble(2, cthd.getThanhTien());
-                updateStmt.setString(3, cthd.getMaHD().getMaHD());
-                updateStmt.setInt(4, cthd.getMaCTT().getMaCTT());
-                updateStmt.setString(5, "Trả Khi Đổi");
-
-                int rowsAffected = updateStmt.executeUpdate();
-                return rowsAffected > 0;
-            }
-
-            // 3️⃣ Nếu ít hơn 2 dòng → INSERT
             PreparedStatement insertStmt = con.prepareStatement(insertSql);
             insertStmt.setString(1, cthd.getMaHD().getMaHD());
             insertStmt.setInt(2, cthd.getMaCTT().getMaCTT());

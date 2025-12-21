@@ -334,7 +334,7 @@ public class DoiThuocFormController extends DialogPane{
             }
             else {
                 for (ChiTietHoaDon ct : selectedItems) {
-                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả Khi Đổi");
+                    chiTietHoaDon_dao.xoaMemChiTietHoaDon(ct.getMaHD().getMaHD(), ct.getMaCTT().getMaCTT(), "Trả Khi Đổi", ct.getSoLuong(), ct.getThanhTien());
                     switch (lyDo) {
                         // Các lý do KHÔNG cộng lại vào kho
                         case "Hết hạn sử dụng":
@@ -487,8 +487,24 @@ public class DoiThuocFormController extends DialogPane{
                 "-fx-padding: 10;"
         );
 
+        // Kết nối DB
+        try { Connection con = ConnectDB.getInstance().connect(); }
+        catch (SQLException e) { throw new RuntimeException(e); }
         CheckBox checkBox = new CheckBox();
         checkBox.setOnAction(event -> {
+            boolean check = chiTietHoaDon_dao.checkChiTietHoaDon(
+                    chiTietHoaDon.getMaHD().getMaHD(),
+                    chiTietHoaDon.getMaCTT().getMaCTT()
+            );
+            if (check) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cảnh báo");
+                alert.setHeaderText("Thuốc đã được thuốc không đươc đổi 2 lần");
+                alert.setContentText("Vui lòng kiểm tra lại chi tiết hóa đơn.");
+                alert.showAndWait();
+                checkBox.setSelected(false);
+                return;
+            }
             if (chiTietHoaDon.getTinhTrang().equals("Bán")) {
                 soLuongThuocDoi += checkBox.isSelected() ? 1 : -1;
             }
@@ -499,10 +515,6 @@ public class DoiThuocFormController extends DialogPane{
             }
             tinhTongTien();
         });
-
-        // Kết nối DB
-        try { Connection con = ConnectDB.getInstance().connect(); }
-        catch (SQLException e) { throw new RuntimeException(e); }
         ChiTietThuoc ctt = chiTietThuoc_dao.getChiTietThuoc(chiTietHoaDon.getMaCTT().getMaCTT());
         Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
         Text txtMaThuoc = new Text(t.getTenThuoc());
