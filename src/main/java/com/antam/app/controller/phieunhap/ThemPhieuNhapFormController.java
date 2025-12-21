@@ -293,7 +293,8 @@ public class ThemPhieuNhapFormController extends DialogPane{
         //Đơn vị tính
         ComboBox<DonViTinh> cbDonViTinh = new ComboBox<>();
         cbDonViTinh.setPrefWidth(150);
-        cbDonViTinh.setPromptText("Chọn đơn vị tính");
+        cbDonViTinh.setPromptText("Đơn vị tính");
+        cbDonViTinh.setDisable(true);
 
         VBox vbDonViTinh = new VBox();
         vbDonViTinh.getChildren().addAll(new Text("Đơn vị tính:"), cbDonViTinh);

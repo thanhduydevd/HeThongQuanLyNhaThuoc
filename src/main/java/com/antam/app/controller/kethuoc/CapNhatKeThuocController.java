@@ -202,11 +202,11 @@ public class CapNhatKeThuocController extends ScrollPane{
         });
 
         btnSuaKe.setOnAction(e -> {
-            if (kiemTraHopLe()){
+            if (kiemTraHopLe()) {
                 ke_DAO.suaKe(new Ke(tfMaKe.getText(), tfTenKe.getText(), tfLoaiKe.getText(), false));
-                showCanhBao("Thông báo","Cập nhật kệ thành công!");
+                showCanhBao("Thông báo", "Cập nhật kệ thành công!");
                 //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
+                dsKeThuoc = ke_DAO.getTatCaKeThuoc();
                 data.setAll(dsKeThuoc);
                 tbKeThuoc.setItems(data);
                 //Xoá trắng các trường nhập liệu
@@ -218,16 +218,22 @@ public class CapNhatKeThuocController extends ScrollPane{
 
         btnXoaKe.setOnAction(e -> {
             if(!tfMaKe.getText().isEmpty()){
-                ke_DAO.xoaKe(tfMaKe.getText());
-                showCanhBao("Thông báo","Xoá kệ thành công!");
-                //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
-                data.setAll(dsKeThuoc);
-                tbKeThuoc.setItems(data);
-                //Xoá trắng các trường nhập liệu
-                tfMaKe.clear();
-                tfTenKe.clear();
-                tfLoaiKe.clear();
+                Ke selected = tbKeThuoc.getSelectionModel().getSelectedItem();
+                if (selected == null) return;
+                if (!selected.isDeleteAt()) {
+                    ke_DAO.xoaKe(tfMaKe.getText());
+                    showCanhBao("Thông báo", "Xoá kệ thành công!");
+                    //Cập nhật lại bảng
+                    dsKeThuoc = ke_DAO.getTatCaKeThuoc();
+                    data.setAll(dsKeThuoc);
+                    tbKeThuoc.setItems(data);
+                    //Xoá trắng các trường nhập liệu
+                    tfMaKe.clear();
+                    tfTenKe.clear();
+                    tfLoaiKe.clear();
+                }else{
+                    showCanhBao("Thông báo","Kệ đang bị xoá!");
+                }
             }else{
                 showCanhBao("Lỗi xoá kệ","Vui lòng chọn kệ cần xoá!");
             }
@@ -235,16 +241,22 @@ public class CapNhatKeThuocController extends ScrollPane{
 
         btnKhoiPhucKe.setOnAction(e -> {
             if(!tfMaKe.getText().isEmpty()){
-                ke_DAO.khoiPhucKe(tfMaKe.getText());
-                showCanhBao("Thông báo","Khôi phục kệ thành công!");
-                //Cập nhật lại bảng
-                dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
-                data.setAll(dsKeThuoc);
-                tbKeThuoc.setItems(data);
-                //Xoá trắng các trường nhập liệu
-                tfMaKe.clear();
-                tfTenKe.clear();
-                tfLoaiKe.clear();
+                Ke selected = tbKeThuoc.getSelectionModel().getSelectedItem();
+                if (selected == null) return;
+                if (selected.isDeleteAt()){
+                    ke_DAO.khoiPhucKe(tfMaKe.getText());
+                    showCanhBao("Thông báo","Khôi phục kệ thành công!");
+                    //Cập nhật lại bảng
+                    dsKeThuoc =  ke_DAO.getTatCaKeThuoc();
+                    data.setAll(dsKeThuoc);
+                    tbKeThuoc.setItems(data);
+                    //Xoá trắng các trường nhập liệu
+                    tfMaKe.clear();
+                    tfTenKe.clear();
+                    tfLoaiKe.clear();
+                }else {
+                    showCanhBao("Thông báo","Kệ đang hoạt động!");
+                }
             }else{
                 showCanhBao("Lỗi khôi phục kệ","Vui lòng chọn kệ cần khôi phục!");
             }
@@ -289,7 +301,7 @@ public class CapNhatKeThuocController extends ScrollPane{
             return false;
         }
 
-        if (ke_DAO.getKeTheoName(tenKe) != null){
+        if (ke_DAO.isTenKeTrung(tenKe, maKe)){
             showCanhBao("Lỗi nhập liệu","Tên kệ đã tồn tại, vui lòng nhập tên khác!");
             tfTenKe.requestFocus();
             return false;

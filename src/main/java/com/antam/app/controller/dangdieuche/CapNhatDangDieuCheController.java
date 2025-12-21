@@ -212,15 +212,21 @@ public class CapNhatDangDieuCheController extends ScrollPane{
 
         btnXoa.setOnAction(e -> {
             if(!tfMaDangDieuChe.getText().isEmpty()){
-                DangDieuChe_DAO.xoaDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
-                showCanhBao("Thông báo","Xoá dạng điều chế thành công!");
-                //Cập nhật lại bảng
-                dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
-                data.setAll(dsDangDieuCheThuoc);
-                tbDangDieuChe.setItems(data);
-                //Xoá trắng các trường nhập liệu
-                tfMaDangDieuChe.clear();
-                tfTenDangDieuChe.clear();
+                DangDieuChe selected = tbDangDieuChe.getSelectionModel().getSelectedItem();
+                if (selected == null) return;
+                if (!selected.isDeleteAt()) {
+                    DangDieuChe_DAO.xoaDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
+                    showCanhBao("Thông báo","Xoá dạng điều chế thành công!");
+                    //Cập nhật lại bảng
+                    dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
+                    data.setAll(dsDangDieuCheThuoc);
+                    tbDangDieuChe.setItems(data);
+                    //Xoá trắng các trường nhập liệu
+                    tfMaDangDieuChe.clear();
+                    tfTenDangDieuChe.clear();
+                }else{
+                    showCanhBao("Thông báo","Dạng điều chế đang bị xoá!");
+                }
             }else{
                 showCanhBao("Lỗi","Vui lòng chọn dạng điều chế cần xoá!");
             }
@@ -228,15 +234,21 @@ public class CapNhatDangDieuCheController extends ScrollPane{
 
         btnKhoiPhuc.setOnAction(e -> {
             if(!tfMaDangDieuChe.getText().isEmpty()){
-                DangDieuChe_DAO.khoiPhucDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
-                showCanhBao("Thông báo","Khôi phục dạng điều chế thành công!");
-                //Cập nhật lại bảng
-                dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
-                data.setAll(dsDangDieuCheThuoc);
-                tbDangDieuChe.setItems(data);
-                //Xoá trắng các trường nhập liệu
-                tfMaDangDieuChe.clear();
-                tfTenDangDieuChe.clear();
+                DangDieuChe selected = tbDangDieuChe.getSelectionModel().getSelectedItem();
+                if (selected == null) return;
+                if (selected.isDeleteAt()){
+                    DangDieuChe_DAO.khoiPhucDangDieuChe(Integer.parseInt(tfMaDangDieuChe.getText()));
+                    showCanhBao("Thông báo","Khôi phục dạng điều chế thành công!");
+                    //Cập nhật lại bảng
+                    dsDangDieuCheThuoc =  DangDieuChe_DAO.getTatCaDangDieuChe();
+                    data.setAll(dsDangDieuCheThuoc);
+                    tbDangDieuChe.setItems(data);
+                    //Xoá trắng các trường nhập liệu
+                    tfMaDangDieuChe.clear();
+                    tfTenDangDieuChe.clear();
+                }else{
+                    showCanhBao("Thông báo","Dạng điều chế đang hoạt động!");
+                }
             }else{
                 showCanhBao("Lỗi","Vui lòng chọn dạng điều chế cần khôi phục!");
             }
