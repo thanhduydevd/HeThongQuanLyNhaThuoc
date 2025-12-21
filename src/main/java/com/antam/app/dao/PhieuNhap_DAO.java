@@ -46,24 +46,19 @@ public class PhieuNhap_DAO {
     }
 
     /* Duy- Cập nhật trạng thái phiếu nhập */
-    public boolean suaTrangThaiPhieuNhap(String maPhieuNhap) {
-
+    public boolean suaTrangThaiPhieuNhap(String maPhieuNhap){
         String sql = "UPDATE PhieuNhap SET DeleteAt = 0 WHERE MaPhieuNhap = ?";
-
-        try (
-                Connection con = ConnectDB.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)
-        ) {
+        try {
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, maPhieuNhap);
-            return ps.executeUpdate() > 0;
-
+            int kq = ps.executeUpdate();
+            return kq > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
     }
-
 
     /* Duy - Tạo mã phiêu nhập tự động */
     public String taoMaPhieuNhapTuDong(){
@@ -154,60 +149,30 @@ public class PhieuNhap_DAO {
     }
 
     /* Duy - Lấy danh sách phiếu nhập theo trạng thái */
-    public ArrayList<PhieuNhap> getDanhSachPhieuNhapTheoTrangThai(boolean isDeleted) {
-
+    public ArrayList<PhieuNhap> getDanhSachPhieuNhapTheoTrangThai(Boolean isDeleted){
         ArrayList<PhieuNhap> list = new ArrayList<>();
+        String sql = "SELECT * FROM PhieuNhap as P JOIN NhanVien as N on N.MaNV = P.MaNV WHERE P.DeleteAt = " + (isDeleted ? "1" : "0") + " ORDER BY P.MaPhieuNhap DESC";
 
-        String sql = """
-        SELECT 
-            P.MaPhieuNhap,
-            P.NhaCungCap,
-            P.NgayNhap,
-            P.DiaChi,
-            P.LyDo,
-            P.TongTien,
-            P.DeleteAt,
-            N.MaNV,
-            N.HoTen
-        FROM PhieuNhap P
-        JOIN NhanVien N ON N.MaNV = P.MaNV
-        WHERE P.DeleteAt = ?
-        ORDER BY P.MaPhieuNhap DESC
-        """;
-
-        try (
-                Connection con = ConnectDB.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)
-        ) {
-
-            ps.setBoolean(1, isDeleted);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-
-                    PhieuNhap pn = new PhieuNhap(
-                            rs.getString("MaPhieuNhap"),
-                            rs.getString("NhaCungCap"),
-                            rs.getDate("NgayNhap").toLocalDate(),
-                            rs.getString("DiaChi"),
-                            rs.getString("LyDo"),
-                            new NhanVien(
-                                    rs.getString("MaNV"),
-                                    rs.getString("HoTen")
-                            ),
-                            rs.getDouble("TongTien"),
-                            rs.getBoolean("DeleteAt")
-                    );
-
-                    list.add(pn);
-                }
+        try{
+            Connection con = ConnectDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                String maPhieuNhap = rs.getString("MaPhieuNhap");
+                String nhaCungCap = rs.getString("NhaCungCap");
+                LocalDate ngayNhap = rs.getDate("NgayNhap").toLocalDate();
+                String diaChi = rs.getString("DiaChi");
+                String maNhanVien = rs.getString("MaNV");
+                String tenNhanVien = rs.getString("HoTen");
+                String lyDo = rs.getString("LyDo");
+                double tongTien = rs.getDouble("TongTien");
+                boolean deleteAt = rs.getBoolean("DeleteAt");
+                PhieuNhap pn = new PhieuNhap(maPhieuNhap, nhaCungCap, ngayNhap, diaChi, lyDo, new NhanVien(maNhanVien, tenNhanVien), tongTien, deleteAt);
+                list.add(pn);
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi lấy danh sách phiếu nhập theo trạng thái", e);
+            throw new RuntimeException(e);
         }
-
         return list;
     }
-
 }
