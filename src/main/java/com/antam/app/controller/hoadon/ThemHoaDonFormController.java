@@ -374,8 +374,8 @@ public class ThemHoaDonFormController extends DialogPane {
                 e.consume();
                 return;
             }
-            if (!soDienThoai.matches("\\d{10}")) {
-                txtWarning.setText("Số điện thoại phải là 10 chữ số!");
+            if (!soDienThoai.matches("0\\d{9}")) {
+                txtWarning.setText("Số điện thoại phải là 10 chữ số và bắt đầu bằng số 0!");
                 txtWarning.setVisible(true);
                 e.consume();
                 return;
