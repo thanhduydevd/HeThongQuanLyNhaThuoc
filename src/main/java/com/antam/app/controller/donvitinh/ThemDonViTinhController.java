@@ -158,7 +158,7 @@ public class ThemDonViTinhController extends ScrollPane {
     private void setupTable() {
         colMaThuoc.setCellValueFactory( e -> new SimpleStringProperty(String.valueOf(e.getValue().getMaDVT())));
         colTenThuoc.setCellValueFactory( e -> new SimpleStringProperty(e.getValue().getTenDVT()));
-        colTrangThai.setCellValueFactory(e-> new SimpleStringProperty(e.getValue().isDelete()? "Đang hoạt động":"Đã xóa"));
+        colTrangThai.setCellValueFactory(e-> new SimpleStringProperty(e.getValue().isDelete()? "Đã xóa":"Đang hoạt động"));
     }
 
     private void loadTable() {
