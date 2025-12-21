@@ -7,9 +7,12 @@ package com.antam.app.helper;/*
 import com.antam.app.entity.KhachHang;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TuDongGoiY {
 
@@ -31,73 +34,110 @@ public class TuDongGoiY {
      */
     private static boolean dangChonGoiY = false;
 
-    private static void taoGoiY(TextField textField,
-                                ObservableList<KhachHang> dsKhach,
-                                boolean timTheoTen,
-                                TextField textFieldConLai) {
-
+    private static void taoGoiY(
+            TextField textField,
+            ObservableList<KhachHang> dsKhach,
+            boolean timTheoTen,
+            TextField textFieldConLai
+    ) {
         ContextMenu menuGoiY = new ContextMenu();
+        AtomicBoolean dangChon = new AtomicBoolean(false);
 
         textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (dangChonGoiY || newVal == null || newVal.isEmpty()) {
+
+            if (newVal == null) return;
+
+            final String keyword = newVal.trim();
+            if (keyword.isEmpty()) return;
+
+
+            if (dangChon.get() || newVal == null) {
                 menuGoiY.hide();
                 return;
             }
 
-            FilteredList<KhachHang> listLoc = dsKhach.filtered(kh ->
-                    timTheoTen
-                            ? kh.getTenKH().toLowerCase().contains(newVal.toLowerCase())
-                            : kh.getSoDienThoai().contains(newVal)
-            );
+            newVal = newVal.trim();
+            if (newVal.isEmpty()) {
+                menuGoiY.hide();
+                return;
+            }
+
+            // Điều kiện tối thiểu
+            if (timTheoTen && newVal.length() < 2) return;
+            if (!timTheoTen && newVal.length() < 3) return;
+
+            FilteredList<KhachHang> listLoc = dsKhach.filtered(kh -> {
+                if (timTheoTen) {
+                    return kh.getTenKH() != null
+                            && kh.getTenKH().toLowerCase()
+                            .startsWith(keyword.toLowerCase());
+                } else {
+                    return kh.getSoDienThoai() != null
+                            && kh.getSoDienThoai().startsWith(keyword);
+                }
+            });
 
             if (listLoc.isEmpty()) {
                 menuGoiY.hide();
                 return;
             }
 
+            // Nếu chỉ có 1 kết quả và nhập trùng → không hiện menu
+            if (listLoc.size() == 1) {
+                KhachHang kh = listLoc.get(0);
+                if ((timTheoTen && kh.getTenKH().equalsIgnoreCase(newVal)) ||
+                        (!timTheoTen && kh.getSoDienThoai().equals(newVal))) {
+                    menuGoiY.hide();
+                    return;
+                }
+            }
+
             menuGoiY.getItems().clear();
 
+            int count = 0;
             for (KhachHang kh : listLoc) {
+                if (count++ >= 5) break;
+
                 String label = kh.getTenKH() + " — " + kh.getSoDienThoai();
                 MenuItem item = new MenuItem(label);
 
                 item.setOnAction(e -> {
-                    chonKhach(kh, textField, textFieldConLai, timTheoTen, menuGoiY);
+                    dangChon.set(true);
+                    if (timTheoTen) {
+                        textField.setText(kh.getTenKH());
+                        textFieldConLai.setText(kh.getSoDienThoai());
+                    } else {
+                        textField.setText(kh.getSoDienThoai());
+                        textFieldConLai.setText(kh.getTenKH());
+                    }
+                    textField.positionCaret(textField.getText().length());
+                    menuGoiY.hide();
+                    dangChon.set(false);
                 });
 
                 menuGoiY.getItems().add(item);
             }
 
-            if (!menuGoiY.isShowing()) {
-                menuGoiY.show(textField,
-                        textField.localToScreen(textField.getBoundsInLocal()).getMinX(),
-                        textField.localToScreen(textField.getBoundsInLocal()).getMaxY()
-                );
-            }
+            Bounds b = textField.localToScreen(textField.getBoundsInLocal());
+            menuGoiY.show(textField, b.getMinX(), b.getMaxY());
         });
 
-        // ENTER = chọn item đầu tiên & đóng menu
         textField.setOnKeyPressed(e -> {
             switch (e.getCode()) {
-                case ENTER:
+                case ENTER -> {
                     if (menuGoiY.isShowing() && !menuGoiY.getItems().isEmpty()) {
                         menuGoiY.getItems().get(0).fire();
                     }
-                    break;
-                case TAB:
-                case ESCAPE:
-                    menuGoiY.hide();
-                    break;
+                }
+                case TAB, ESCAPE -> menuGoiY.hide();
             }
         });
 
-        // Mất focus là đóng menu
-        textField.focusedProperty().addListener((obs, old, isFocused) -> {
-            if (!isFocused) {
-                menuGoiY.hide();
-            }
+        textField.focusedProperty().addListener((obs, o, focused) -> {
+            if (!focused) menuGoiY.hide();
         });
     }
+
 
     private static void chonKhach(KhachHang kh,
                                   TextField textField,
