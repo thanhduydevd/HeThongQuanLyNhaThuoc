@@ -154,7 +154,7 @@ public class KhungChinhController extends BorderPane {
         subMenuDonViTinh = createSubMenu("Thêm đơn vị tính", "Cập nhật đơn vị tính");
         subMenuKhuyenMai = createSubMenu("Tìm khuyến mãi", "Thêm khuyến mãi", "Cập nhật khuyến mãi", "Khôi phục khuyến mãi");
         subMenuPhieuNhap = createSubMenu("Tìm phiếu nhập", "Thêm phiếu nhập", "Cập nhật phiếu nhập", "Khôi phục phiếu nhập");
-        subMenuKhachHang = createSubMenu("Tìm khách hàng", "Cập nhật khách hàng", "Khôi phục khách hàng");
+        subMenuKhachHang = createSubMenu("Tìm khách hàng", "Cập nhật khách hàng");
         subMenuNhanVien = createSubMenu("Tìm nhân viên", "Thêm nhân viên", "Cập nhật nhân viên", "Khôi phục nhân viên");
         subMenuCaiDat = createSubMenu("Cài đặt tài khoản");
 

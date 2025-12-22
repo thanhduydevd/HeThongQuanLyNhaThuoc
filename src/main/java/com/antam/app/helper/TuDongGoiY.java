@@ -62,7 +62,7 @@ public class TuDongGoiY {
                 return;
             }
 
-            // Điều kiện tối thiểu
+            // Điều kiện số kí tự tối thiểu
             if (timTheoTen && newVal.length() < 2) return;
             if (!timTheoTen && newVal.length() < 3) return;
 
