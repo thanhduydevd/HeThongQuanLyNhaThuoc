@@ -408,7 +408,7 @@ public class ThemPhieuDatFormController extends DialogPane{
                 return;
             }
 
-            if (!newValue.matches("^0[35679]\\d{8}$")) {
+            if (!newValue.matches("^0\\d{9}$")) {
                 txtCanhBaoSDT.setText("Số điện thoại không hợp lệ");
             } else {
                 txtCanhBaoSDT.setText("");
