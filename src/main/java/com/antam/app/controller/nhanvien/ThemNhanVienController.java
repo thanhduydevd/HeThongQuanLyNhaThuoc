@@ -140,7 +140,7 @@ public class ThemNhanVienController extends ScrollPane{
             ThemNhanVienFormController themDialog = new ThemNhanVienFormController();
             Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
             dialog.setDialogPane(themDialog);
-            dialog.setTitle("Chi tiết khách hàng");
+            dialog.setTitle("Thêm khách hàng");
             dialog.showAndWait();
             listNV = NhanVien_DAO.getDsNhanVienformDBS();
             loadNhanVien();
