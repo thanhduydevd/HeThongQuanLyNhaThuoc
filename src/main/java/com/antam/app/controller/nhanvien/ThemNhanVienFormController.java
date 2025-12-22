@@ -180,7 +180,7 @@ public class ThemNhanVienFormController extends DialogPane{
 
         //Sự kiện khi người dùng nhập sai trên số điện thoại
         txtSDT.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.matches("^0[35679]\\d{8}$")
+            if (newText.matches("^0\\d{9}$")
                     || newText.isBlank()) {
                 // Hợp lệ -> bỏ viền đỏ
                 txtSDT.setStyle("");

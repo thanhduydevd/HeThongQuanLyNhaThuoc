@@ -125,7 +125,7 @@ public class NhanVien {
     public void setSoDienThoai(String soDienThoai) {
         if (soDienThoai == null || soDienThoai.isEmpty()) {
             throw new IllegalArgumentException("Số điện thoại không được để trống");
-        } else if (!soDienThoai.matches("^\\d{10}$")) {
+        } else if (!soDienThoai.matches("^0\\d{9}$")) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ");
         }
 
