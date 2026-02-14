@@ -395,11 +395,11 @@ public class DoiThuocFormController extends DialogPane{
                                                 soLuong,
                                                 comboDonVi.getValue(),
                                                 "Thuốc Mới Khi Đổi",
-                                                Math.round(t.getGiaBan() * soLuong * (1 + t.getThue()) * 100.0) / 100.0
+                                                t.getGiaBan() * soLuong
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon1(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -soLuong);
-                                        tongTienMua += newCTHD.getThanhTien();
+                                        tongTienMua += Math.round(t.getGiaBan() * soLuong * (1 + t.getThue()) * 100.0) / 100.0;
                                         break;
                                     }else{
                                         soLuong -= ctt.getSoLuong();
@@ -409,11 +409,11 @@ public class DoiThuocFormController extends DialogPane{
                                                 ctt.getSoLuong(),
                                                 comboDonVi.getValue(),
                                                 "Thuốc Mới Khi Đổi",
-                                                Math.round(t.getGiaBan() * ctt.getSoLuong() * (1 + t.getThue()) * 100.0) / 100.0
+                                                t.getGiaBan() * ctt.getSoLuong()
                                         );
                                         chiTietHoaDon_dao.themChiTietHoaDon1(newCTHD);
                                         chiTietThuoc_dao.CapNhatSoLuongChiTietThuoc(ctt.getMaCTT(), -ctt.getSoLuong());
-                                        tongTienMua += newCTHD.getThanhTien();
+                                        tongTienMua += Math.round(t.getGiaBan() * ctt.getSoLuong() * (1 + t.getThue()) * 100.0) / 100.0;
                                     }
                                 }
                             }
@@ -421,15 +421,24 @@ public class DoiThuocFormController extends DialogPane{
                             double tongTienTra = 0;
                             double tongTienCoKM = 0;
                             for (ChiTietHoaDon ct : selectedItems) {
+                                ChiTietThuoc ctt = ct.getMaCTT();
+                                Thuoc thuoc = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
                                 if (!ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
-                                    tongTienCoKM += ct.getThanhTien();
+                                    tongTienCoKM += ct.getThanhTien() * (1 + thuoc.getThue());
                                 }else{
-                                    tongTienTra += ct.getThanhTien();
+                                    tongTienTra += ct.getThanhTien() * (1 + thuoc.getThue());
                                 }
                             }
-                            if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-                                tongTienCoKM = TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                            if (hoaDon.getMaKM() != null) {
+
+                                String maKM = hoaDon.getMaKM().getMaKM();
+                                KhuyenMai km = khuyenMai_dao.getKhuyenMaiTheoMa(maKM);
+
+                                if (km != null) {
+                                    tongTienCoKM = TinhTienKhuyenMai(tongTienCoKM, km.getSo());
+                                }
                             }
+
                             hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienCoKM - tongTienTra + tongTienMua);
                         } else {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -612,10 +621,12 @@ public class DoiThuocFormController extends DialogPane{
         double tongTienTraCoKM = 0;
         double tongTienKhiTra = 0;
         for (ChiTietHoaDon ct : selectedItems) {
+            ChiTietThuoc  ctt = ct.getMaCTT();
+            Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
             if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
-                tongTienKhiTra += ct.getThanhTien();
+                tongTienKhiTra += ct.getThanhTien() * (1 + t.getThue());
             } else {
-                tongTienTraCoKM += ct.getThanhTien();
+                tongTienTraCoKM += ct.getThanhTien() * (1 + t.getThue());
             }
         }
 
@@ -638,12 +649,19 @@ public class DoiThuocFormController extends DialogPane{
         }
 
         DecimalFormat df = new DecimalFormat("#,### đ");
-        if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null && tongTienTraCoKM > 0) {
-            tongTienTraCoKM = TinhTienKhuyenMai(tongTienTraCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+        KhuyenMai km = null;
+
+        if (hoaDon.getMaKM() != null) {
+            km = khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM());
+        }
+
+        if (km != null && tongTienTraCoKM > 0) {
+            tongTienTraCoKM = TinhTienKhuyenMai(tongTienTraCoKM, km.getSo());
             txtTongTienTra.setText(df.format(tongTienTraCoKM + tongTienKhiTra) + " (KM chỉ áp dụng cho thuốc mua)");
-        }else{
+        } else {
             txtTongTienTra.setText(df.format(tongTienTraCoKM + tongTienKhiTra));
         }
+
         txtTongTienMua.setText(df.format(tongTienMua));
 
         double tienDoi = tongTienMua - (tongTienTraCoKM + tongTienKhiTra);

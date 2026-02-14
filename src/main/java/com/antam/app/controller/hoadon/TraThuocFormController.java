@@ -7,10 +7,7 @@ package com.antam.app.controller.hoadon;
 
 import com.antam.app.connect.ConnectDB;
 import com.antam.app.dao.*;
-import com.antam.app.entity.ChiTietHoaDon;
-import com.antam.app.entity.ChiTietThuoc;
-import com.antam.app.entity.HoaDon;
-import com.antam.app.entity.Thuoc;
+import com.antam.app.entity.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -272,16 +269,28 @@ public class TraThuocFormController extends DialogPane{
                     double tongTienTra = 0;
                     double tongTienCoKM = 0;
                     for (ChiTietHoaDon ct : selectedItems) {
+                        ChiTietThuoc ctt = ct.getMaCTT();
+                        Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
                         if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
-                            tongTienTra += ct.getThanhTien();
+                            tongTienTra += ct.getThanhTien() * (1 + t.getThue());
                         } else {
-                            tongTienCoKM += ct.getThanhTien();
+                            tongTienCoKM += ct.getThanhTien() * (1 + t.getThue());
                         }
                     }
-                    if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null) {
-                        tongTienCoKM = TinhTienKhuyenMai(tongTienCoKM, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
+                    KhuyenMai km = null;
+
+                    if (hoaDon.getMaKM() != null) {
+                        km = khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM());
                     }
-                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongTienCu - tongTienTra - tongTienCoKM);
+
+                    if (km != null) {
+                        tongTienCoKM = TinhTienKhuyenMai(tongTienCoKM, km.getSo());
+                    }
+
+                    double tongMoi = tongTienCu - tongTienTra - tongTienCoKM;
+                    hoaDon.setTongTien(tongMoi);
+                    hoaDon_dao.CapNhatTongTienHoaDon(hoaDon.getMaHD(), tongMoi);
+
                 }
             }
         });
@@ -294,19 +303,31 @@ public class TraThuocFormController extends DialogPane{
         double tongTien = 0;
         double tongTienKhiTra = 0;
         for (ChiTietHoaDon ct : selectedItems){
+            ChiTietThuoc ctt = ct.getMaCTT();
+            Thuoc t = thuoc_dao.getThuocTheoMa(ctt.getMaThuoc().getMaThuoc());
             if (ct.getTinhTrang().equals("Thuốc Mới Khi Đổi")){
-                tongTienKhiTra += ct.getThanhTien();
+                tongTienKhiTra += ct.getThanhTien() * (1 + t.getThue());
             } else {
-                tongTien += ct.getThanhTien();
+                tongTien += ct.getThanhTien() * (1 + t.getThue());
             }
         }
         DecimalFormat df = new DecimalFormat("#,### đ");
-        if (khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()) != null){
-            tongTien = TinhTienKhuyenMai(tongTien, khuyenMai_dao.getKhuyenMaiTheoMa(hoaDon.getMaKM().getMaKM()).getSo());
-            txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra) + " (Có áp dụng KM)");
-        }else {
+        if (hoaDon.getMaKM() != null) {
+
+            String maKM = hoaDon.getMaKM().getMaKM();
+            KhuyenMai km = khuyenMai_dao.getKhuyenMaiTheoMa(maKM);
+
+            if (km != null) {
+                tongTien = TinhTienKhuyenMai(tongTien, km.getSo());
+                txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra) + " (Có áp dụng KM)");
+            } else {
+                txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra));
+            }
+
+        } else {
             txtTongTienTra.setText(df.format(tongTien + tongTienKhiTra));
         }
+
     }
     // Thêm giá trị vào combobox lý do trả
     public void addValueCombobox(){
